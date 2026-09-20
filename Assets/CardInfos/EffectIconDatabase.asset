@@ -12,4 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae638a6939507e54f888f4cb5838ce0b, type: 3}
   m_Name: EffectIconDatabase
   m_EditorClassIdentifier: Assembly-CSharp::Steamchasing.Cards.EffectIconDatabase
-  effectIcons: []
+  effectIcons:
+  - effectType: 5
+    icon: {fileID: 0}
+  - effectType: 6
+    icon: {fileID: 0}
+  - effectType: 7
+    icon: {fileID: 0}
+  - effectType: 8
+    icon: {fileID: 0}
+  - effectType: 9
+    icon: {fileID: 0}
+  - effectType: 10
+    icon: {fileID: 0}
+  - effectType: 11
+    icon: {fileID: 0}
+  - effectType: 12
+    icon: {fileID: 0}
+  - effectType: 13
+    icon: {fileID: 0}
+  - effectType: 14
+    icon: {fileID: 0}
+  - effectType: 15
+    icon: {fileID: 0}
+  - effectType: 4
+    icon: {fileID: 0}
+  - effectType: 16
+    icon: {fileID: 0}
