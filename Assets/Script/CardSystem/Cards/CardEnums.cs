@@ -5,12 +5,30 @@ namespace Steamchasing.Cards
     public enum CharacterID { Whiskey, Ade }
     public enum DeckType { Deck1, Deck2, Deck3 }
     public enum TargetType { None, SingleEnemy, AllEnemies, Self, SingleAlly, AllAllies, RandomEnemy, RandomEnemies }
+
+    // CardEffect.type is serialized as this enum, so Unity automatically
+    // displays every value below in the CardData -> Effects -> Type dropdown.
     public enum EffectType
     {
-        Damage, Block, Heal, Draw, GainEnergy,
-        ApplyVulnerable, ApplyAggravated, ApplyStress, ApplyShock,
-        ApplyMark, ApplyAttackUp, ApplyAttackDown, FillStunGauge,
-        ExtraAttack, FollowUpAttack, Exhaust, Discard, Repeat,
-        ModifyCost
+        Damage,
+        Block,
+        Heal,
+        Draw,
+        GainEnergy,
+        ApplyVulnerable,
+        ApplyAggravated,
+        ApplyStress,
+        ApplyShock,
+        ApplyMark,
+        ApplyAttackUp,
+        ApplyAttackDown,
+        FillStunGauge,
+        ExtraAttack,
+        FollowUpAttack,
+        Exhaust,
+        Discard,
+        Repeat,
+        ModifyCost,
+        Disintegrate
     }
 }

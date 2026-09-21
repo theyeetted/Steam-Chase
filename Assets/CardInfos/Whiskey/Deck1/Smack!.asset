@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8de6000c0618544d96d6c6db69fa677, type: 3}
   m_Name: Smack!
   m_EditorClassIdentifier: Assembly-CSharp::Steamchasing.Cards.CardData
-  id: WHS_ATTACK_001
+  id: WHS_ATTACK_003
   cardName: Smack!
-  description: deal 8 damage and apply 1 vulnerable
+  description: Deal 8 damage and apply 1 vulnerable
   artwork: {fileID: 0}
   cardType: 0
   rarity: 0

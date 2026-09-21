@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -116,7 +115,7 @@ namespace Steamchasing.Cards
 
             foreach (CardEffect effect in currentCard.Effects)
             {
-                if (!IsStatusEffect(effect.type))
+                if (!ShouldShowEffectIcon(effect.type))
                     continue;
 
                 Sprite icon =
@@ -155,7 +154,7 @@ namespace Steamchasing.Cards
             }
         }
 
-        private bool IsStatusEffect(EffectType type)
+        private bool ShouldShowEffectIcon(EffectType type)
         {
             switch (type)
             {
@@ -169,6 +168,7 @@ namespace Steamchasing.Cards
                 case EffectType.ExtraAttack:
                 case EffectType.FollowUpAttack:
                 case EffectType.ApplyAggravated:
+                case EffectType.Disintegrate:
                     return true;
 
                 default:
@@ -209,6 +209,9 @@ namespace Steamchasing.Cards
 
                 case EffectType.ApplyAggravated:
                     return "Aggravated";
+
+                case EffectType.Disintegrate:
+                    return "Disintegrate";
 
                 default:
                     return string.Empty;
