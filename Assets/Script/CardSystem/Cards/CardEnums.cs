@@ -15,6 +15,7 @@ namespace Steamchasing.Cards
         Heal,
         Draw,
         GainEnergy,
+
         ApplyVulnerable,
         ApplyAggravated,
         ApplyStress,
@@ -22,9 +23,12 @@ namespace Steamchasing.Cards
         ApplyMark,
         ApplyAttackUp,
         ApplyAttackDown,
+
         FillStunGauge,
+
         ExtraAttack,
         FollowUpAttack,
+
         Exhaust,
         Discard,
         Repeat,
