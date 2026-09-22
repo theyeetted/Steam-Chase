@@ -413,15 +413,21 @@ namespace Steamchasing.Combat
 
             float damage = stressStacks;
 
+            // Stress ignores ordinary Attack Up / Vulnerable modifiers,
+            // but receives the native +20% damage bonus while Stunned.
             if (owner.IsStunned)
                 damage *= 1.20f;
 
-            owner.TakeDirectDamage(Mathf.RoundToInt(damage));
+            int finalDamage = Mathf.Max(0, Mathf.RoundToInt(damage));
+
+            owner.TakeDirectDamage(finalDamage);
 
             if (consumeStacks)
                 RemoveStatus(StatusEffectType.Stress);
 
-            return stressStacks;
+            // Watch It Blow! needs the actual damage dealt so it can convert
+            // 40% of that number into Stun-gauge percentage points.
+            return finalDamage;
         }
 
         /// <summary>

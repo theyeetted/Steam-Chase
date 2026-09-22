@@ -85,6 +85,26 @@ namespace Steamchasing.Combat
                     source != null ? source.StatusEffects : null
                 );
             }
+
+            // Overheated Plating and future "when attacked" passives.
+            // This fires even if Block absorbed all HP damage, because the unit
+            // was still attacked.
+            target.TriggerRetaliation(source, this);
+        }
+
+        /// <summary>
+        /// Deals retaliation damage without triggering another retaliation.
+        /// This prevents two retaliating units from causing an infinite loop.
+        /// </summary>
+        public void DealRetaliationDamage(
+            CombatUnit source,
+            CombatUnit target,
+            int amount)
+        {
+            if (target == null)
+                return;
+
+            target.TakeDamage(Mathf.Max(0, amount));
         }
 
         public void DealToAll(

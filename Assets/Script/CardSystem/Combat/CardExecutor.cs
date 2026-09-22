@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Steamchasing.Cards;
 using Steamchasing.DeckSystem;
 using UnityEngine;
@@ -10,25 +9,36 @@ namespace Steamchasing.Combat
         [SerializeField] private CombatManager combat;
         [SerializeField] private DeckManager deckManager;
 
-        public bool TryPlay(
-            CardInstance card,
-            CombatUnit source,
-            CombatUnit target)
+        // Tracks the first Attack card successfully played during the current player turn.
+        private CardData firstAttackPlayedThisTurn;
+
+        // Prevents Repeat effects from recursively repeating themselves forever.
+        private bool isRepeatingCard;
+
+        /// <summary>
+        /// Call this at the start of every player turn.
+        /// </summary>
+        public void ResetTurnHistory()
+        {
+            firstAttackPlayedThisTurn = null;
+            isRepeatingCard = false;
+        }
+
+        public bool TryPlay(CardInstance card, CombatUnit source, CombatUnit target)
         {
             if (card == null || card.Data == null)
                 return false;
 
             if (combat == null)
             {
-                Debug.LogError(
-                    "CardExecutor: CombatManager is not assigned.",
-                    this
-                );
+                Debug.LogError("CardExecutor: CombatManager is not assigned.", this);
                 return false;
             }
 
             if (!combat.TrySpendEnergy(card.CurrentCost))
                 return false;
+
+            RegisterCardPlayed(card);
 
             bool disintegrateAfterResolution = false;
 
@@ -37,33 +47,18 @@ namespace Steamchasing.Combat
                 if (effect == null)
                     continue;
 
-                // Conditions are checked once before the effect begins resolving.
-                // This is important for effects such as:
-                // "If target has Vulnerable, attack another time."
-                if (!CheckCondition(effect.condition, source, target))
+                if (Random.value > effect.chance)
                     continue;
 
-                int repeatCount = Mathf.Max(1, effect.repeat);
-
-                for (int i = 0; i < repeatCount; i++)
-                {
-                    // Chance is rolled for each repetition. This supports effects such
-                    // as "attack 6 times; each hit has a 50% chance to apply Attack Down."
-                    if (Random.value > Mathf.Clamp01(effect.chance))
-                        continue;
-
-                    if (ExecuteEffect(effect, card, source, target))
-                        disintegrateAfterResolution = true;
-                }
+                if (ExecuteEffect(effect, card, source, target))
+                    disintegrateAfterResolution = true;
             }
 
-            // Move the played card only after every effect has resolved.
+            // Finish moving the played CardInstance only after every effect has
+            // resolved. This prevents Disintegrate from interrupting later effects.
             if (deckManager != null)
             {
-                deckManager.ResolvePlayedCard(
-                    card,
-                    disintegrateAfterResolution
-                );
+                deckManager.ResolvePlayedCard(card, disintegrateAfterResolution);
             }
             else
             {
@@ -76,311 +71,217 @@ namespace Steamchasing.Combat
             return true;
         }
 
+        /// <summary>
+        /// Records the first Attack card played during this turn.
+        /// Later Attack cards do not overwrite it.
+        /// </summary>
+        private void RegisterCardPlayed(CardInstance card)
+        {
+            if (card == null || card.Data == null)
+                return;
+
+            if (firstAttackPlayedThisTurn != null)
+                return;
+
+            if (card.Data.CardType != CardType.Attack)
+                return;
+
+            firstAttackPlayedThisTurn = card.Data;
+
+            Debug.Log(
+                $"CardExecutor: First Attack this turn is {card.Data.CardName}.",
+                this
+            );
+        }
+
+        /// <summary>
+        /// Replays the effects of the first Attack card played this turn.
+        /// This does NOT spend the repeated Attack's energy and does NOT move
+        /// another physical card through the deck/discard/disintegrate piles.
+        /// </summary>
+        private void RepeatFirstAttack(CombatUnit source, CombatUnit target)
+        {
+            if (isRepeatingCard)
+                return;
+
+            if (firstAttackPlayedThisTurn == null)
+            {
+                Debug.Log(
+                    "Following Up: No Attack has been played this turn.",
+                    this
+                );
+                return;
+            }
+
+            isRepeatingCard = true;
+
+            try
+            {
+                Debug.Log(
+                    $"Following Up repeats {firstAttackPlayedThisTurn.CardName}.",
+                    this
+                );
+
+                // Temporary runtime instance used only so existing effect logic
+                // can safely receive a CardInstance (for effects such as ModifyCost).
+                // It is never inserted into the player's deck or hand.
+                CardInstance repeatedCard =
+                    new CardInstance(firstAttackPlayedThisTurn);
+
+                foreach (CardEffect effect in firstAttackPlayedThisTurn.Effects)
+                {
+                    if (effect == null)
+                        continue;
+
+                    if (Random.value > effect.chance)
+                        continue;
+
+                    // Ignore the returned Disintegrate/Exhaust flag here.
+                    // The replay is not a real second card instance in the deck cycle.
+                    ExecuteEffect(
+                        effect,
+                        repeatedCard,
+                        source,
+                        target
+                    );
+                }
+            }
+            finally
+            {
+                isRepeatingCard = false;
+            }
+        }
+
+        /// <summary>
+        /// Executes one card effect.
+        /// Returns true when the played card must be removed from circulation
+        /// for the rest of the current combat.
+        /// </summary>
         private bool ExecuteEffect(
             CardEffect effect,
             CardInstance card,
             CombatUnit source,
-            CombatUnit selectedTarget)
-        {
-            // Effects that do not require a CombatUnit target.
-            switch (effect.type)
-            {
-                case EffectType.Draw:
-                    if (deckManager != null)
-                        deckManager.Draw(Mathf.Max(0, effect.value));
-                    return false;
-
-                case EffectType.GainEnergy:
-                    combat.GainEnergy(effect.value);
-                    return false;
-
-                case EffectType.ModifyCost:
-                    card.AddTemporaryCostModifier(effect.value);
-                    return false;
-
-                case EffectType.Exhaust:
-                case EffectType.Disintegrate:
-                    return true;
-
-                case EffectType.Discard:
-                    // Reserved for discard-specific effects.
-                    return false;
-
-                case EffectType.Repeat:
-                    // The CardEffect.repeat field now handles repeated resolution.
-                    // This enum entry is retained for compatibility with existing assets.
-                    return false;
-            }
-
-            List<CombatUnit> targets = ResolveTargets(
-                effect.target,
-                source,
-                selectedTarget
-            );
-
-            foreach (CombatUnit resolvedTarget in targets)
-            {
-                if (resolvedTarget == null)
-                    continue;
-
-                ExecuteOnTarget(
-                    effect,
-                    source,
-                    resolvedTarget
-                );
-            }
-
-            return false;
-        }
-
-        private void ExecuteOnTarget(
-            CardEffect effect,
-            CombatUnit source,
             CombatUnit target)
         {
+            CombatUnit resolvedTarget = target != null ? target : source;
+
             switch (effect.type)
             {
                 case EffectType.Damage:
-                    combat.DealDamage(source, target, effect.value);
+                    combat.DealDamage(source, resolvedTarget, effect.value);
                     break;
 
                 case EffectType.Block:
-                    target.GainBlock(effect.value);
+                    source?.GainBlock(effect.value);
                     break;
 
                 case EffectType.Heal:
-                    target.Heal(effect.value);
+                    resolvedTarget?.Heal(effect.value);
+                    break;
+
+                case EffectType.GainEnergy:
+                    combat.GainEnergy(effect.value);
                     break;
 
                 case EffectType.ApplyVulnerable:
-                    ApplyStatus(
-                        target,
-                        StatusEffectType.Vulnerable,
-                        effect,
-                        source
-                    );
+                    resolvedTarget?.ApplyVulnerable(effect.value);
                     break;
 
                 case EffectType.ApplyAggravated:
-                    ApplyStatus(
-                        target,
-                        StatusEffectType.Aggravated,
-                        effect,
-                        source,
-                        effect.statusDuration > 0 ? effect.statusDuration : 1
+                    resolvedTarget?.ApplyAggravated(
+                        effect.value,
+                        effect.statusDuration > 0 ? effect.statusDuration : 1,
+                        source
                     );
                     break;
 
                 case EffectType.ApplyStress:
-                    ApplyStatus(
-                        target,
-                        StatusEffectType.Stress,
-                        effect,
-                        source
-                    );
+                    resolvedTarget?.ApplyStress(effect.value);
                     break;
 
                 case EffectType.ApplyShock:
-                    ApplyStatus(
-                        target,
-                        StatusEffectType.Shock,
-                        effect,
-                        source
-                    );
+                    resolvedTarget?.ApplyShock(effect.value);
                     break;
 
                 case EffectType.ApplyMark:
-                    ApplyStatus(
-                        target,
-                        StatusEffectType.Mark,
-                        effect,
-                        source
-                    );
+                    resolvedTarget?.ApplyMark(effect.value);
                     break;
 
                 case EffectType.ApplyAttackUp:
-                    ApplyStatus(
-                        target,
-                        StatusEffectType.AttackUp,
-                        effect,
-                        source
-                    );
+                    source?.ApplyAttackUp(effect.value);
                     break;
 
                 case EffectType.ApplyAttackDown:
-                    ApplyStatus(
-                        target,
-                        StatusEffectType.AttackDown,
-                        effect,
-                        source
-                    );
+                    resolvedTarget?.ApplyAttackDown(effect.value);
                     break;
 
                 case EffectType.FillStunGauge:
-                    target.FillStunGauge(effect.value / 100f);
+                    resolvedTarget?.FillStunGauge(effect.value / 100f);
+                    break;
+
+                case EffectType.TriggerStressDetonation:
+                    if (resolvedTarget != null)
+                    {
+                        // Detonate all current Stress immediately WITHOUT consuming it.
+                        int stressDamage =
+                            resolvedTarget.TriggerStressImmediately(false);
+
+                        // effect.value is the percentage of the detonation damage
+                        // converted into Stun-gauge percentage points.
+                        //
+                        // Example: 20 damage * 40% = 8 percentage points = 0.08 gauge.
+                        float stunGaugePercentPoints =
+                            stressDamage * (effect.value / 100f);
+
+                        resolvedTarget.FillStunGauge(
+                            stunGaugePercentPoints / 100f
+                        );
+                    }
+                    break;
+
+                case EffectType.Draw:
+                    if (deckManager != null)
+                        deckManager.Draw(effect.value);
+                    break;
+
+                case EffectType.ModifyCost:
+                    card?.AddTemporaryCostModifier(effect.value);
                     break;
 
                 case EffectType.ExtraAttack:
-                    combat.DealDamage(source, target, effect.value);
+                    combat.DealDamage(source, resolvedTarget, effect.value);
                     break;
 
                 case EffectType.FollowUpAttack:
-                    combat.DealDamage(source, target, effect.value);
+                    combat.DealDamage(source, resolvedTarget, effect.value);
                     break;
-            }
-        }
 
-        private void ApplyStatus(
-            CombatUnit target,
-            StatusEffectType type,
-            CardEffect effect,
-            CombatUnit source,
-            int? overrideDuration = null)
-        {
-            if (target == null)
-                return;
+                case EffectType.Retaliate:
+                    source?.ApplyRetaliation(effect.value);
+                    break;
 
-            int duration = overrideDuration ?? effect.statusDuration;
+                case EffectType.Exhaust:
+                case EffectType.Disintegrate:
+                    // Steamchasing's Disintegrate rule:
+                    // after the card finishes resolving, remove this CardInstance
+                    // from the draw/hand/discard cycle for this combat.
+                    return true;
 
-            target.ApplyStatus(
-                type,
-                effect.value,
-                duration,
-                source
-            );
-        }
+                case EffectType.Discard:
+                    // Reserved for discard-specific card effects.
+                    break;
 
-        private bool CheckCondition(
-            CardCondition condition,
-            CombatUnit source,
-            CombatUnit selectedTarget)
-        {
-            if (condition == null ||
-                condition.type == CardConditionType.None)
-            {
-                return true;
-            }
-
-            switch (condition.subject)
-            {
-                case ConditionSubject.Self:
-                    return CheckConditionOnUnit(condition, source);
-
-                case ConditionSubject.SelectedTarget:
-                    return CheckConditionOnUnit(
-                        condition,
-                        selectedTarget
-                    );
-
-                case ConditionSubject.AnyEnemy:
-                    if (combat == null || combat.Enemies == null)
-                        return false;
-
-                    foreach (CombatUnit enemy in combat.Enemies)
-                    {
-                        if (CheckConditionOnUnit(condition, enemy))
-                            return true;
-                    }
-
-                    return false;
+                case EffectType.Repeat:
+                    // Following Up:
+                    // replay the first Attack card used during this turn.
+                    RepeatFirstAttack(source, target);
+                    break;
+                case EffectType.DoubleStress:
+                    resolvedTarget?.DoubleStress();
+                    break;
             }
 
             return false;
-        }
-
-        private bool CheckConditionOnUnit(
-            CardCondition condition,
-            CombatUnit unit)
-        {
-            if (unit == null)
-                return false;
-
-            switch (condition.type)
-            {
-                case CardConditionType.HasStatus:
-                    return unit.GetStatusStacks(condition.statusType) >=
-                           Mathf.Max(1, condition.minimumStacks);
-
-                case CardConditionType.DoesNotHaveStatus:
-                    return unit.GetStatusStacks(condition.statusType) <
-                           Mathf.Max(1, condition.minimumStacks);
-
-                case CardConditionType.IsStunned:
-                    return unit.IsStunned;
-
-                case CardConditionType.WasAttackedThisTurn:
-                    return unit.WasAttackedThisTurn;
-
-                case CardConditionType.None:
-                default:
-                    return true;
-            }
-        }
-
-        private List<CombatUnit> ResolveTargets(
-            EffectTarget targetType,
-            CombatUnit source,
-            CombatUnit selectedTarget)
-        {
-            List<CombatUnit> result = new();
-
-            switch (targetType)
-            {
-                case EffectTarget.Self:
-                    AddUnique(result, source);
-                    break;
-
-                case EffectTarget.SelectedTarget:
-                    AddUnique(result, selectedTarget);
-                    break;
-
-                case EffectTarget.AllEnemies:
-                    if (combat != null && combat.Enemies != null)
-                    {
-                        foreach (CombatUnit enemy in combat.Enemies)
-                            AddUnique(result, enemy);
-                    }
-
-                    // Useful for simple one-enemy test scenes before the enemy list
-                    // has been wired into CombatManager.
-                    if (result.Count == 0)
-                        AddUnique(result, selectedTarget);
-                    break;
-
-                case EffectTarget.RandomEnemy:
-                    if (combat != null && combat.Enemies != null)
-                    {
-                        List<CombatUnit> validEnemies = new();
-
-                        foreach (CombatUnit enemy in combat.Enemies)
-                        {
-                            if (enemy != null)
-                                validEnemies.Add(enemy);
-                        }
-
-                        if (validEnemies.Count > 0)
-                        {
-                            AddUnique(
-                                result,
-                                validEnemies[Random.Range(0, validEnemies.Count)]
-                            );
-                        }
-                    }
-
-                    if (result.Count == 0)
-                        AddUnique(result, selectedTarget);
-                    break;
-            }
-
-            return result;
-        }
-
-        private static void AddUnique(
-            List<CombatUnit> list,
-            CombatUnit unit)
-        {
-            if (unit != null && !list.Contains(unit))
-                list.Add(unit);
         }
     }
 }

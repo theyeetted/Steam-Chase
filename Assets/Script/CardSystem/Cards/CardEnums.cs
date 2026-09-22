@@ -29,10 +29,17 @@ namespace Steamchasing.Cards
         ExtraAttack,
         FollowUpAttack,
 
+        Retaliate,
+
         Exhaust,
         Discard,
         Repeat,
         ModifyCost,
-        Disintegrate
+        Disintegrate,
+
+        // Immediately detonates current Stress without consuming it.
+        // effect.value = percent of detonation damage converted into Stun gauge.
+        TriggerStressDetonation,
+        DoubleStress
     }
 }

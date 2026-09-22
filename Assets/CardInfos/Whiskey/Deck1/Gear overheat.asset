@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8de6000c0618544d96d6c6db69fa677, type: 3}
+  m_Name: Gear overheat
+  m_EditorClassIdentifier: Assembly-CSharp::Steamchasing.Cards.CardData
+  id: WHK_POW_003
+  cardName: Gear overheat
+  description: play the attack card when turn ends disintegrate
+  artwork: {fileID: 0}
+  cardType: 2
+  rarity: 1
+  character: 0
+  deck: 0
+  energyCost: 2
+  isDraftable: 1
+  isRemovable: 1
+  effects:
+  - type: 20
+    target: 0
+    value: 1
+    repeat: 0
+    chance: 1
+    statusDuration: 0
+    condition:
+      type: 0
+      subject: 0
+      statusType: 0
+      minimumStacks: 0
+  - type: 19
+    target: 0
+    value: 1
+    repeat: 0
+    chance: 1
+    statusDuration: 0
+    condition:
+      type: 0
+      subject: 0
+      statusType: 0
+      minimumStacks: 0

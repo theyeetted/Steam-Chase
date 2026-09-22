@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8de6000c0618544d96d6c6db69fa677, type: 3}
   m_Name: Swing
   m_EditorClassIdentifier: Assembly-CSharp::Steamchasing.Cards.CardData
-  id: WHS_ATTACK_001
+  id: WHS_ATK
   cardName: Swing
   description: Deal 6 damage
   artwork: {fileID: 0}
@@ -27,6 +27,11 @@ MonoBehaviour:
   - type: 0
     target: 1
     value: 6
-    secondaryValue: 0
+    repeat: 1
     chance: 0
-    disintegrateAfterUse: 0
+    statusDuration: -1
+    condition:
+      type: 0
+      subject: 1
+      statusType: 0
+      minimumStacks: 1

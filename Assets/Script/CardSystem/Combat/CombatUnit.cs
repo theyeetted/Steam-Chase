@@ -20,6 +20,9 @@ namespace Steamchasing.Combat
         private int fallbackShock;
         private int fallbackMark;
 
+        // Combat-long passive used by Overheated Plating.
+        private int retaliationDamage;
+
         public int CurrentHP { get; private set; }
         public int Block { get; private set; }
         public float StunGauge { get; private set; }
@@ -28,6 +31,8 @@ namespace Steamchasing.Combat
         public bool WasAttackedThisTurn { get; private set; }
 
         public StatusEffectController StatusEffects => statusEffects;
+
+        public int RetaliationDamage => retaliationDamage;
 
         // Compatibility properties for code that still reads the old CombatUnit fields.
         public int AttackUp => GetStatusStacks(StatusEffectType.AttackUp);
@@ -41,6 +46,7 @@ namespace Steamchasing.Combat
         private void Awake()
         {
             CurrentHP = maxHP;
+            retaliationDamage = 0;
 
             if (statusEffects == null)
                 statusEffects = GetComponent<StatusEffectController>();
@@ -87,6 +93,48 @@ namespace Steamchasing.Combat
         public void ResetTurnFlags()
         {
             WasAttackedThisTurn = false;
+        }
+
+        /// <summary>
+        /// Adds combat-long retaliation damage.
+        /// Playing multiple retaliation effects stacks their damage.
+        /// </summary>
+        public void ApplyRetaliation(int damage)
+        {
+            retaliationDamage += Mathf.Max(0, damage);
+        }
+
+        /// <summary>
+        /// Called after this unit is attacked.
+        /// Retaliation still triggers when Block absorbs the incoming attack.
+        /// </summary>
+        public void TriggerRetaliation(
+            CombatUnit attacker,
+            CombatManager combat)
+        {
+            if (retaliationDamage <= 0)
+                return;
+
+            if (attacker == null || combat == null)
+                return;
+
+            // A defeated unit does not retaliate.
+            if (CurrentHP <= 0)
+                return;
+
+            combat.DealRetaliationDamage(
+                this,
+                attacker,
+                retaliationDamage
+            );
+        }
+
+        /// <summary>
+        /// Call when combat ends if CombatUnit objects persist between battles.
+        /// </summary>
+        public void ClearCombatPassives()
+        {
+            retaliationDamage = 0;
         }
 
         public int GetStatusStacks(StatusEffectType type)
@@ -176,8 +224,51 @@ namespace Steamchasing.Combat
         public void ApplyStress(int amount) =>
             ApplyStatus(StatusEffectType.Stress, amount);
 
+        public void DoubleStress()
+        {
+            int currentStress = GetStatusStacks(StatusEffectType.Stress);
+
+            if (currentStress <= 0 || currentStress >= 99)
+                return;
+
+            int doubledStress = Mathf.Min(currentStress * 2, 99);
+            int additionalStress = doubledStress - currentStress;
+
+            ApplyStatus(StatusEffectType.Stress, additionalStress);
+        }
+
         public void ApplyShock(int amount) =>
             ApplyStatus(StatusEffectType.Shock, amount);
+
+        /// <summary>
+        /// Immediately detonates current Stress and returns the actual damage dealt.
+        /// When consumeStacks is false, Stress remains unchanged.
+        /// Includes the native +20% Stress damage bonus if this unit is Stunned.
+        /// </summary>
+        public int TriggerStressImmediately(bool consumeStacks)
+        {
+            if (statusEffects != null)
+                return statusEffects.TriggerStressImmediately(consumeStacks);
+
+            int stressStacks = Mathf.Max(0, fallbackStress);
+
+            if (stressStacks <= 0)
+                return 0;
+
+            float damage = stressStacks;
+
+            if (IsStunned)
+                damage *= 1.20f;
+
+            int finalDamage = Mathf.Max(0, Mathf.RoundToInt(damage));
+
+            TakeDirectDamage(finalDamage);
+
+            if (consumeStacks)
+                fallbackStress = 0;
+
+            return finalDamage;
+        }
 
         public void ApplyMark(int amount) =>
             ApplyStatus(StatusEffectType.Mark, amount);

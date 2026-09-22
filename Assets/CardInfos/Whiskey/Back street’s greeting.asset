@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8de6000c0618544d96d6c6db69fa677, type: 3}
   m_Name: "Back street\u2019s greeting"
   m_EditorClassIdentifier: Assembly-CSharp::Steamchasing.Cards.CardData
-  id: WHS_ATTACK_002
+  id: WHS_UNQ
   cardName: "Back street\u2019s greeting"
   description: 'Deal 12 damage and apply 2 Vulnerable. '
   artwork: {fileID: 0}
@@ -27,12 +27,22 @@ MonoBehaviour:
   - type: 0
     target: 1
     value: 12
-    secondaryValue: 0
+    repeat: 1
     chance: 0
-    disintegrateAfterUse: 0
+    statusDuration: -1
+    condition:
+      type: 0
+      subject: 1
+      statusType: 0
+      minimumStacks: 1
   - type: 5
     target: 1
     value: 2
-    secondaryValue: 0
+    repeat: 1
     chance: 0
-    disintegrateAfterUse: 0
+    statusDuration: -1
+    condition:
+      type: 0
+      subject: 1
+      statusType: 0
+      minimumStacks: 1
