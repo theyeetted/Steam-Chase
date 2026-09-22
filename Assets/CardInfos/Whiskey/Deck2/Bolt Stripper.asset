@@ -14,19 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Steamchasing.Cards.CardData
   id: WHK_ATK_011
   cardName: 'Bolt Stripper '
-  description: Deal 8 damage. If the target is Aggravated, remove up to 10 of their
-    Block and apply 1 Vulnerable.
+  description: Deal 8 damage. If the target is Aggravated, gain 10 block and apply
+    1 Vulnerable.
   artwork: {fileID: 0}
   cardType: 0
   rarity: 1
   character: 0
   deck: 1
-  energyCost: 1
+  energyCost: 2
   isDraftable: 1
   isRemovable: 1
   effects:
   - type: 0
-    target: 0
+    target: 1
     value: 8
     repeat: 0
     chance: 1
@@ -36,7 +36,7 @@ MonoBehaviour:
       subject: 0
       statusType: 0
       minimumStacks: 0
-  - type: 2
+  - type: 1
     target: 0
     value: 10
     repeat: 0
@@ -47,8 +47,8 @@ MonoBehaviour:
       subject: 1
       statusType: 3
       minimumStacks: 0
-  - type: 6
-    target: 0
+  - type: 5
+    target: 1
     value: 1
     repeat: 0
     chance: 1

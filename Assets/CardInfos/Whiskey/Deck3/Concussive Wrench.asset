@@ -24,18 +24,7 @@ MonoBehaviour:
   isDraftable: 1
   isRemovable: 1
   effects:
-  - type: 0
-    target: 1
-    value: 4
-    repeat: 0
-    chance: 1
-    statusDuration: 0
-    condition:
-      type: 0
-      subject: 0
-      statusType: 0
-      minimumStacks: 0
-  - type: 13
+  - type: 14
     target: 1
     value: 20
     repeat: 0
@@ -46,9 +35,9 @@ MonoBehaviour:
       subject: 0
       statusType: 0
       minimumStacks: 0
-  - type: 8
+  - type: 0
     target: 1
-    value: 2
+    value: 4
     repeat: 0
     chance: 1
     statusDuration: 0

@@ -43,6 +43,6 @@ MonoBehaviour:
     statusDuration: 0
     condition:
       type: 1
-      subject: 0
+      subject: 1
       statusType: 3
       minimumStacks: 1

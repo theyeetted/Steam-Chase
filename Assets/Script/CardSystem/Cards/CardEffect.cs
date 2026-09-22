@@ -8,6 +8,7 @@ namespace Steamchasing.Cards
     {
         Self,
         SelectedTarget,
+        AllAllies,
         AllEnemies,
         RandomEnemy
     }
@@ -18,7 +19,11 @@ namespace Steamchasing.Cards
         HasStatus,
         DoesNotHaveStatus,
         IsStunned,
-        WasAttackedThisTurn
+        WasAttackedThisTurn,
+
+        // True after this card's source has triggered at least one Extra Attack
+        // during the current player turn.
+        ExtraAttackTriggeredThisTurn
     }
 
     public enum ConditionSubject

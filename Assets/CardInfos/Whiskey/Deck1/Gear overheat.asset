@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Steamchasing.Cards.CardData
   id: WHK_POW_003
   cardName: Gear overheat
-  description: play the attack card when turn ends disintegrate
+  description: gain 3 attack ups
   artwork: {fileID: 0}
   cardType: 2
   rarity: 1
@@ -24,20 +24,9 @@ MonoBehaviour:
   isDraftable: 1
   isRemovable: 1
   effects:
-  - type: 20
+  - type: 12
     target: 0
-    value: 1
-    repeat: 0
-    chance: 1
-    statusDuration: 0
-    condition:
-      type: 0
-      subject: 0
-      statusType: 0
-      minimumStacks: 0
-  - type: 19
-    target: 0
-    value: 1
+    value: 3
     repeat: 0
     chance: 1
     statusDuration: 0

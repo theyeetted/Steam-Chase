@@ -26,7 +26,7 @@ MonoBehaviour:
   effects:
   - type: 1
     target: 0
-    value: 10
+    value: 8
     repeat: 0
     chance: 1
     statusDuration: 1

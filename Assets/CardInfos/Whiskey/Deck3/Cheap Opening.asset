@@ -36,36 +36,36 @@ MonoBehaviour:
       subject: 0
       statusType: 0
       minimumStacks: 0
-  - type: 5
-    target: 1
+  - type: 3
+    target: 0
     value: 1
     repeat: 0
     chance: 1
     statusDuration: 0
     condition:
       type: 3
-      subject: 0
+      subject: 1
       statusType: 0
       minimumStacks: 0
   - type: 4
-    target: 1
+    target: 0
     value: 1
     repeat: 0
     chance: 1
     statusDuration: 0
     condition:
       type: 3
-      subject: 0
+      subject: 1
       statusType: 0
       minimumStacks: 0
-  - type: 21
-    target: 1
+  - type: 30
+    target: 0
     value: 1
     repeat: 0
     chance: 1
     statusDuration: 0
     condition:
-      type: 3
-      subject: 0
+      type: 0
+      subject: 1
       statusType: 0
       minimumStacks: 0

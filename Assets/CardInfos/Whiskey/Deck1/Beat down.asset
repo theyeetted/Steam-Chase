@@ -25,7 +25,7 @@ MonoBehaviour:
   isRemovable: 1
   effects:
   - type: 0
-    target: 0
+    target: 1
     value: 8
     repeat: 0
     chance: 1

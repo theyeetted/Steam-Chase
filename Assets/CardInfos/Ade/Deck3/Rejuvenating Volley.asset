@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8de6000c0618544d96d6c6db69fa677, type: 3}
+  m_Name: Rejuvenating Volley
+  m_EditorClassIdentifier: Assembly-CSharp::Steamchasing.Cards.CardData
+  id: ADE_ATK_020
+  cardName: Rejuvenating Volley
+  description: Deal 8 damage. If the target has Mark, gain 6 blocks and heal 5 HP.
+  artwork: {fileID: 0}
+  cardType: 0
+  rarity: 1
+  character: 1
+  deck: 2
+  energyCost: 2
+  isDraftable: 1
+  isRemovable: 1
+  effects:
+  - type: 0
+    target: 1
+    value: 8
+    repeat: 0
+    chance: 1
+    statusDuration: 0
+    condition:
+      type: 0
+      subject: 0
+      statusType: 0
+      minimumStacks: 0
+  - type: 1
+    target: 1
+    value: 6
+    repeat: 0
+    chance: 1
+    statusDuration: 0
+    condition:
+      type: 1
+      subject: 1
+      statusType: 6
+      minimumStacks: 0
+  - type: 2
+    target: 1
+    value: 5
+    repeat: 0
+    chance: 1
+    statusDuration: 0
+    condition:
+      type: 1
+      subject: 1
+      statusType: 6
+      minimumStacks: 0

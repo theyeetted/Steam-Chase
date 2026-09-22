@@ -266,8 +266,12 @@ namespace Steamchasing.Combat
                 return;
             }
 
-            // Base Follow-Up attack from the GDD.
-            attacker.owner.TriggerFollowUpAttack(owner, 4);
+            // Base Follow-Up attack from the GDD. CombatUnit has a dedicated
+            // Mark path so Mark-only Follow-Up bonuses do not affect other Follow-Ups.
+            if (attacker.owner is CombatUnit combatAttacker)
+                combatAttacker.TriggerMarkFollowUpAttack(owner, 4);
+            else
+                attacker.owner.TriggerFollowUpAttack(owner, 4);
         }
 
         // =========================================================
@@ -344,8 +348,9 @@ namespace Steamchasing.Combat
 
             int damage = shockStacks * 4;
 
-            // Direct damage intentionally bypasses standard attack
-            // modifiers. Specialized Shock buffs can be added later.
+            if (owner is CombatUnit combatOwner)
+                damage = combatOwner.ModifyShockTickDamage(damage);
+
             owner.TakeDirectDamage(damage);
 
             // Shock loses one stack after triggering.
@@ -364,6 +369,10 @@ namespace Steamchasing.Combat
                 return 0;
 
             int damage = stacks * 4;
+
+            if (owner is CombatUnit combatOwner)
+                damage = combatOwner.ModifyShockTickDamage(damage);
+
             owner.TakeDirectDamage(damage);
 
             if (consumeAllStacks)

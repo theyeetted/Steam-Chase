@@ -28,18 +28,7 @@ MonoBehaviour:
     target: 1
     value: 40
     repeat: 0
-    chance: 0
-    statusDuration: 0
-    condition:
-      type: 0
-      subject: 0
-      statusType: 0
-      minimumStacks: 0
-  - type: 0
-    target: 1
-    value: 40
-    repeat: 0
-    chance: 0
+    chance: 1
     statusDuration: 0
     condition:
       type: 1

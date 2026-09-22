@@ -36,7 +36,7 @@ MonoBehaviour:
       subject: 0
       statusType: 0
       minimumStacks: 0
-  - type: 8
+  - type: 7
     target: 1
     value: 10
     repeat: 0
@@ -44,6 +44,6 @@ MonoBehaviour:
     statusDuration: 0
     condition:
       type: 1
-      subject: 0
+      subject: 1
       statusType: 4
       minimumStacks: 5

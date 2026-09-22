@@ -24,7 +24,7 @@ MonoBehaviour:
   isDraftable: 1
   isRemovable: 1
   effects:
-  - type: 22
+  - type: 31
     target: 0
     value: 1
     repeat: 0

@@ -35,7 +35,7 @@ MonoBehaviour:
       subject: 0
       statusType: 0
       minimumStacks: 0
-  - type: 5
+  - type: 4
     target: 0
     value: 2
     repeat: 0

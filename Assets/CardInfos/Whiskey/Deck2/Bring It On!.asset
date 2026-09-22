@@ -36,7 +36,7 @@ MonoBehaviour:
       subject: 0
       statusType: 0
       minimumStacks: 0
-  - type: 16
+  - type: 25
     target: 0
     value: 14
     repeat: 0
@@ -47,8 +47,8 @@ MonoBehaviour:
       subject: 0
       statusType: 0
       minimumStacks: 0
-  - type: 7
-    target: 1
+  - type: 5
+    target: 3
     value: 1
     repeat: 0
     chance: 1

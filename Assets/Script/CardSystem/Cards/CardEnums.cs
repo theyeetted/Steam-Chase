@@ -20,6 +20,16 @@ namespace Steamchasing.Cards
         ApplyAggravated,
         ApplyStress,
         ApplyShock,
+
+        // Adds flat damage to each Shock tick event on the affected target.
+        // effect.value = additional damage per Shock tick.
+        // effect.statusDuration = duration in turns.
+        ShockTickDamageUp,
+
+        // Heals the source for effect.value HP per total Shock stack
+        // currently active across all living enemies.
+        HealPerTotalEnemyShock,
+
         ApplyMark,
         ApplyAttackUp,
         ApplyAttackDown,
@@ -27,6 +37,45 @@ namespace Steamchasing.Cards
         FillStunGauge,
 
         ExtraAttack,
+
+        // Adds bonus damage to every Extra Attack triggered by this unit.
+        // effect.value = additional damage per Extra Attack.
+        ExtraAttackDamageUp,
+
+        // Queues Extra Attacks for the next Attack cards actually played.
+        // effect.value = Extra Attack base damage.
+        // effect.repeat = number of Attack cards that will trigger it.
+        ExtraAttackOnNextAttackCards,
+
+        // Reduces the cost of random cards currently in hand for this turn.
+        // effect.value = amount reduced from each selected card.
+        // effect.repeat = number of distinct random cards selected.
+        ReduceRandomHandCostThisTurn,
+
+        // Every real card played after this effect resolves during the current
+        // player turn triggers an Extra Attack.
+        // effect.value = Extra Attack base damage.
+        ExtraAttackEveryCardThisTurn,
+
+        // For a limited duration, every Extra Attack triggered by this unit
+        // fills its target's Stun gauge by additional percentage points.
+        // effect.value = Stun gauge percentage points.
+        // effect.statusDuration = duration in turns.
+        ExtraAttackStunGaugeUp,
+
+        // Adds bonus damage to every Follow-Up attack triggered by this unit
+        // for a limited duration.
+        // effect.value = additional Follow-Up damage.
+        // effect.statusDuration = duration in turns.
+        FollowUpDamageUp,
+
+        // Adds bonus damage only to Follow-Up attacks triggered by consuming Mark.
+        // effect.value = additional Mark Follow-Up damage.
+        // effect.statusDuration = duration in turns.
+        MarkFollowUpDamageUp,
+
+        ConsumeMark,
+
         FollowUpAttack,
 
         Retaliate,
@@ -40,6 +89,8 @@ namespace Steamchasing.Cards
         // Immediately detonates current Stress without consuming it.
         // effect.value = percent of detonation damage converted into Stun gauge.
         TriggerStressDetonation,
-        DoubleStress
+        DoubleStress,
+
+        TriggerShock
     }
 }
