@@ -49,19 +49,17 @@ public class CardSystem : SingleTon<CardSystem>
     //Performer
     private IEnumerator DrawCardsPerformer(DrawCardsGA drawcardGA)
     {
-        int actualDrawAmount = Mathf.Min(drawcardGA.Amount, drawPile.Count);
-        int notDrawnAmount = drawcardGA.Amount - actualDrawAmount;
-        for (int i = 0; i < actualDrawAmount; i++)
+        for (int i = 0; i < drawcardGA.Amount; i++)
         {
-            yield return DrawCard();
-        }
-        if (notDrawnAmount > 0)
-        {
-            RefillDeck();
-            for(int i = 0; i < notDrawnAmount; i++)
+            if (drawPile.Count == 0)
             {
-                yield return DrawCard();
+                RefillDeck();
             }
+
+            // There may be fewer cards available than the requested draw amount.
+            if (drawPile.Count == 0) yield break;
+
+            yield return DrawCard();
         }
     }
 
@@ -79,6 +77,7 @@ public class CardSystem : SingleTon<CardSystem>
     private IEnumerator PlayCardPerformer(PlayCardGA playCardGA)
     {
         hand.Remove(playCardGA.Card);
+        discardPile.Add(playCardGA.Card);
         CardView cardView = handView.RemoveCard(playCardGA.Card);
         yield return DiscardCard(cardView);
         //perform Effects
