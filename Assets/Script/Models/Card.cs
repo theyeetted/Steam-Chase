@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -8,6 +9,8 @@ public class Card
     public int Cost { get; private set; }
 
     public string Description => data.description;
+
+    public List<Effect> Effects => data.Effects;
 
     public Sprite Image => data.Image;
 

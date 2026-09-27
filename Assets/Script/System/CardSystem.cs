@@ -80,7 +80,12 @@ public class CardSystem : SingleTon<CardSystem>
         discardPile.Add(playCardGA.Card);
         CardView cardView = handView.RemoveCard(playCardGA.Card);
         yield return DiscardCard(cardView);
-        //perform Effects
+        foreach(var effect in playCardGA.Card.Effects)
+        {
+            PerformEffectGA performEffectGA = new(effect);
+            ActionSystem.Instance.AddReaction(performEffectGA);
+        }
+
     }
 
     //Reaction

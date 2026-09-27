@@ -578,6 +578,7 @@ Transform:
   - {fileID: 392364067}
   - {fileID: 1935524408}
   - {fileID: 1961101915}
+  - {fileID: 993614908}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &689999242
@@ -1040,6 +1041,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2107549347014219472, guid: dd49e7e45cf36724caa1e80f6a4c8467, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3228288423987529262, guid: dd49e7e45cf36724caa1e80f6a4c8467, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -1138,6 +1143,50 @@ Transform:
   - {fileID: 793113986}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &993614907
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 993614908}
+  - component: {fileID: 993614909}
+  m_Layer: 0
+  m_Name: EffectSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &993614908
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993614907}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 667498306}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &993614909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993614907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad3ff3337d6d05f479112b1ce6eada07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectSystem
 --- !u!1 &995080531
 GameObject:
   m_ObjectHideFlags: 0
@@ -1599,9 +1648,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9c0d227722e0b7a4b977a332bad4c673, type: 2}
   - {fileID: 11400000, guid: 9c0d227722e0b7a4b977a332bad4c673, type: 2}
   - {fileID: 11400000, guid: 9c0d227722e0b7a4b977a332bad4c673, type: 2}
-  - {fileID: 11400000, guid: 9c0d227722e0b7a4b977a332bad4c673, type: 2}
-  - {fileID: 11400000, guid: 9c0d227722e0b7a4b977a332bad4c673, type: 2}
-  - {fileID: 11400000, guid: 9c0d227722e0b7a4b977a332bad4c673, type: 2}
+  - {fileID: 11400000, guid: 1fd2477f76ea8a4449b14de960dde288, type: 2}
+  - {fileID: 11400000, guid: 1fd2477f76ea8a4449b14de960dde288, type: 2}
+  - {fileID: 11400000, guid: 1fd2477f76ea8a4449b14de960dde288, type: 2}
 --- !u!1 &1961101914
 GameObject:
   m_ObjectHideFlags: 0
