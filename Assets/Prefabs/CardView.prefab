@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 555053184842228350}
   - component: {fileID: 6980936958388868477}
   - component: {fileID: 5516525364189315818}
-  - component: {fileID: 3228288423987529262}
+  - component: {fileID: 2107549347014219472}
   m_Layer: 0
   m_Name: CardView
   m_TagString: Untagged
@@ -88,6 +88,9 @@ MonoBehaviour:
   Cost: {fileID: 4629963742212519316}
   CardImage: {fileID: 1953120542482633119}
   Wrapper: {fileID: 1255329648949836799}
+  dropArea:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!210 &5516525364189315818
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -101,7 +104,7 @@ SortingGroup:
   m_SortingOrder: 0
   m_SortAtRoot: 0
   m_Sort3DAs2D: 0
---- !u!61 &3228288423987529262
+--- !u!61 &2107549347014219472
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,7 +148,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 4.163102, y: 5.2787175}
+  m_Size: {x: 4.6, y: 5.29}
   m_EdgeRadius: 0
 --- !u!1 &2350894927483124734
 GameObject:
@@ -544,8 +547,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.18, y: -1.91}
-  m_SizeDelta: {x: 20, y: 5}
+  m_AnchoredPosition: {x: 2.1994982, y: -1.91}
+  m_SizeDelta: {x: 20.2701, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &5575737552039215849
 MeshRenderer:

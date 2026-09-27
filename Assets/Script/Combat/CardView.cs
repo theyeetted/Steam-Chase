@@ -8,6 +8,7 @@ public class CardView : MonoBehaviour
     [SerializeField] private TextMeshPro Cost;
     [SerializeField] private SpriteRenderer CardImage;
     [SerializeField] private GameObject Wrapper;
+    [SerializeField] private LayerMask dropArea;
 
     public Card Card { get; private set; }
 
@@ -59,9 +60,10 @@ public class CardView : MonoBehaviour
     void OnMouseUp()
     {
         if (!Interactions.Instance.PlayerCanInteract()) return;
-        if(Physics.Raycast(transform.position, Vector3.forward, out RaycastHit hit, 10f))
+        if(Physics.Raycast(transform.position, Vector3.forward, out RaycastHit hit, 10f, dropArea))
         {
-
+            PlayCardGA playCardGA = new(Card);
+            ActionSystem.Instance.Perform(playCardGA);
         }
         else
         {
