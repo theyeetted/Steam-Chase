@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -20,6 +21,14 @@ public class CombatantView : MonoBehaviour
     private void UpdateHealthText()
     {
         healthText.text = "HP: " + CurrentHealth;
+    }
+
+    public void Damage(int damageAmount) 
+    {
+        CurrentHealth -= damageAmount;
+        if (CurrentHealth < 0) { CurrentHealth = 0; }
+        transform.DOShakePosition(0.2f, 0.5f);
+        UpdateHealthText();
     }
 
 }
