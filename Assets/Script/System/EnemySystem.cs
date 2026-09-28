@@ -35,6 +35,12 @@ public class EnemySystem : SingleTon<EnemySystem>
     {
         foreach (var enemy in enemyBoardView.EnemyViews)
         {
+            int shockStacks = enemy.GetStatusEffectStacks(StatusEffectType.SHOCK);
+            if(shockStacks > 0)
+            {
+                ApplyShockGA applyShockGA = new(shockStacks, enemy);
+                ActionSystem.Instance.AddReaction(applyShockGA);
+            }
             AttackHeroGA attackHeroGA = new(enemy);
             ActionSystem.Instance.AddReaction(attackHeroGA);
         }

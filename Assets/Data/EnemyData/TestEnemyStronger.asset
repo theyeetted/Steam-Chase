@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cfc36edc2d5c3d94cb6c5eedd7dafff0, type: 3}
-  m_Name: StrongerEnemyTest
+  m_Name: TestEnemyStronger
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   <Image>k__BackingField: {fileID: 5575842270196637367, guid: fb95c1889d08b064394e4bec475a8fb1, type: 3}
-  <Health>k__BackingField: 20
-  <AttackPower>k__BackingField: 10
+  <Health>k__BackingField: 30
+  <AttackPower>k__BackingField: 8

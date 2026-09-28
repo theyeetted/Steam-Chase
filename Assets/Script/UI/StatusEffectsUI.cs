@@ -6,7 +6,7 @@ using UnityEngine.InputSystem.XR.Haptics;
 public class StatusEffectsUI : MonoBehaviour
 {
     [SerializeField] private StatusEffectUI statusEffectUIPrefab;
-    [SerializeField] private Sprite vulnerableSprite, shockSprite;
+    [SerializeField] private Sprite vulnerableSprite, shockSprite, attackUpSprite, BlockSprite;
     private Dictionary<StatusEffectType, StatusEffectUI> statusEffectUIs = new();
 
     public void UpdateStatusEffectUI(StatusEffectType statusEffectType, int stackCount)
@@ -38,6 +38,8 @@ public class StatusEffectsUI : MonoBehaviour
         {
             StatusEffectType.VULNERABLE => vulnerableSprite,
             StatusEffectType.SHOCK => shockSprite,
+            StatusEffectType.ATTACKUP => attackUpSprite,
+            StatusEffectType.BLOCK => BlockSprite,
             _ => null,
         };
     }
