@@ -13,5 +13,7 @@ public class CardData : ScriptableObject
 
     [field: SerializeField] public int Cost { get; private set; }
 
-    [field: SerializeReference, SR] public List<Effect> Effects { get; private set; }
+    [field: SerializeReference, SR] public Effect MannualTargetEffect { get; private set; } = null;
+
+    [field: SerializeReference, SR] public List<AutoTargetEffect> OtherTargetEffects { get; private set; }
 }

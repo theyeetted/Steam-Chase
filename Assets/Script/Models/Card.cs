@@ -10,7 +10,9 @@ public class Card
 
     public string Description => data.description;
 
-    public List<Effect> Effects => data.Effects;
+    public Effect MannualTargetEffect => data.MannualTargetEffect;
+
+    public List<AutoTargetEffect> OtherEffects => data.OtherTargetEffects;
 
     public Sprite Image => data.Image;
 

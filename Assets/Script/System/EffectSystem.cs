@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class EffectSystem : MonoBehaviour
 {
@@ -16,7 +18,7 @@ public class EffectSystem : MonoBehaviour
 
     private IEnumerator PerfromEffectPerformer(PerformEffectGA performEffectGA)
     {
-        GameAction effecAction = performEffectGA.Effect.GetGameAction();
+        GameAction effecAction = performEffectGA.Effect.GetGameAction(performEffectGA.Targets);
         ActionSystem.Instance.AddReaction(effecAction);
         yield return null;
     }
