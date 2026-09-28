@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7702621144328876130}
   - component: {fileID: 6047527997702566900}
   - component: {fileID: 8918530403139838620}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: AttackPower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +191,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4348160293502306420}
   - component: {fileID: 2881266388856486004}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,7 +283,7 @@ GameObject:
   - component: {fileID: 3116761665136864057}
   - component: {fileID: 3486473660690695969}
   - component: {fileID: 8270457038180012696}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EnemyView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -323,7 +323,6 @@ MonoBehaviour:
   healthText: {fileID: 1387946906922544674}
   spriteRenderer: {fileID: 2881266388856486004}
   attackText: {fileID: 8918530403139838620}
-  health: 50
 --- !u!65 &8270457038180012696
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -356,7 +355,7 @@ GameObject:
   - component: {fileID: 4602383298850232117}
   - component: {fileID: 3269682712346720797}
   - component: {fileID: 1387946906922544674}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HealthText
   m_TagString: Untagged
   m_Icon: {fileID: 0}

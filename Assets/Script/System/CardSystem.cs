@@ -83,6 +83,12 @@ public class CardSystem : SingleTon<CardSystem>
         SpendEnergyGA spendEnergyGA = new(playCardGA.Card.Cost);
         ActionSystem.Instance.AddReaction(spendEnergyGA);
 
+        if(playCardGA.Card.MannualTargetEffect != null)
+        {
+            PerformEffectGA performEffectGA = new(playCardGA.Card.MannualTargetEffect, new() { playCardGA.MannualTarget });
+            ActionSystem.Instance.AddReaction(performEffectGA);
+        }
+
         foreach(var effectWrapper in playCardGA.Card.OtherEffects)
         {
             List<CombatantView> targets = effectWrapper.TargetMode.GetTargets();
