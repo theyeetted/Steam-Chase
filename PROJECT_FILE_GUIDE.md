@@ -1,5 +1,7 @@
 # Steam Chase — Project Files and Relationships
 
+> **Historical snapshot:** This page describes an earlier prototype. For the current card architecture and instructions for adding stun bars, card effects, and status effects, use the [Developer Implementation Guide](DEVELOPER_IMPLEMENTATION_GUIDE.md).
+
 **Snapshot: 27 September 2026 · Unity 6000.3.24f1**
 
 Steam Chase currently contains a prototype card-hand system: create cards from saved data, draw them into a curved hand, show a larger preview on hover, discard the hand, and run a placeholder enemy turn.
