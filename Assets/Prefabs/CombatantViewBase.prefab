@@ -54,6 +54,8 @@ MonoBehaviour:
   statusEffectUIPrefab: {fileID: 6759796279573380349, guid: 5c50d456c93220541a34c00e175ad0b8, type: 3}
   vulnerableSprite: {fileID: -9120369034046867018, guid: 7637c505ef0f16f4e8460382c94f35ca, type: 3}
   shockSprite: {fileID: 2715435097457428830, guid: 1a4fd1d1ce7cadf4883ee4e3763b4600, type: 3}
+  attackUpSprite: {fileID: -6620776729418108137, guid: 98ca230dc6116824faa4a9040c76202a, type: 3}
+  BlockSprite: {fileID: 0}
 --- !u!222 &3232961632685271272
 CanvasRenderer:
   m_ObjectHideFlags: 0

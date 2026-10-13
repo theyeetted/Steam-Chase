@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
   m_Name: Block
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <description>k__BackingField: Apply 1 Attack UP
+  <description>k__BackingField: Apply 5 Block
   <Image>k__BackingField: {fileID: 0}
   <Cost>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
@@ -28,14 +28,14 @@ MonoBehaviour:
       type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
       data:
         <TargetMode>k__BackingField:
-          rid: 4419360084440646027
+          rid: 9151934852312858624
         <Effect>k__BackingField:
           rid: 4419360084440646028
-    - rid: 4419360084440646027
-      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
-      data: 
     - rid: 4419360084440646028
       type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 2
         stackCount: 5
+    - rid: 9151934852312858624
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data: 

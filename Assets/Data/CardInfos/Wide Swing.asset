@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Deal 10 damage to all enemy
   <Image>k__BackingField: {fileID: 21300020, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  <Cost>k__BackingField: 1
+  <Cost>k__BackingField: 2
   <MannualTargetEffect>k__BackingField:
     rid: -2
   <OtherTargetEffects>k__BackingField:
@@ -34,7 +34,7 @@ MonoBehaviour:
     - rid: 4419360084440645975
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
-        damageAmount: 10
+        damageAmount: 12
     - rid: 4419360084440645980
       type: {class: AllEnemies, ns: , asm: Assembly-CSharp}
       data: 

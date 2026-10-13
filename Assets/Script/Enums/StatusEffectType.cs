@@ -5,5 +5,11 @@ public enum StatusEffectType
     VULNERABLE,
     SHOCK,
     BLOCK,
-    ATTACKUP
+    ATTACKUP,
+    AttackDown,
+    Mark,
+    ExtraAttack,
+    FollowUpAttack,
+    DefenseUp,
+    Stun
 }

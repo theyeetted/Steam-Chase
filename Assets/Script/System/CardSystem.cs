@@ -1,5 +1,4 @@
 using DG.Tweening;
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -88,7 +87,7 @@ public class CardSystem : SingleTon<CardSystem>
 
         foreach(var effectWrapper in playCardGA.Card.OtherEffects)
         {
-            List<CombatantView> targets = effectWrapper.TargetMode.GetTargets();
+            List<CombatantView> targets = effectWrapper.TargetMode.GetTargets(playCardGA.MannualTarget);
             PerformEffectGA performEffectGA = new(effectWrapper.Effect, targets);
             ActionSystem.Instance.AddReaction(performEffectGA);
         }

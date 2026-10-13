@@ -5,4 +5,10 @@ using UnityEngine;
 public abstract class TargetMode
 {
     public abstract List<CombatantView> GetTargets();
+
+    public virtual List<CombatantView> GetTargets(CombatantView manualTarget)
+    {
+        // Existing automatic target modes do not need the card's manual selection.
+        return GetTargets();
+    }
 }

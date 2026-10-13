@@ -34,12 +34,20 @@ public class ActionSystem : SingleTon<ActionSystem>
 
     public void Perform(GameAction action, System.Action OnPerformFinished = null)
     {
+        if (GameManager.Instance != null && !GameManager.Instance.IsPlaying) return;
         if(IsPerformingAction) return;
         IsPerformingAction = true;
         StartCoroutine(Flow(action, ()=> {
             IsPerformingAction = false;
             OnPerformFinished?.Invoke();
         }));
+    }
+
+    public void StopActions()
+    {
+        StopAllCoroutines();
+        reactions = null;
+        IsPerformingAction = false;
     }
 
     public void AddReaction(GameAction gameAction)

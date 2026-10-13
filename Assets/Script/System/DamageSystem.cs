@@ -17,9 +17,15 @@ public class DamageSystem : MonoBehaviour
 
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA)
     {
+        int outgoingDamage = StatusEffectSystem.ModifyOutgoingDamage(dealDamageGA.Caster, dealDamageGA.Amount);
         foreach (var target in dealDamageGA.Targets)
         {
-            target.Damage(dealDamageGA.Amount);
+            if (target == null || target.CurrentHealth <= 0)
+                continue;
+
+            int damage = VulnerableSystem.ModifyIncomingDamage(target, outgoingDamage);
+            target.Damage(damage);
+
             Instantiate(damageVFX, target.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(0.15f);
             if(target.CurrentHealth <= 0)

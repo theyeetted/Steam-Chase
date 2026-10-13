@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: TestEnemy
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   <Image>k__BackingField: {fileID: -7304260367883036598, guid: 01daff0823f609f4faecbbb64a7f603f, type: 3}
-  <Health>k__BackingField: 20
+  <Health>k__BackingField: 50
   <AttackPower>k__BackingField: 5
