@@ -9,6 +9,9 @@ public class StatusEffectsUI : MonoBehaviour
     [SerializeField] private Sprite vulnerableSprite, shockSprite, attackUpSprite, BlockSprite;
     [SerializeField] private Sprite attackDownSprite;
     [SerializeField] private Sprite aggravatedSprite;
+    [SerializeField] private Sprite followUpAttackSprite;
+    [SerializeField] private Sprite markSprite;
+    [SerializeField] private Sprite extraAttackSprite;
     private Dictionary<StatusEffectType, StatusEffectUI> statusEffectUIs = new();
 
     public void UpdateStatusEffectUI(StatusEffectType statusEffectType, int stackCount)
@@ -43,6 +46,9 @@ public class StatusEffectsUI : MonoBehaviour
             StatusEffectType.ATTACKUP => attackUpSprite,
             StatusEffectType.AttackDown => attackDownSprite,
             StatusEffectType.Aggravated => aggravatedSprite,
+            StatusEffectType.FollowUpAttack => followUpAttackSprite,
+            StatusEffectType.Mark => markSprite,
+            StatusEffectType.ExtraAttack => extraAttackSprite,
             StatusEffectType.BLOCK => BlockSprite,
             _ => null,
         };

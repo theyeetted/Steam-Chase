@@ -17,9 +17,25 @@ MonoBehaviour:
   <Cost>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
     rid: -2
-  <OtherTargetEffects>k__BackingField: []
+  <OtherTargetEffects>k__BackingField:
+  - rid: 9151934867734003789
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 9151934867734003789
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 9151934867734003790
+        <Effect>k__BackingField:
+          rid: 9151934867734003791
+    - rid: 9151934867734003790
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151934867734003791
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 3
+        stackCount: 2

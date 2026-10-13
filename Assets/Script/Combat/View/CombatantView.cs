@@ -12,6 +12,8 @@ public class CombatantView : MonoBehaviour
     public int MaxHealth { get; private set; }
     public int CurrentHealth { get; private set; }
     public CombatantView AggravatedApplier { get; private set; }
+    public CombatantView MarkApplier { get; private set; }
+    public const int MaxMarkStacks = 5;
 
     private Dictionary<StatusEffectType, int> statusEffects = new();
     protected void SetupBase(int  health, Sprite image)
@@ -70,6 +72,17 @@ public class CombatantView : MonoBehaviour
             AggravatedApplier = applier;
             statusEffects[type] = 1;
         }
+        else if (type == StatusEffectType.Mark)
+        {
+            if (CurrentHealth <= 0 || stackCount <= 0 || applier == null || applier.CurrentHealth <= 0)
+                return;
+
+            // Reapplication transfers all remaining stacks to the latest applier.
+            // Limit the increment before adding, so even a very large grant cannot overflow.
+            MarkApplier = applier;
+            int currentStacks = Mathf.Clamp(GetStatusEffectStacks(type), 0, MaxMarkStacks);
+            statusEffects[type] = currentStacks + Mathf.Min(stackCount, MaxMarkStacks - currentStacks);
+        }
         else if (statusEffects.ContainsKey(type)) 
         {
             statusEffects[type] += stackCount;
@@ -91,6 +104,8 @@ public class CombatantView : MonoBehaviour
                 statusEffects.Remove(type);
                 if (type == StatusEffectType.Aggravated)
                     AggravatedApplier = null;
+                if (type == StatusEffectType.Mark)
+                    MarkApplier = null;
             }
         }
         statusEffectsUI.UpdateStatusEffectUI(type, GetStatusEffectStacks(type));

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
+  m_Name: Marking
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <description>k__BackingField: Apply 2 Marks to 1 enemy
+  <Image>k__BackingField: {fileID: 21300020, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  <Cost>k__BackingField: 1
+  <MannualTargetEffect>k__BackingField:
+    rid: 9151934874601652299
+  <OtherTargetEffects>k__BackingField: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 9151934874601652299
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 5
+        stackCount: 2

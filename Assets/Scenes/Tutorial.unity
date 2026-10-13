@@ -1065,6 +1065,14 @@ PrefabInstance:
       propertyPath: attackUpSprite
       value: 
       objectReference: {fileID: -6620776729418108137, guid: 98ca230dc6116824faa4a9040c76202a, type: 3}
+    - target: {fileID: 1666403722865256612, guid: 924e91e667fddc34ab40ce8bc1c14327, type: 3}
+      propertyPath: aggravatedSprite
+      value: 
+      objectReference: {fileID: -7304260367883036598, guid: 01daff0823f609f4faecbbb64a7f603f, type: 3}
+    - target: {fileID: 1666403722865256612, guid: 924e91e667fddc34ab40ce8bc1c14327, type: 3}
+      propertyPath: attackDownSprite
+      value: 
+      objectReference: {fileID: 21300066, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
     - target: {fileID: 4418492254615710314, guid: 924e91e667fddc34ab40ce8bc1c14327, type: 3}
       propertyPath: m_Name
       value: Whiskey
@@ -1629,7 +1637,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb3c2c5766ee5a942b8e575d27e5468a, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VulnerableSystem
 --- !u!1 &645659280
 GameObject:

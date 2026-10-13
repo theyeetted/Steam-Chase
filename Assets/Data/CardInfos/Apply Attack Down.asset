@@ -12,14 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
   m_Name: Apply Attack Down
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <description>k__BackingField: 
+  <description>k__BackingField: Apply attack down to yourself
   <Image>k__BackingField: {fileID: 0}
   <Cost>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
     rid: -2
-  <OtherTargetEffects>k__BackingField: []
+  <OtherTargetEffects>k__BackingField:
+  - rid: 9151934867734003795
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 9151934867734003795
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 9151934867734003796
+        <Effect>k__BackingField:
+          rid: 9151934867734003797
+    - rid: 9151934867734003796
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151934867734003797
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 4
+        stackCount: 2
