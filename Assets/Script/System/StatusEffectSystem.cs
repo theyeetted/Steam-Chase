@@ -11,13 +11,36 @@ public class StatusEffectSystem : MonoBehaviour
             // Attack Up stacks represent duration; every hit gets the same 25% bonus.
             damage = Mathf.FloorToInt(damage * 1.25f);
         }
+        if (caster != null && caster.GetStatusEffectStacks(StatusEffectType.AttackDown) > 0)
+        {
+            // Apply after Attack Up and round each modifier separately. Stacks are duration.
+            damage = Mathf.FloorToInt(damage * 0.75f);
+        }
         return damage;
+    }
+
+    public static CombatantView GetAggravatedTarget(CombatantView caster)
+    {
+        if (!(caster is EnemyView) || caster == null ||
+            caster.GetStatusEffectStacks(StatusEffectType.Aggravated) <= 0)
+            return null;
+
+        CombatantView applier = caster.AggravatedApplier;
+        if (applier != null && applier.CurrentHealth > 0)
+            return applier;
+
+        // A dead/destroyed applier releases the enemy to use its normal targets.
+        caster.RemoveStatusEffect(StatusEffectType.Aggravated,
+            caster.GetStatusEffectStacks(StatusEffectType.Aggravated));
+        return null;
     }
 
     void OnEnable()
     {
         ActionSystem.AttachPerformer<AddStatusEffectGA>(AddStatusEffectPerformer);
         ActionSystem.AttachPerformer<DecayAttackUpGA>(DecayAttackUpPerformer);
+        ActionSystem.AttachPerformer<DecayAttackDownGA>(DecayAttackDownPerformer);
+        ActionSystem.AttachPerformer<ExpireAggravatedGA>(ExpireAggravatedPerformer);
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<AttackHeroGA>(AttackHeroPostReaction, ReactionTiming.POST);
     }
@@ -27,6 +50,8 @@ public class StatusEffectSystem : MonoBehaviour
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<AttackHeroGA>(AttackHeroPostReaction, ReactionTiming.POST);
         ActionSystem.DetachPerformer<DecayAttackUpGA>();
+        ActionSystem.DetachPerformer<DecayAttackDownGA>();
+        ActionSystem.DetachPerformer<ExpireAggravatedGA>();
         ActionSystem.DetachPerformer<AddStatusEffectGA>();
     }
 
@@ -36,6 +61,7 @@ public class StatusEffectSystem : MonoBehaviour
         if (HeroSystem.Instance != null)
         {
             QueueAttackUpDecay(HeroSystem.Instance.playerView);
+            QueueAttackDownDecay(HeroSystem.Instance.playerView);
         }
     }
 
@@ -43,6 +69,12 @@ public class StatusEffectSystem : MonoBehaviour
     {
         // POST runs after this enemy's attack and all of its damage reactions.
         QueueAttackUpDecay(attackHeroGA.Attacker);
+        QueueAttackDownDecay(attackHeroGA.Attacker);
+        EnemyView attacker = attackHeroGA.Attacker;
+        if (attacker != null && attacker.GetStatusEffectStacks(StatusEffectType.Aggravated) > 0)
+        {
+            ActionSystem.Instance.AddReaction(new ExpireAggravatedGA(attacker));
+        }
     }
 
     private static void QueueAttackUpDecay(CombatantView target)
@@ -64,6 +96,36 @@ public class StatusEffectSystem : MonoBehaviour
         yield break;
     }
 
+    private static void QueueAttackDownDecay(CombatantView target)
+    {
+        if (target != null && target.CurrentHealth > 0 &&
+            target.GetStatusEffectStacks(StatusEffectType.AttackDown) > 0)
+        {
+            ActionSystem.Instance.AddReaction(new DecayAttackDownGA(target));
+        }
+    }
+
+    private IEnumerator DecayAttackDownPerformer(DecayAttackDownGA decayAttackDownGA)
+    {
+        CombatantView target = decayAttackDownGA.Target;
+        if (target != null && target.CurrentHealth > 0)
+        {
+            target.RemoveStatusEffect(StatusEffectType.AttackDown, 1);
+        }
+        yield break;
+    }
+
+    private IEnumerator ExpireAggravatedPerformer(ExpireAggravatedGA expireAggravatedGA)
+    {
+        EnemyView target = expireAggravatedGA.Target;
+        if (target != null)
+        {
+            target.RemoveStatusEffect(StatusEffectType.Aggravated,
+                target.GetStatusEffectStacks(StatusEffectType.Aggravated));
+        }
+        yield break;
+    }
+
     private IEnumerator AddStatusEffectPerformer(AddStatusEffectGA addStatusEffectGA)
     {
         foreach (var target in addStatusEffectGA.Targets)
@@ -72,7 +134,7 @@ public class StatusEffectSystem : MonoBehaviour
             if (target == null || target.CurrentHealth <= 0)
                 continue;
 
-            target.AddStatusEffect(addStatusEffectGA.StatusEffectType, addStatusEffectGA.StackCount);
+            target.AddStatusEffect(addStatusEffectGA.StatusEffectType, addStatusEffectGA.StackCount, addStatusEffectGA.Caster);
             yield return null;
         }
     }

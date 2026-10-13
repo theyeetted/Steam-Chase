@@ -50,11 +50,26 @@ public class EnemySystem : SingleTon<EnemySystem>
     private IEnumerator AttackHeroPerformer(AttackHeroGA attackHeroGA)
     {
         EnemyView attacker = attackHeroGA.Attacker;
-        Tween tween = attacker.transform.DOMoveX(attacker.transform.position.x - 1f, 0.15f);
+        if (attacker == null || attacker.CurrentHealth <= 0)
+            yield break;
+
+        CombatantView normalTarget = HeroSystem.Instance != null ? HeroSystem.Instance.playerView : null;
+        CombatantView attackTarget = StatusEffectSystem.GetAggravatedTarget(attacker);
+        if (attackTarget == null)
+            attackTarget = normalTarget;
+        if (attackTarget == null || attackTarget.CurrentHealth <= 0)
+            yield break;
+
+        float startingX = attacker.transform.position.x;
+        float direction = Mathf.Sign(attackTarget.transform.position.x - startingX);
+        Tween tween = attacker.transform.DOMoveX(startingX + direction, 0.15f);
         yield return tween.WaitForCompletion();
-        attacker.transform.DOMoveX(attacker.transform.position.x + 1f, 0.15f);
-        //deal damage
-        DealDamageGA dealDamageGA = new(attacker.AttackPower, new() { HeroSystem.Instance.playerView }, attackHeroGA.Caster);
+        if (attacker == null || attacker.CurrentHealth <= 0)
+            yield break;
+        attacker.transform.DOMoveX(startingX, 0.15f);
+        // Keep the normal target available if the applier dies before damage executes.
+        // DamageSystem resolves Aggravated again after any intervening reactions.
+        DealDamageGA dealDamageGA = new(attacker.AttackPower, new() { normalTarget }, attackHeroGA.Caster);
         ActionSystem.Instance.AddReaction(dealDamageGA);
     }
 

@@ -11,6 +11,7 @@ public class CombatantView : MonoBehaviour
 
     public int MaxHealth { get; private set; }
     public int CurrentHealth { get; private set; }
+    public CombatantView AggravatedApplier { get; private set; }
 
     private Dictionary<StatusEffectType, int> statusEffects = new();
     protected void SetupBase(int  health, Sprite image)
@@ -57,9 +58,19 @@ public class CombatantView : MonoBehaviour
         UpdateHealthText();
     }
 
-    public void AddStatusEffect(StatusEffectType type, int stackCount)
+    public void AddStatusEffect(StatusEffectType type, int stackCount, CombatantView applier = null)
     {
-        if (statusEffects.ContainsKey(type)) 
+        if (type == StatusEffectType.Aggravated)
+        {
+            // Aggravated is enemy-only and always lasts one turn, even when reapplied.
+            if (!(this is EnemyView) || CurrentHealth <= 0 || stackCount <= 0 ||
+                applier == null || applier == this || applier.CurrentHealth <= 0)
+                return;
+
+            AggravatedApplier = applier;
+            statusEffects[type] = 1;
+        }
+        else if (statusEffects.ContainsKey(type)) 
         {
             statusEffects[type] += stackCount;
         }
@@ -78,6 +89,8 @@ public class CombatantView : MonoBehaviour
             if (statusEffects[type] <= 0)
             {
                 statusEffects.Remove(type);
+                if (type == StatusEffectType.Aggravated)
+                    AggravatedApplier = null;
             }
         }
         statusEffectsUI.UpdateStatusEffectUI(type, GetStatusEffectStacks(type));

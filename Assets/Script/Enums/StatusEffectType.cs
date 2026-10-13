@@ -11,5 +11,6 @@ public enum StatusEffectType
     ExtraAttack,
     FollowUpAttack,
     DefenseUp,
-    Stun
+    Stun,
+    Aggravated
 }
