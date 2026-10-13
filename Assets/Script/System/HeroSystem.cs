@@ -4,11 +4,26 @@ using UnityEngine.Rendering;
 
 public class HeroSystem : SingleTon<HeroSystem>
 {
-    [field: SerializeField] public PlayerView playerView {  get; private set; }
+    [field: SerializeField] 
+    public PlayerView playerView {  get; private set; }
+
+    [field: SerializeField]
+    public PlayerView secondPlayerView { get; private set; }
 
     public void Setup(CharData charData)
     {
         playerView.Setup(charData);
+    }
+
+    public void Setup(CharData firstCharData, CharData secondCharData)
+    {
+        playerView.Setup(firstCharData);
+        secondPlayerView.Setup(secondCharData);
+    }
+
+    public PlayerView GetHero(int heroIndex)
+    {
+        return heroIndex == 0 ? playerView : secondPlayerView;
     }
 
     void OnEnable()
@@ -27,20 +42,32 @@ public class HeroSystem : SingleTon<HeroSystem>
 
     private void EnemyTurnPreReaction(EnemyTurnGA enemyTurnPreGA)
     {
-        DiscardAllCardsGA discardAllCardsGA = new();
-        ActionSystem.Instance.AddReaction(discardAllCardsGA);
+        // Discard cards from both heroes' hands.
+        ActionSystem.Instance.AddReaction(new DiscardAllCardsGA());
     }
 
     private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnPostGA)
     {
-        int shockStack = playerView.GetStatusEffectStacks(StatusEffectType.SHOCK);
-        if (shockStack > 0)
+        // Process SHOCK separately for each hero.
+        for (int i = 0; i < 2; i++)
         {
-            ApplyShockGA applyShockGA = new(shockStack, playerView);
-            ActionSystem.Instance.AddReaction(applyShockGA);
+            PlayerView hero = GetHero(i);
+
+            if (hero == null)
+                continue;
+
+            int shockStacks = hero.GetStatusEffectStacks(StatusEffectType.SHOCK);
+
+            if (shockStacks > 0)
+            {
+                ApplyShockGA shockAction = new ApplyShockGA(shockStacks, hero);
+                ActionSystem.Instance.AddReaction(shockAction);
+            }
         }
-        DrawCardsGA drawCardsGA = new(5);
-        ActionSystem.Instance.AddReaction(drawCardsGA);
+
+        // Each hero draws five cards into their own hand.
+        ActionSystem.Instance.AddReaction(new DrawCardsGA(5, 0));
+        ActionSystem.Instance.AddReaction(new DrawCardsGA(5, 1));
     }
 
 }

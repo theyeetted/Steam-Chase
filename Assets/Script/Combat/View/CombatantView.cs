@@ -19,6 +19,8 @@ public class CombatantView : MonoBehaviour
         CurrentHealth = health;
         spriteRenderer.sprite = image;
         UpdateHealthText();
+
+        Debug.Log("Combatant setup Complete.");
     }
 
     private void UpdateHealthText()
@@ -87,6 +89,20 @@ public class CombatantView : MonoBehaviour
     {
         if(statusEffects.ContainsKey(type)) return statusEffects[type];
         else return 0;
+    }
+
+    // Reset, used in MatchSetupSystem.cs
+    public void ResetCombatant()
+    {
+        CurrentHealth = MaxHealth;
+        statusEffects.Clear();
+
+        UpdateHealthText();
+
+        foreach (StatusEffectType type in System.Enum.GetValues(typeof(StatusEffectType)))
+        {
+            statusEffectsUI.UpdateStatusEffectUI(type, 0);
+        }
     }
 
 }

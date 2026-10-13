@@ -11,13 +11,16 @@ public class CardView : MonoBehaviour
     [SerializeField] private LayerMask dropArea;
 
     public Card Card { get; private set; }
+    public int HeroIndex { get; private set; }
 
     private Vector3 dragStartPosition;
     private Quaternion dragStartRotation;
 
-    public void Setup(Card card)
+    public void Setup(Card card, int heroIndex = 0) // default value of 0 keeps older calls to Setup(card) working
     {
         Card = card;
+        HeroIndex = heroIndex;
+
         Title.text = card.Title;
         Description.text = card.Description;
         Cost.text = card.Cost.ToString();
@@ -72,16 +75,16 @@ public class CardView : MonoBehaviour
         if (Card.MannualTargetEffect != null)
         {
             EnemyView target = ManualTargetSystem.Instance.EndTargeting(MouseUtil.GetMousePositionInWorldSpace(-1));
-            if (target != null && EnergySystem.Instance.HasEnoughEnergy(Card.Cost))
+            if (target != null && EnergySystem.Instance.HasEnoughEnergy(Card.Cost, HeroIndex))
             {
-                PlayCardGA playCardGA = new(Card, target);
+                PlayCardGA playCardGA = new(Card, target, HeroIndex);
                 ActionSystem.Instance.Perform(playCardGA);
             }
         }
         else {
-            if (EnergySystem.Instance.HasEnoughEnergy(Card.Cost) && Physics.Raycast(transform.position, Vector3.forward, out RaycastHit hit, 10f, dropArea))
+            if (EnergySystem.Instance.HasEnoughEnergy(Card.Cost, HeroIndex) && Physics.Raycast(transform.position, Vector3.forward, out RaycastHit hit, 10f, dropArea))
             {
-                PlayCardGA playCardGA = new(Card);
+                PlayCardGA playCardGA = new(Card, HeroIndex);
                 ActionSystem.Instance.Perform(playCardGA);
             }
             else

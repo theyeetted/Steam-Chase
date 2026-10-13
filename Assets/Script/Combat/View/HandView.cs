@@ -52,4 +52,18 @@ public class HandView : MonoBehaviour
 
         yield return new WaitForSeconds(duration);
     }
+
+    // Destroys the card visuals currently tracked by HandView, then empties its list
+    public void ResetHand()
+    {
+        foreach (CardView card in cards)
+        {
+            if (card != null)
+            {
+                Destroy(card.gameObject);
+            }
+        }
+
+        cards.Clear();
+    }
 }

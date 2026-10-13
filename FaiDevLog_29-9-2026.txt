@@ -1,0 +1,87 @@
+29-9-2026: Main Goal -> Add Ade
+- Modified enemy UI Helath & PowerText color.
+- Added Ade Char. in Data > CharData.
+- Added Starter folder in CardInfos.
+- Comment codes and add Debug.Log().
+- CardSystem.cs:
+	- Fixed a bug where playing a card could add it to the discard pile twice.
+	- Clear old card data before loading a deck again.
+- Added a proper reset system, reset methods in many codes (no UI yet).
+
+
+TMR: 
+- Stun bar for every char
+- Second char
+- perk is like a passive for char
+
+
+
+arrow bug
+game too hard
+UI improve to guide player where to place card
+
+### Need Performance Analysis: 
+- Have to be able to test with both AI and Human
+-Goal is to prevent exploitation and bugs occur in the game
+
+2 types
+1. By AI bot/automation
+- Unit test design 
+	- Edge Case (overload the computer and note the maximum how much u can go with gameplay before it cant be played, for performance limit check, we can use Unity profiler. Also game build file size check too)
+	- Load test
+- UI test, E2E
+
+2. Human driven (5-7 main tests design that we need for next class)
+Why human? > UI might not have straight forward flow, maybe intuitive test. Or if it has a lot of random elements, AI will get confused
+- 50 times repeatly or sm (for randomness system)
+
+- Input validations (min, max, range, valid chars)
+- game logic/game flow (e.g. testing card draw: requirement, what player do, what var change into how much, what the expected result)
+- Performance check (
+	- frame rate, 
+	- minimum system requirement, 
+	- screen resolution available
+	- etc.)
+
+
+
+------------- TODO vv
+
+Chat log >> using queue, ust like doing debug.log() but show to player and what happen. Like stream chat yk
+Parallax BG >> like do a separate BG Manager
+
+1. Cards can accidentally be duplicated
+When a card is played, the current code can add it to the discard pile twice. This could cause cards to appear more frequently than intended when the deck cycles.
+
+2. Restarting doesn't fully reset the game
+The current setup process does not completely clear existing card piles and status effects. A restart or repeated setup could leave old state behind.
+
+3. Defeat and enemy deaths need more work
+The guide notes that the player's death-handling logic is incomplete. An enemy killed by Shock may also remain able to perform an attack that was already queued.
+
+4. The opening hand has a problem
+The documented startup sequence fills the draw pile but does not draw the opening hand. The first normal five-card draw is instead scheduled after an enemy turn.
+
+5. The wrong scene is configured for launching the game
+The current gameplay setup is in Tutorial.unity, but the saved build settings enable SampleScene.unity. The latter also contains an unresolved reference to an older card-view script.
+
+6. PLS ADD DEBUG.LOG();
+
+
+
+---------------- DONE vvv
+
+Card management
+We fixed a bug where playing a card could add it to the discard pile twice. We also changed CardSystem.Setup() to clear old card data before loading a deck again.
+
+Hand and status-effect resets
+We added HandView.ResetHand() to destroy the displayed cards, and CombatantView.ResetCombatant() to restore health and clear status effects and their UI.
+
+Enemy and energy resets
+We added a way to remove old enemies and recreate them, plus EnergySystem.ResetEnergy() to restore energy.
+
+Fight restart flow
+We added MatchSetupSystem.RestartFight() to coordinate resetting the hero, enemies, deck, and energy, then draw five cards.
+
+Action ordering
+We changed the initial draw/refill sequence so the refill is requested after the draw finishes, rather than immediately submitting two actions.

@@ -3,13 +3,15 @@ using UnityEngine;
 
 public class EnergySystem : SingleTon<EnergySystem>
 {
-    [SerializeField] EnergyUI energyUI;
+    [SerializeField] private EnergyUI[] energyUIs = new EnergyUI[2];
+
     private const int MAX_ENERGY = 3;
-    private int currentEnergy = MAX_ENERGY;
+    private readonly int[] currentEnergy = { MAX_ENERGY, MAX_ENERGY };
 
     private void Start()
     {
-        energyUI.UpdateEnergyText(currentEnergy);
+        for (int i = 0; i < currentEnergy.Length; i++)
+            UpdateEnergyUI(i);
     }
 
     void OnEnable()
@@ -26,27 +28,60 @@ public class EnergySystem : SingleTon<EnergySystem>
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
     }
 
-    public bool HasEnoughEnergy(int energy)
+    public bool HasEnoughEnergy(int energy, int heroIndex = 0)
     {
-        return currentEnergy >= energy;
+        return currentEnergy[heroIndex] >= energy;
     }
 
     private IEnumerator SpendEnergyPerformer(SpendEnergyGA spendEnergyGA)
     {
-        currentEnergy-= spendEnergyGA.Amount;
-        energyUI.UpdateEnergyText(currentEnergy);
+        int heroIndex = spendEnergyGA.HeroIndex;
+
+        currentEnergy[heroIndex] -= spendEnergyGA.Amount;
+        UpdateEnergyUI(heroIndex);
         yield return null;
     }
+
     private IEnumerator RefillEnergyPerformer(RefillEnergyGA refillEnergyGA)
     {
-        currentEnergy = MAX_ENERGY;
-        energyUI.UpdateEnergyText(currentEnergy);
+        int heroIndex = refillEnergyGA.HeroIndex;
+
+        currentEnergy[heroIndex] = MAX_ENERGY;
+        UpdateEnergyUI(heroIndex);
         yield return null;
     }
 
     private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA)
     {
+        ActionSystem.Instance.AddReaction(new RefillEnergyGA(0));
+        ActionSystem.Instance.AddReaction(new RefillEnergyGA(1));
+
+        /*
         RefillEnergyGA refillEnergyGA = new();
         ActionSystem.Instance.AddReaction(refillEnergyGA);
+        */
     }
+
+    // Way to reset energy
+    public void ResetEnergy()
+    {
+        for (int i = 0; i < currentEnergy.Length; i++)
+        {
+            currentEnergy[i] = MAX_ENERGY;
+            UpdateEnergyUI(i);
+        }
+    }
+
+    public void ResetEnergy(int heroIndex)
+    {
+        currentEnergy[heroIndex] = MAX_ENERGY;
+        UpdateEnergyUI(heroIndex);
+    }
+
+    private void UpdateEnergyUI(int heroIndex)
+    {
+        if (energyUIs[heroIndex] != null)
+            energyUIs[heroIndex].UpdateEnergyText(currentEnergy[heroIndex]);
+    }
+
 }

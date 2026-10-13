@@ -62,4 +62,20 @@ public class EnemySystem : SingleTon<EnemySystem>
     {
         yield return enemyBoardView.RemoveEnemy(killEnemyGA.EnemyView);
     }
+
+    // Removes all surviving enemies, waits for their removal animations, then creates fresh enemies from the original data.
+    public IEnumerator ResetEnemies(List<EnemyData> enemyDatas)
+    {
+        List<EnemyView> oldEnemies = new(Enemies);
+
+        foreach (EnemyView enemy in oldEnemies)
+        {
+            yield return enemyBoardView.RemoveEnemy(enemy);
+        }
+
+        foreach (EnemyData enemyData in enemyDatas)
+        {
+            enemyBoardView.AddEnemy(enemyData);
+        }
+    }
 }
