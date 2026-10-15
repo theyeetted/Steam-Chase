@@ -6,7 +6,7 @@ public class PlayerView : CombatantView
 
     public void Setup(CharData charData)
     {
-        SetupBase(charData.Health, charData.Image);
+        SetupBase(charData.Health, charData.Image, charData.MaxStun);
     }
 
     private void OnMouseDown()

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ade
   m_EditorClassIdentifier: Assembly-CSharp::CharData
   <Image>k__BackingField: {fileID: 2424721101523345921, guid: 0ddedd9178e08164e82d9b3aef79c6d9, type: 3}
-  <Health>k__BackingField: 80
+  <Health>k__BackingField: 220
   <Deck>k__BackingField:
   - {fileID: 11400000, guid: 1e0637957449c09429bd9a34befbc3d4, type: 2}
   - {fileID: 11400000, guid: 1e0637957449c09429bd9a34befbc3d4, type: 2}
@@ -24,3 +24,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1e0637957449c09429bd9a34befbc3d4, type: 2}
   - {fileID: 11400000, guid: 1e0637957449c09429bd9a34befbc3d4, type: 2}
   - {fileID: 11400000, guid: 1e0637957449c09429bd9a34befbc3d4, type: 2}
+  <MaxStun>k__BackingField: 100

@@ -28,14 +28,16 @@ MonoBehaviour:
       type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
       data:
         <TargetMode>k__BackingField:
-          rid: 4419360084440646045
+          rid: 7746331273383903371
         <Effect>k__BackingField:
           rid: 4419360084440646046
-    - rid: 4419360084440646045
-      type: {class: AllEnemies, ns: , asm: Assembly-CSharp}
-      data: 
+        <RepeatCount>k__BackingField: 1
+        <ChancePercent>k__BackingField: 100
     - rid: 4419360084440646046
       type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 1
         stackCount: 3
+    - rid: 7746331273383903371
+      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+      data: 

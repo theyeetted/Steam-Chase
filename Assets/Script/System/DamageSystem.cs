@@ -31,7 +31,28 @@ public class DamageSystem : MonoBehaviour
         {
             if (gameOverTriggered) { yield break; }
 
-            target.Damage(dealDamageGA.Amount);
+            if (target == null || target.CurrentHealth <= 0)
+                continue;
+
+            // Base damage before the stunned-target bonus.
+            int baseDamage = dealDamageGA.Amount;
+            int finalDamage = baseDamage;
+
+            // Stunned targets take 20% more damage.
+            if (target.IsStunned)
+            {   // fractional damage rounds up cus Mathf.CeilToInt()
+                finalDamage = Mathf.CeilToInt(baseDamage * 1.2f);
+            }
+
+            // Apply damage, including existing BLOCK behavior.
+            target.Damage(finalDamage);
+
+            // Build stun from base damage, not bonus damage.
+            int stunAmount = Mathf.FloorToInt(baseDamage * 0.4f);
+            if (stunAmount > 0)
+            {
+                target.AddStun(stunAmount);
+            }
 
             if (damageVFX != null)
             {

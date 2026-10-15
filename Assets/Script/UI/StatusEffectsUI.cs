@@ -6,6 +6,7 @@ using UnityEngine.InputSystem.XR.Haptics;
 public class StatusEffectsUI : MonoBehaviour
 {
     [SerializeField] private StatusEffectUI statusEffectUIPrefab;
+    // Add status effect here vvv
     [SerializeField] private Sprite vulnerableSprite, shockSprite, attackUpSprite, BlockSprite;
     private Dictionary<StatusEffectType, StatusEffectUI> statusEffectUIs = new();
 

@@ -2,13 +2,18 @@ using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class EnemySystem : SingleTon<EnemySystem>
 {
     
     [SerializeField] private EnemyBoardView enemyBoardView;
 
+    private readonly EnemyAI enemyAI = new EnemyAI();
+
     public List<EnemyView> Enemies => enemyBoardView.EnemyViews;
+    
+
     void OnEnable()
     {
         ActionSystem.AttachPerformer<EnemyTurnGA>(EnemyTurnPerformer);
@@ -33,17 +38,42 @@ public class EnemySystem : SingleTon<EnemySystem>
     }
     private IEnumerator EnemyTurnPerformer(EnemyTurnGA enemyTurnGA)
     {
-        foreach (var enemy in enemyBoardView.EnemyViews)
+        foreach (EnemyView enemy in Enemies.ToList())
         {
-            int shockStacks = enemy.GetStatusEffectStacks(StatusEffectType.SHOCK);
-            if(shockStacks > 0)
+            if (enemy == null || enemy.CurrentHealth <= 0)
+                continue;
+
+            // STUN: skip this enemy's turn.
+            if (enemy.IsStunned)
             {
-                ApplyShockGA applyShockGA = new(shockStacks, enemy);
-                ActionSystem.Instance.AddReaction(applyShockGA);
+                enemy.ConsumeStun();
+                continue;
             }
-            AttackHeroGA attackHeroGA = new(enemy);
-            ActionSystem.Instance.AddReaction(attackHeroGA);
+
+            // Remember whether cooldown was active when this turn began
+            bool cooldownAtTurnStart = enemy.IsStunOnCooldown;
+
+            // Apply SHOCK
+            int shock = enemy.GetStatusEffectStacks(StatusEffectType.SHOCK);
+            if (shock > 0) { ActionSystem.Instance.AddReaction(new ApplyShockGA(shock, enemy)); }
+
+            List<PlayerView> heroes = enemyAI.GetLivingHeroes();
+
+            if (heroes.Count > 0 && !enemyAI.TryAct(enemy, heroes)) {
+                // If no skill was used, attack a random living hero normally.
+                PlayerView target = heroes[Random.Range(0, heroes.Count)];
+                ActionSystem.Instance.AddReaction(new AttackHeroGA(enemy, target));
+            }
+
+            // Cooldown lasts until this enemy has completed
+            // one turn after recovering from stun.
+            if (cooldownAtTurnStart)
+            {
+                enemy.EndStunCooldown();
+            }
+            
         }
+
         yield return null;
     }
 
@@ -53,8 +83,20 @@ public class EnemySystem : SingleTon<EnemySystem>
         Tween tween = attacker.transform.DOMoveX(attacker.transform.position.x - 1f, 0.15f);
         yield return tween.WaitForCompletion();
         attacker.transform.DOMoveX(attacker.transform.position.x + 1f, 0.15f);
-        //deal damage
-        DealDamageGA dealDamageGA = new(attacker.AttackPower, new() { HeroSystem.Instance.playerView }, attackHeroGA.Caster);
+
+        // ------- Deal damage to selected hero ---------
+        PlayerView target = attackHeroGA.Target;
+
+        if (target == null || target.CurrentHealth <= 0)
+            yield break;
+
+        DealDamageGA dealDamageGA = new(
+            attacker.AttackPower,
+            new List<CombatantView> { target },
+            attackHeroGA.Caster
+        );
+        // -----------------------------------------------
+        
         ActionSystem.Instance.AddReaction(dealDamageGA);
     }
 

@@ -53,19 +53,36 @@ public class HeroSystem : SingleTon<HeroSystem>
         {
             PlayerView hero = GetHero(i);
 
-            if (hero == null)
+            if (hero == null || hero.CurrentHealth <= 0)
                 continue;
 
-            int shockStacks = hero.GetStatusEffectStacks(StatusEffectType.SHOCK);
+            // A stunned hero recovers at the end of the enemy turn.
+            if (hero.IsStunned)
+            {
+                hero.ConsumeStun();
+                continue;
+            }
+
+            // End cooldown after the hero has spent one enemy turn
+            // recovering from stun.
+            if (hero.IsStunOnCooldown)
+            {
+                hero.EndStunCooldown();
+            }
+
+            // Process SHOCK.
+            int shockStacks =
+                hero.GetStatusEffectStacks(StatusEffectType.SHOCK);
 
             if (shockStacks > 0)
             {
-                ApplyShockGA shockAction = new ApplyShockGA(shockStacks, hero);
-                ActionSystem.Instance.AddReaction(shockAction);
+                ActionSystem.Instance.AddReaction(
+                    new ApplyShockGA(shockStacks, hero)
+                );
             }
         }
 
-        // Each hero draws five cards into their own hand.
+        // Draw five cards for each hero.
         ActionSystem.Instance.AddReaction(new DrawCardsGA(5, 0));
         ActionSystem.Instance.AddReaction(new DrawCardsGA(5, 1));
     }

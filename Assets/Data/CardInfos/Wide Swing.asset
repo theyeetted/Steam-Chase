@@ -31,10 +31,11 @@ MonoBehaviour:
           rid: 4419360084440645980
         <Effect>k__BackingField:
           rid: 4419360084440645975
+        <RepeatCount>k__BackingField: 1
+        <ChancePercent>k__BackingField: 100
     - rid: 4419360084440645975
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         damageAmount: 10
     - rid: 4419360084440645980
       type: {class: AllEnemies, ns: , asm: Assembly-CSharp}
-      data: 

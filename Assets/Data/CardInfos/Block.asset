@@ -28,14 +28,14 @@ MonoBehaviour:
       type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
       data:
         <TargetMode>k__BackingField:
-          rid: 4419360084440646027
+          rid: 7746331273383903307
         <Effect>k__BackingField:
           rid: 4419360084440646028
-    - rid: 4419360084440646027
-      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
-      data: 
     - rid: 4419360084440646028
       type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 2
         stackCount: 5
+    - rid: 7746331273383903307
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
