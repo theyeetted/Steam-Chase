@@ -14,7 +14,8 @@ public class FollowUpAttackGA : GameAction, IHaveCaster
 
     public static FollowUpAttackGA CreateFromMark(CombatantView target, CombatantView applier)
     {
-        // Mark pays its own stack cost and fixes the reaction's target and four damage.
+        // Mark pays its own stack cost and fixes the target. DamageSystem reads the applier's
+        // current MarkFollowUpDamageUp bonus when this reaction executes (base damage is four).
         return new FollowUpAttackGA(new List<CombatantView> { target }, applier)
         {
             IsTriggeredByMark = true

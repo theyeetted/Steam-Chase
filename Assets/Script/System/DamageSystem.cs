@@ -67,7 +67,8 @@ public class DamageSystem : MonoBehaviour
         // A distinct normal damage action applies all ordinary modifiers and Mark.
         // Keep the original targets so Aggravated can be resolved again at execution.
         ActionSystem.Instance.AddReaction(new DealDamageGA(
-            ExtraAttackGA.BaseDamage, extraAttackGA.Targets, caster));
+            StatusEffectSystem.ModifyStatusDamage(caster, StatusEffectType.ExtraAttackDamageUp, ExtraAttackGA.BaseDamage),
+            extraAttackGA.Targets, caster));
         yield break;
     }
 
@@ -96,13 +97,19 @@ public class DamageSystem : MonoBehaviour
         // Mark has already consumed its stack; it never spends the applier's charges.
         if (!followUpAttackGA.IsTriggeredByMark)
             caster.RemoveStatusEffect(StatusEffectType.FollowUpAttack, 1);
+        // Mark reactions use the Mark applier's dedicated bonus. Regular Follow-Up bonuses
+        // remain separate; neither path uses ordinary attack modifiers or Vulnerable.
+        StatusEffectType damageBuffType = followUpAttackGA.IsTriggeredByMark
+            ? StatusEffectType.MarkFollowUpDamageUp
+            : StatusEffectType.FollowUpAttackDamageUp;
+        int damage = StatusEffectSystem.ModifyStatusDamage(caster, damageBuffType, followUpAttackGA.Damage);
         foreach (var target in targets)
         {
             if (target == null || target.CurrentHealth <= 0)
                 continue;
 
-            // Exactly four plus the dedicated card bonus; Block still absorbs the hit.
-            yield return ApplyDamage(target, followUpAttackGA.Damage);
+            // Base four, the dedicated card bonus, and the matching status bonus; Block still applies.
+            yield return ApplyDamage(target, damage);
         }
     }
 

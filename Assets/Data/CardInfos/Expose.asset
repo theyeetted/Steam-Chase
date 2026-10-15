@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Apply 2 Vulnerable.
   <Image>k__BackingField: {fileID: -9120369034046867018, guid: 7637c505ef0f16f4e8460382c94f35ca, type: 3}
-  <Cost>k__BackingField: 1
+  <Cost>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
     rid: 4419360084440645989
   <OtherTargetEffects>k__BackingField: []
@@ -25,4 +25,4 @@ MonoBehaviour:
       type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 0
-        stackCount: 2
+        stackCount: 10

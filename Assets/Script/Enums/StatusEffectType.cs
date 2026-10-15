@@ -12,5 +12,9 @@ public enum StatusEffectType
     FollowUpAttack,
     DefenseUp,
     Stun,
-    Aggravated
+    Aggravated,
+    // Bonus damage points, separate from the attack's charges or Mark's stacks.
+    MarkFollowUpDamageUp,
+    FollowUpAttackDamageUp,
+    ExtraAttackDamageUp
 }

@@ -6,13 +6,17 @@ public class AddStatusEffectGA : GameAction, IHaveCaster
     public StatusEffectType StatusEffectType {  get; private set; }
     public int StackCount { get; private set; }
     public CombatantView Caster { get; private set; }
+    // Used only by damage-buff statuses. Zero means permanent for this battle.
+    public int DamageBuffTurns { get; private set; }
 
     public List<CombatantView> Targets { get; private set; }
-    public AddStatusEffectGA(StatusEffectType statusEffectType, int stackCount, List<CombatantView> targets, CombatantView caster = null)
+    public AddStatusEffectGA(StatusEffectType statusEffectType, int stackCount, List<CombatantView> targets,
+        CombatantView caster = null, int damageBuffTurns = 0)
     {
         StatusEffectType = statusEffectType;
         StackCount = stackCount;
-        Targets = targets;
+        Targets = targets == null ? new() : new(targets);
         Caster = caster;
+        DamageBuffTurns = damageBuffTurns;
     }
 }

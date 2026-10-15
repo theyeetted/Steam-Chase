@@ -1058,6 +1058,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 701074640}
     m_Modifications:
     - target: {fileID: 1666403722865256612, guid: 924e91e667fddc34ab40ce8bc1c14327, type: 3}
+      propertyPath: markSprite
+      value: 
+      objectReference: {fileID: -2529804286022096062, guid: 364b520645f42a74abb9a1d971d0aa07, type: 3}
+    - target: {fileID: 1666403722865256612, guid: 924e91e667fddc34ab40ce8bc1c14327, type: 3}
       propertyPath: BlockSprite
       value: 
       objectReference: {fileID: 3529559439965600187, guid: 30822dd087304b24f8fcef686af7b195, type: 3}
@@ -1073,6 +1077,10 @@ PrefabInstance:
       propertyPath: attackDownSprite
       value: 
       objectReference: {fileID: 21300066, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+    - target: {fileID: 1666403722865256612, guid: 924e91e667fddc34ab40ce8bc1c14327, type: 3}
+      propertyPath: followUpAttackSprite
+      value: 
+      objectReference: {fileID: -4924481747208015825, guid: d88096a2de25c4d46a64aefa70563c06, type: 3}
     - target: {fileID: 4418492254615710314, guid: 924e91e667fddc34ab40ce8bc1c14327, type: 3}
       propertyPath: m_Name
       value: Whiskey

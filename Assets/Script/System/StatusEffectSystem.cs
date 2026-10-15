@@ -3,6 +3,16 @@ using UnityEngine;
 
 public class StatusEffectSystem : MonoBehaviour
 {
+    public static int ModifyStatusDamage(CombatantView caster, StatusEffectType buffType, int amount)
+    {
+        int damage = Mathf.Max(0, amount);
+        if (caster == null || !StatusDamageBuffs.IsDamageBuff(buffType))
+            return damage;
+
+        int bonus = caster.GetStatusEffectStacks(buffType);
+        return damage + Mathf.Min(bonus, int.MaxValue - damage);
+    }
+
     public static int ModifyOutgoingDamage(CombatantView caster, int amount)
     {
         int damage = Mathf.Max(0, amount);
@@ -41,6 +51,7 @@ public class StatusEffectSystem : MonoBehaviour
         ActionSystem.AttachPerformer<DecayAttackUpGA>(DecayAttackUpPerformer);
         ActionSystem.AttachPerformer<DecayAttackDownGA>(DecayAttackDownPerformer);
         ActionSystem.AttachPerformer<ExpireAggravatedGA>(ExpireAggravatedPerformer);
+        ActionSystem.AttachPerformer<DecayStatusDamageBuffsGA>(DecayStatusDamageBuffsPerformer);
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<AttackHeroGA>(AttackHeroPostReaction, ReactionTiming.POST);
     }
@@ -52,6 +63,7 @@ public class StatusEffectSystem : MonoBehaviour
         ActionSystem.DetachPerformer<DecayAttackUpGA>();
         ActionSystem.DetachPerformer<DecayAttackDownGA>();
         ActionSystem.DetachPerformer<ExpireAggravatedGA>();
+        ActionSystem.DetachPerformer<DecayStatusDamageBuffsGA>();
         ActionSystem.DetachPerformer<AddStatusEffectGA>();
     }
 
@@ -62,6 +74,7 @@ public class StatusEffectSystem : MonoBehaviour
         {
             QueueAttackUpDecay(HeroSystem.Instance.playerView);
             QueueAttackDownDecay(HeroSystem.Instance.playerView);
+            QueueStatusDamageBuffDecay(HeroSystem.Instance.playerView);
         }
     }
 
@@ -70,6 +83,7 @@ public class StatusEffectSystem : MonoBehaviour
         // POST runs after this enemy's attack and all of its damage reactions.
         QueueAttackUpDecay(attackHeroGA.Attacker);
         QueueAttackDownDecay(attackHeroGA.Attacker);
+        QueueStatusDamageBuffDecay(attackHeroGA.Attacker);
         EnemyView attacker = attackHeroGA.Attacker;
         if (attacker != null && attacker.GetStatusEffectStacks(StatusEffectType.Aggravated) > 0)
         {
@@ -126,6 +140,19 @@ public class StatusEffectSystem : MonoBehaviour
         yield break;
     }
 
+    private static void QueueStatusDamageBuffDecay(CombatantView target)
+    {
+        if (target != null && target.CurrentHealth > 0 && target.HasTimedStatusDamageBuffs)
+            ActionSystem.Instance.AddReaction(new DecayStatusDamageBuffsGA(target));
+    }
+
+    private IEnumerator DecayStatusDamageBuffsPerformer(DecayStatusDamageBuffsGA action)
+    {
+        if (action.Target != null && action.Target.CurrentHealth > 0)
+            action.Target.AdvanceStatusDamageBuffs();
+        yield break;
+    }
+
     private IEnumerator AddStatusEffectPerformer(AddStatusEffectGA addStatusEffectGA)
     {
         foreach (var target in addStatusEffectGA.Targets)
@@ -134,7 +161,8 @@ public class StatusEffectSystem : MonoBehaviour
             if (target == null || target.CurrentHealth <= 0)
                 continue;
 
-            target.AddStatusEffect(addStatusEffectGA.StatusEffectType, addStatusEffectGA.StackCount, addStatusEffectGA.Caster);
+            target.AddStatusEffect(addStatusEffectGA.StatusEffectType, addStatusEffectGA.StackCount,
+                addStatusEffectGA.Caster, addStatusEffectGA.DamageBuffTurns);
             yield return null;
         }
     }

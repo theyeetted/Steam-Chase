@@ -49,6 +49,10 @@ public class StatusEffectsUI : MonoBehaviour
             StatusEffectType.FollowUpAttack => followUpAttackSprite,
             StatusEffectType.Mark => markSprite,
             StatusEffectType.ExtraAttack => extraAttackSprite,
+            // Damage-buff icons show bonus damage points, independently of attack charges.
+            StatusEffectType.MarkFollowUpDamageUp => markSprite,
+            StatusEffectType.FollowUpAttackDamageUp => followUpAttackSprite,
+            StatusEffectType.ExtraAttackDamageUp => extraAttackSprite,
             StatusEffectType.BLOCK => BlockSprite,
             _ => null,
         };

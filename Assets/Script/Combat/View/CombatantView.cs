@@ -16,8 +16,14 @@ public class CombatantView : MonoBehaviour
     public const int MaxMarkStacks = 5;
 
     private Dictionary<StatusEffectType, int> statusEffects = new();
+    private readonly StatusDamageBuffs statusDamageBuffs = new();
+    public bool HasTimedStatusDamageBuffs => statusDamageBuffs.HasTimedBuffs;
+
     protected void SetupBase(int  health, Sprite image)
     {
+        // Reusing a unit for a new battle must also clear permanent damage bonuses.
+        foreach (StatusEffectType type in statusDamageBuffs.Clear())
+            statusEffectsUI.UpdateStatusEffectUI(type, 0);
         MaxHealth = health;
         CurrentHealth = health;
         spriteRenderer.sprite = image;
@@ -60,9 +66,15 @@ public class CombatantView : MonoBehaviour
         UpdateHealthText();
     }
 
-    public void AddStatusEffect(StatusEffectType type, int stackCount, CombatantView applier = null)
+    public void AddStatusEffect(StatusEffectType type, int stackCount, CombatantView applier = null,
+        int damageBuffTurns = 0)
     {
-        if (type == StatusEffectType.Aggravated)
+        if (StatusDamageBuffs.IsDamageBuff(type))
+        {
+            if (CurrentHealth <= 0 || !statusDamageBuffs.Add(type, stackCount, damageBuffTurns))
+                return;
+        }
+        else if (type == StatusEffectType.Aggravated)
         {
             // Aggravated is enemy-only and always lasts one turn, even when reapplied.
             if (!(this is EnemyView) || CurrentHealth <= 0 || stackCount <= 0 ||
@@ -96,7 +108,11 @@ public class CombatantView : MonoBehaviour
 
     public void RemoveStatusEffect(StatusEffectType type, int stackCount)
     {
-        if (statusEffects.ContainsKey(type))
+        if (StatusDamageBuffs.IsDamageBuff(type))
+        {
+            statusDamageBuffs.Remove(type, stackCount);
+        }
+        else if (statusEffects.ContainsKey(type))
         {
             statusEffects[type] -= stackCount;
             if (statusEffects[type] <= 0)
@@ -113,8 +129,17 @@ public class CombatantView : MonoBehaviour
 
     public int GetStatusEffectStacks(StatusEffectType type)
     {
+        if (StatusDamageBuffs.IsDamageBuff(type))
+            return statusDamageBuffs.GetBonus(type);
         if(statusEffects.ContainsKey(type)) return statusEffects[type];
         else return 0;
+    }
+
+    public void AdvanceStatusDamageBuffs()
+    {
+        // Expire only the individual grants whose timers elapsed, preserving later/permanent grants.
+        foreach (StatusEffectType type in statusDamageBuffs.AdvanceTurn())
+            statusEffectsUI.UpdateStatusEffectUI(type, GetStatusEffectStacks(type));
     }
 
 }

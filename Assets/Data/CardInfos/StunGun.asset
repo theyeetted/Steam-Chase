@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: 'Apply 3 Shocks  and Deal 5 damage to all Enemy '
   <Image>k__BackingField: {fileID: 2715435097457428830, guid: 1a4fd1d1ce7cadf4883ee4e3763b4600, type: 3}
-  <Cost>k__BackingField: 2
+  <Cost>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
     rid: -2
   <OtherTargetEffects>k__BackingField:
