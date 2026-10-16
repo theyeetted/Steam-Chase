@@ -9,6 +9,7 @@ public class FollowUpAttackGA : GameAction, IHaveCaster
     public CombatantView Caster { get; private set; }
     public List<CombatantView> Targets { get; private set; }
     public int FollowUpDamageBonus { get; private set; }
+    public int StunFillPercent { get; private set; }
     public int Damage => BaseDamage + FollowUpDamageBonus;
     public bool IsTriggeredByMark { get; private set; }
 
@@ -22,11 +23,14 @@ public class FollowUpAttackGA : GameAction, IHaveCaster
         };
     }
 
-    public FollowUpAttackGA(List<CombatantView> targets, CombatantView caster, int followUpDamageBonus = 0)
+    public FollowUpAttackGA(List<CombatantView> targets, CombatantView caster, int followUpDamageBonus = 0,
+        int stunFillPercent = 0)
     {
         Targets = targets != null ? new List<CombatantView>(targets) : new List<CombatantView>();
         Caster = caster;
         // Only a specifically configured Follow-Up effect supplies this per-action bonus.
         FollowUpDamageBonus = Mathf.Clamp(followUpDamageBonus, 0, int.MaxValue - BaseDamage);
+        // Per-effect only. Existing calls and automatic Mark Follow-Ups default to no extra Stun.
+        StunFillPercent = Mathf.Clamp(stunFillPercent, 0, 100);
     }
 }

@@ -20,17 +20,31 @@ public class CombatantView : MonoBehaviour
     public CombatantView AggravatedApplier { get; private set; }
     public CombatantView MarkApplier { get; private set; }
     public const int MaxMarkStacks = 5;
+    public const int MaxStressStacks = 99;
+
+    public bool WasAttackedLastTurn { get; private set; }
+    public bool WasAttackedThisCombat { get; private set; }
+    private bool wasAttackedThisTurn;
 
     private Dictionary<StatusEffectType, int> statusEffects = new();
     private readonly StatusDamageBuffs statusDamageBuffs = new();
+    private readonly CounterBuffs counterBuffs = new();
     public bool HasTimedStatusDamageBuffs => statusDamageBuffs.HasTimedBuffs;
+    public bool HasTimedCounter => counterBuffs.HasTimedBuffs;
 
 
     protected void SetupBase(int  health, Sprite image, int maxStun)
     {
+        ResetAttackHistory();
+        if (counterBuffs.Damage > 0)
+            RemoveStatusEffect(StatusEffectType.Counter, counterBuffs.Damage);
         // Reusing a unit for a new battle must also clear permanent damage bonuses.
         foreach (StatusEffectType type in statusDamageBuffs.Clear())
             statusEffectsUI.UpdateStatusEffectUI(type, 0);
+        // Stress has no turn decay, but must not carry into a new combat on a reused enemy.
+        int stressStacks = GetStatusEffectStacks(StatusEffectType.Stress);
+        if (stressStacks > 0)
+            RemoveStatusEffect(StatusEffectType.Stress, stressStacks);
         MaxHealth = health;
         CurrentHealth = health;
         spriteRenderer.sprite = image;
@@ -38,6 +52,30 @@ public class CombatantView : MonoBehaviour
         UpdateHealthText();
 
         Debug.Log("Combatant setup Complete.");
+    }
+
+    // Record resolved attacks, including fully blocked hits. Status damage must not call this.
+    public void RecordAttack()
+    {
+        if (!(this is EnemyView) || CurrentHealth <= 0)
+            return;
+
+        wasAttackedThisTurn = true;
+        WasAttackedThisCombat = true;
+    }
+
+    public void AdvanceAttackHistory()
+    {
+        // Replace the snapshot even after an unattacked turn; never accumulate across turns.
+        WasAttackedLastTurn = wasAttackedThisTurn;
+        wasAttackedThisTurn = false;
+    }
+
+    private void ResetAttackHistory()
+    {
+        wasAttackedThisTurn = false;
+        WasAttackedLastTurn = false;
+        WasAttackedThisCombat = false;
     }
 
     private void UpdateHealthText()
@@ -101,7 +139,8 @@ public class CombatantView : MonoBehaviour
         if (CurrentHealth <= 0 || IsStunned || amount <= 0 || IsStunOnCooldown )
             return;
 
-        CurrentStun = Mathf.Min(CurrentStun + amount, MaxStun);
+        // Cap the increment before adding, so a large gauge fill cannot overflow.
+        CurrentStun += Mathf.Min(amount, MaxStun - CurrentStun);
         IsStunned = CurrentStun >= MaxStun;
 
         UpdateStunUI();
@@ -110,6 +149,15 @@ public class CombatantView : MonoBehaviour
             $"{name}: Stun {CurrentStun}/{MaxStun}" +
             (IsStunned ? " — STUNNED!" : "")
         );
+    }
+
+    public void AddStunPercent(int percent)
+    {
+        percent = Mathf.Clamp(percent, 0, 100);
+        // Round up exactly and use a wide intermediate for large MaxStun values.
+        // AddStun owns the cap, Stunned state, cooldown/death guards, and gauge UI refresh.
+        int amount = (int)(((long)MaxStun * percent + 99L) / 100L);
+        AddStun(amount);
     }
 
     public bool ConsumeStun()
@@ -160,7 +208,13 @@ public class CombatantView : MonoBehaviour
     public void AddStatusEffect(StatusEffectType type, int stackCount, CombatantView applier = null,
         int damageBuffTurns = 0)
     {
-        if (StatusDamageBuffs.IsDamageBuff(type))
+        if (type == StatusEffectType.Counter)
+        {
+            // Counter belongs to heroes; stacks are damage, with independent grant durations.
+            if (!(this is PlayerView) || CurrentHealth <= 0 || !counterBuffs.Add(stackCount, damageBuffTurns))
+                return;
+        }
+        else if (StatusDamageBuffs.IsDamageBuff(type))
         {
             if (CurrentHealth <= 0 || !statusDamageBuffs.Add(type, stackCount, damageBuffTurns))
                 return;
@@ -174,6 +228,15 @@ public class CombatantView : MonoBehaviour
 
             AggravatedApplier = applier;
             statusEffects[type] = 1;
+        }
+        else if (type == StatusEffectType.Stress)
+        {
+            if (!(this is EnemyView) || CurrentHealth <= 0 || stackCount <= 0)
+                return;
+
+            // Add only the available capacity, avoiding overflow even for a very large grant.
+            int currentStacks = Mathf.Clamp(GetStatusEffectStacks(type), 0, MaxStressStacks);
+            statusEffects[type] = currentStacks + Mathf.Min(stackCount, MaxStressStacks - currentStacks);
         }
         else if (type == StatusEffectType.Mark)
         {
@@ -199,7 +262,11 @@ public class CombatantView : MonoBehaviour
 
     public void RemoveStatusEffect(StatusEffectType type, int stackCount)
     {
-        if (StatusDamageBuffs.IsDamageBuff(type))
+        if (type == StatusEffectType.Counter)
+        {
+            counterBuffs.Remove(stackCount);
+        }
+        else if (StatusDamageBuffs.IsDamageBuff(type))
         {
             statusDamageBuffs.Remove(type, stackCount);
         }
@@ -220,10 +287,18 @@ public class CombatantView : MonoBehaviour
 
     public int GetStatusEffectStacks(StatusEffectType type)
     {
+        if (type == StatusEffectType.Counter)
+            return counterBuffs.Damage;
         if (StatusDamageBuffs.IsDamageBuff(type))
             return statusDamageBuffs.GetBonus(type);
         if(statusEffects.ContainsKey(type)) return statusEffects[type];
         else return 0;
+    }
+
+    public void AdvanceCounterTurn()
+    {
+        counterBuffs.AdvanceTurn();
+        statusEffectsUI.UpdateStatusEffectUI(StatusEffectType.Counter, counterBuffs.Damage);
     }
 
     public void AdvanceStatusDamageBuffs()
@@ -238,6 +313,8 @@ public class CombatantView : MonoBehaviour
     // Reset, used in MatchSetupSystem.cs
     public void ResetCombatant()
     {
+        ResetAttackHistory();
+        counterBuffs.Clear();
         CurrentHealth = MaxHealth;
         statusEffects.Clear();
 

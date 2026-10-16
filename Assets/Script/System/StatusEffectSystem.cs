@@ -52,18 +52,22 @@ public class StatusEffectSystem : MonoBehaviour
         ActionSystem.AttachPerformer<DecayAttackDownGA>(DecayAttackDownPerformer);
         ActionSystem.AttachPerformer<ExpireAggravatedGA>(ExpireAggravatedPerformer);
         ActionSystem.AttachPerformer<DecayStatusDamageBuffsGA>(DecayStatusDamageBuffsPerformer);
+        ActionSystem.AttachPerformer<DecayCounterGA>(DecayCounterPerformer);
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
         ActionSystem.SubscribeReaction<AttackHeroGA>(AttackHeroPostReaction, ReactionTiming.POST);
     }
 
     void OnDisable()
     {
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
         ActionSystem.UnsubscribeReaction<AttackHeroGA>(AttackHeroPostReaction, ReactionTiming.POST);
         ActionSystem.DetachPerformer<DecayAttackUpGA>();
         ActionSystem.DetachPerformer<DecayAttackDownGA>();
         ActionSystem.DetachPerformer<ExpireAggravatedGA>();
         ActionSystem.DetachPerformer<DecayStatusDamageBuffsGA>();
+        ActionSystem.DetachPerformer<DecayCounterGA>();
         ActionSystem.DetachPerformer<AddStatusEffectGA>();
     }
 
@@ -76,6 +80,42 @@ public class StatusEffectSystem : MonoBehaviour
             QueueAttackDownDecay(HeroSystem.Instance.playerView);
             QueueStatusDamageBuffDecay(HeroSystem.Instance.playerView);
         }
+
+        // Resolve Stress after the player's turn, before EnemyTurnPerformer consumes Stun.
+        if (EnemySystem.Instance != null)
+        {
+            foreach (EnemyView enemy in EnemySystem.Instance.Enemies)
+            {
+                if (enemy != null && enemy.CurrentHealth > 0 && enemy.IsStunned &&
+                    enemy.GetStatusEffectStacks(StatusEffectType.Stress) > 0)
+                {
+                    ActionSystem.Instance.AddReaction(new DetonateStressGA(enemy));
+                }
+            }
+        }
+    }
+
+    private void EnemyTurnPostReaction(EnemyTurnGA action)
+    {
+        // All enemy attacks and their counters have resolved. Tick each hero once per phase.
+        if (HeroSystem.Instance == null)
+            return;
+
+        QueueCounterDecay(HeroSystem.Instance.playerView);
+        QueueCounterDecay(HeroSystem.Instance.secondPlayerView);
+    }
+
+    private static void QueueCounterDecay(PlayerView hero)
+    {
+        if (hero != null && hero.HasTimedCounter)
+            ActionSystem.Instance.AddReaction(new DecayCounterGA(hero));
+    }
+
+    private IEnumerator DecayCounterPerformer(DecayCounterGA action)
+    {
+        if (action.Target != null)
+            action.Target.AdvanceCounterTurn();
+        yield break;
     }
 
     private void AttackHeroPostReaction(AttackHeroGA attackHeroGA)

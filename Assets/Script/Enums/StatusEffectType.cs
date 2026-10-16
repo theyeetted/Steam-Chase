@@ -16,5 +16,7 @@ public enum StatusEffectType
     // Bonus damage points, separate from the attack's charges or Mark's stacks.
     MarkFollowUpDamageUp,
     FollowUpAttackDamageUp,
-    ExtraAttackDamageUp
+    ExtraAttackDamageUp,
+    Stress,
+    Counter
 }

@@ -6,7 +6,7 @@ public class AddStatusEffectGA : GameAction, IHaveCaster
     public StatusEffectType StatusEffectType {  get; private set; }
     public int StackCount { get; private set; }
     public CombatantView Caster { get; private set; }
-    // Used only by damage-buff statuses. Zero means permanent for this battle.
+    // Used by damage-buff statuses and Counter. Zero means permanent for this battle.
     public int DamageBuffTurns { get; private set; }
 
     public List<CombatantView> Targets { get; private set; }

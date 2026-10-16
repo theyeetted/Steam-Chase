@@ -8,6 +8,8 @@ public class Card
 
     public int Cost { get; private set; }
 
+    public bool Disintegrate => data.Disintegrate;
+
     public string Description => data.description;
 
     public Effect MannualTargetEffect => data.MannualTargetEffect;

@@ -13,6 +13,8 @@ public class StatusEffectsUI : MonoBehaviour
     [SerializeField] private Sprite followUpAttackSprite;
     [SerializeField] private Sprite markSprite;
     [SerializeField] private Sprite extraAttackSprite;
+    [SerializeField] private Sprite stressSprite;
+    [SerializeField] private Sprite counterSprite;
     private Dictionary<StatusEffectType, StatusEffectUI> statusEffectUIs = new();
 
     public void UpdateStatusEffectUI(StatusEffectType statusEffectType, int stackCount)
@@ -50,6 +52,9 @@ public class StatusEffectsUI : MonoBehaviour
             StatusEffectType.FollowUpAttack => followUpAttackSprite,
             StatusEffectType.Mark => markSprite,
             StatusEffectType.ExtraAttack => extraAttackSprite,
+            StatusEffectType.Stress => stressSprite,
+            // Counter's count is its total base damage, not remaining turns or charges.
+            StatusEffectType.Counter => counterSprite,
             // Damage-buff icons show bonus damage points, independently of attack charges.
             StatusEffectType.MarkFollowUpDamageUp => markSprite,
             StatusEffectType.FollowUpAttackDamageUp => followUpAttackSprite,

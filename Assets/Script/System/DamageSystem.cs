@@ -21,6 +21,10 @@ public class DamageSystem : MonoBehaviour
         ActionSystem.AttachPerformer<DealDamageGA>(DealDamagePerformer);
         ActionSystem.AttachPerformer<FollowUpAttackGA>(FollowUpAttackPerformer);
         ActionSystem.AttachPerformer<ExtraAttackGA>(ExtraAttackPerformer);
+        ActionSystem.AttachPerformer<DetonateStressGA>(DetonateStressPerformer);
+        ActionSystem.AttachPerformer<CounterAttackGA>(CounterAttackPerformer);
+        ActionSystem.SubscribeReaction<EnemyTurnGA>(AdvanceEnemyAttackHistory, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<EnemyTurnGA>(AdvanceEnemyAttackHistory, ReactionTiming.POST);
     }
 
     void OnDisable()
@@ -28,6 +32,24 @@ public class DamageSystem : MonoBehaviour
         ActionSystem.DetachPerformer<DealDamageGA>();
         ActionSystem.DetachPerformer<FollowUpAttackGA>();
         ActionSystem.DetachPerformer<ExtraAttackGA>();
+        ActionSystem.DetachPerformer<DetonateStressGA>();
+        ActionSystem.DetachPerformer<CounterAttackGA>();
+        ActionSystem.UnsubscribeReaction<EnemyTurnGA>(AdvanceEnemyAttackHistory, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<EnemyTurnGA>(AdvanceEnemyAttackHistory, ReactionTiming.POST);
+    }
+
+    private void AdvanceEnemyAttackHistory(EnemyTurnGA action)
+    {
+        // PRE ends the player turn; POST ends the enemy turn, matching the shared turn flow.
+        // Both boundaries matter: Last Turn can refer to either side's completed turn.
+        if (EnemySystem.Instance == null)
+            return;
+
+        foreach (EnemyView enemy in EnemySystem.Instance.Enemies)
+        {
+            if (enemy != null)
+                enemy.AdvanceAttackHistory();
+        }
     }
 
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA)
@@ -63,10 +85,14 @@ public class DamageSystem : MonoBehaviour
 
             // Stun buildup uses the original amount, before bonuses or Block.
             int stunAmount = Mathf.FloorToInt(dealDamageGA.Amount * 0.4f);
+            // Record the actual target after redirection, before Block can absorb the hit.
+            // Extra Attack also resolves through this path.
+            target.RecordAttack();
             yield return ApplyDamage(target, damage, dealDamageGA.Caster, stunAmount);
             // A landed ordinary attack triggers Mark even when Block absorbs the hit.
             // Follow-Up damage and direct status ticks never enter this trigger path.
             QueueMarkFollowUp(target);
+            QueueCounterAttack(target, dealDamageGA.Caster);
         }
     }
 
@@ -140,8 +166,59 @@ public class DamageSystem : MonoBehaviour
                 continue;
 
             // Base four, the dedicated card bonus, and the matching status bonus; Block still applies.
-            yield return ApplyDamage(target, damage, caster);
+            // Includes Mark-triggered Follow-Up attacks during either side's turn.
+            target.RecordAttack();
+            yield return ApplyDamage(target, damage, caster, stunFillPercent: followUpAttackGA.StunFillPercent);
+            QueueCounterAttack(target, caster);
         }
+    }
+
+    private static void QueueCounterAttack(CombatantView defender, CombatantView attacker)
+    {
+        // Only enemy attacks against a surviving hero trigger Counter. Status ticks never call here.
+        if (!(defender is PlayerView hero) || hero == null || hero.CurrentHealth <= 0 ||
+            !(attacker is EnemyView enemy) || enemy == null || enemy.CurrentHealth <= 0)
+            return;
+
+        int damage = hero.GetStatusEffectStacks(StatusEffectType.Counter);
+        if (damage > 0)
+            ActionSystem.Instance.AddReaction(new CounterAttackGA(hero, enemy, damage));
+    }
+
+    private IEnumerator CounterAttackPerformer(CounterAttackGA action)
+    {
+        // Earlier hit reactions may have killed the defender or the original attacker.
+        if (gameOverTriggered || action.Caster == null || action.Caster.CurrentHealth <= 0 ||
+            action.Target == null || action.Target.CurrentHealth <= 0 || action.Damage <= 0)
+            yield break;
+
+        // Normal hero attack: applies damage modifiers, Block, Stun buildup, Mark, and attack history.
+        // Counter is hero-only and responds only to enemy casters, so it cannot counter itself.
+        ActionSystem.Instance.AddReaction(new DealDamageGA(action.Damage, new() { action.Target }, action.Caster));
+        yield break;
+    }
+
+    private IEnumerator DetonateStressPerformer(DetonateStressGA action)
+    {
+        if (gameOverTriggered)
+            yield break;
+
+        EnemyView target = action.Target;
+        // An earlier reaction may have killed the enemy, cleared Stun, or consumed Stress.
+        if (target == null || target.CurrentHealth <= 0 || !target.IsStunned)
+            yield break;
+
+        int stressStacks = target.GetStatusEffectStacks(StatusEffectType.Stress);
+        if (stressStacks <= 0)
+            yield break;
+
+        // One damage per stack plus Stun's 20%, rounded up to whole damage.
+        // Exact integer arithmetic avoids floating-point over-rounding (25 stacks = 30 damage).
+        int damage = stressStacks + (stressStacks + 4) / 5;
+        // Bypass attack/status bonuses, Vulnerable, and Mark triggers. Keep Block, VFX, and death handling.
+        yield return ApplyDamage(target, damage, null);
+        if (target != null)
+            target.RemoveStatusEffect(StatusEffectType.Stress, stressStacks);
     }
 
     private static void QueueMarkFollowUp(CombatantView target)
@@ -160,11 +237,14 @@ public class DamageSystem : MonoBehaviour
         ActionSystem.Instance.AddReaction(FollowUpAttackGA.CreateFromMark(target, applier));
     }
 
-    private IEnumerator ApplyDamage(CombatantView target, int damage, CombatantView caster, int stunAmount = 0)
+    private IEnumerator ApplyDamage(CombatantView target, int damage, CombatantView caster, int stunAmount = 0,
+        int stunFillPercent = 0)
     {
         target.Damage(damage, caster);
         if (stunAmount > 0)
             target.AddStun(stunAmount);
+        if (stunFillPercent > 0)
+            target.AddStunPercent(stunFillPercent);
 
         if (damageVFX != null)
             Instantiate(damageVFX, target.transform.position, Quaternion.identity);

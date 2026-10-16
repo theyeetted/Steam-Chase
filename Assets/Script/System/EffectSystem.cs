@@ -9,12 +9,14 @@ public class EffectSystem : MonoBehaviour
     {
         ActionSystem.AttachPerformer<PerformEffectGA>(PerfromEffectPerformer);
         ActionSystem.AttachPerformer<ConditionalEffectGA>(ConditionalEffectPerformer);
+        ActionSystem.AttachPerformer<FillStunGaugeGA>(FillStunGaugePerformer);
     }
 
     void OnDisable()
     {
         ActionSystem.DetachPerformer<PerformEffectGA>();
         ActionSystem.DetachPerformer<ConditionalEffectGA>();
+        ActionSystem.DetachPerformer<FillStunGaugeGA>();
     }
 
     private IEnumerator PerfromEffectPerformer(PerformEffectGA performEffectGA)
@@ -51,6 +53,20 @@ public class EffectSystem : MonoBehaviour
 
         // Preserve the caster and one action per effect, including nested conditional effects.
         QueueEffect(action.Effect, matchingTargets, action.Caster);
+        yield break;
+    }
+
+    private IEnumerator FillStunGaugePerformer(FillStunGaugeGA action)
+    {
+        // Each selected combatant receives one fill, even if a target list contains duplicates.
+        HashSet<CombatantView> filledTargets = new();
+        foreach (CombatantView target in action.Targets)
+        {
+            if (target == null || target.CurrentHealth <= 0 || !filledTargets.Add(target))
+                continue;
+
+            target.AddStunPercent(action.StunFillPercent);
+        }
         yield break;
     }
 

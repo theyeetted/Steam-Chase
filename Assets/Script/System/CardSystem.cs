@@ -230,10 +230,14 @@ public class CardSystem : SingleTon<CardSystem>
             yield break;
         }
 
-        // discardPile.Add(playCardGA.Card);
         CardView cardView = handView.RemoveCard(playCardGA.Card);
         
-        if (cardView != null) {
+        if (playCardGA.Card.Disintegrate) {
+            // Remove only this runtime copy; Setup rebuilds the deck for the next combat.
+            // Keep it out of discard before resolving effects so it cannot draw itself again.
+            if (cardView != null)
+                yield return DisintegrateCard(cardView);
+        } else if (cardView != null) {
             yield return DiscardCard(heroIndex, cardView);
         } else {
             discardPiles[heroIndex].Add(playCardGA.Card);
@@ -300,6 +304,13 @@ public class CardSystem : SingleTon<CardSystem>
         drawPiles[heroIndex].AddRange(discardPiles[heroIndex]);
         discardPiles[heroIndex].Clear();
         Debug.Log("[CardSystem] Refilling deck...");
+    }
+
+    private IEnumerator DisintegrateCard(CardView cardView)
+    {
+        Tween tween = cardView.transform.DOScale(Vector3.zero, 0.15f);
+        yield return tween.WaitForCompletion();
+        Destroy(cardView.gameObject);
     }
 
     private IEnumerator DiscardCard(int heroIndex, CardView cardView)
