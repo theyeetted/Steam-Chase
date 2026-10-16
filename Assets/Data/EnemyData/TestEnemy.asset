@@ -15,3 +15,78 @@ MonoBehaviour:
   <Image>k__BackingField: {fileID: -7304260367883036598, guid: 01daff0823f609f4faecbbb64a7f603f, type: 3}
   <Health>k__BackingField: 50
   <AttackPower>k__BackingField: 5
+  <MaxStun>k__BackingField: 100
+  <Rank>k__BackingField: 0
+  <Skills>k__BackingField:
+  - <SkillName>k__BackingField: Attack 10 dmg
+    <Description>k__BackingField: 
+    <Category>k__BackingField: 0
+    <Purpose>k__BackingField: 0
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: 7746331273383903323
+      <Effect>k__BackingField:
+        rid: 7746331273383903324
+      <RepeatCount>k__BackingField: 1
+      <ChancePercent>k__BackingField: 100
+  - <SkillName>k__BackingField: Heal self 10
+    <Description>k__BackingField: 
+    <Category>k__BackingField: 0
+    <Purpose>k__BackingField: 1
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: 7746331273383903326
+      <Effect>k__BackingField:
+        rid: 7746331273383903325
+      <RepeatCount>k__BackingField: 1
+      <ChancePercent>k__BackingField: 100
+  - <SkillName>k__BackingField: Ultimate kill
+    <Description>k__BackingField: 
+    <Category>k__BackingField: 1
+    <Purpose>k__BackingField: 0
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: 7746331273383903328
+      <Effect>k__BackingField:
+        rid: 7746331273383903327
+      <RepeatCount>k__BackingField: 3
+      <ChancePercent>k__BackingField: 20
+    - <TargetMode>k__BackingField:
+        rid: 7746331273383903329
+      <Effect>k__BackingField:
+        rid: 7746331273383903330
+      <RepeatCount>k__BackingField: 3
+      <ChancePercent>k__BackingField: 20
+  references:
+    version: 2
+    RefIds:
+    - rid: 7746331273383903323
+      type: {class: OneHeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331273383903324
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 10
+    - rid: 7746331273383903325
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 2
+        stackCount: 10
+    - rid: 7746331273383903326
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331273383903327
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 50
+    - rid: 7746331273383903328
+      type: {class: RandomHeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331273383903329
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331273383903330
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 3
+        stackCount: 1

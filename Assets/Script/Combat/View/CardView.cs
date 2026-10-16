@@ -11,13 +11,16 @@ public class CardView : MonoBehaviour
     [SerializeField] private LayerMask dropArea;
 
     public Card Card { get; private set; }
+    public int HeroIndex { get; private set; }
 
     private Vector3 dragStartPosition;
     private Quaternion dragStartRotation;
 
-    public void Setup(Card card)
+    public void Setup(Card card, int heroIndex = 0) // default value of 0 keeps older calls to Setup(card) working
     {
         Card = card;
+        HeroIndex = heroIndex;
+
         Title.text = card.Title;
         Description.text = card.Description;
         Cost.text = card.Cost.ToString();
@@ -42,6 +45,11 @@ public class CardView : MonoBehaviour
     void OnMouseDown()
     {
         if (!Interactions.Instance.PlayerCanInteract()) return;
+
+        if (TurnSystem.Instance == null ||
+            !TurnSystem.Instance.CanHeroPlayCards(HeroIndex))
+            return;
+
         if(Card.MannualTargetEffect != null)
         {
             ManualTargetSystem.Instance.StartTargeting(transform.position);
@@ -68,29 +76,50 @@ public class CardView : MonoBehaviour
 
     void OnMouseUp()
     {
-        if (!Interactions.Instance.PlayerCanInteract()) return;
         if (Card.MannualTargetEffect != null)
         {
+            if (!Interactions.Instance.PlayerCanInteract() ||
+                TurnSystem.Instance == null ||
+                !TurnSystem.Instance.CanHeroPlayCards(HeroIndex))
+                return;
+
             EnemyView target = ManualTargetSystem.Instance.EndTargeting(MouseUtil.GetMousePositionInWorldSpace(-1));
-            if (target != null && EnergySystem.Instance.HasEnoughEnergy(Card.Cost))
+            
+            if (target != null && EnergySystem.Instance.HasEnoughEnergy(Card.Cost, HeroIndex) &&
+            !ActionSystem.Instance.IsPerformingAction)
             {
-                PlayCardGA playCardGA = new(Card, target);
-                ActionSystem.Instance.Perform(playCardGA);
+                ActionSystem.Instance.Perform(new PlayCardGA(Card, target, HeroIndex));
             }
         }
-        else {
-            if (EnergySystem.Instance.HasEnoughEnergy(Card.Cost) && Physics.Raycast(transform.position, Vector3.forward, out RaycastHit hit, 10f, dropArea))
-            {
-                PlayCardGA playCardGA = new(Card);
-                ActionSystem.Instance.Perform(playCardGA);
-            }
-            else
-            {
-                transform.position = dragStartPosition;
-                transform.rotation = dragStartRotation;
-            }
+        if (!Interactions.Instance.PlayerCanInteract() ||
+            TurnSystem.Instance == null ||
+            !TurnSystem.Instance.CanHeroPlayCards(HeroIndex) ||
+            ActionSystem.Instance.IsPerformingAction)
+        {
+            ReturnDraggedCard();
+            return;
+        }
+
+        if (EnergySystem.Instance.HasEnoughEnergy(Card.Cost, HeroIndex) &&
+            Physics.Raycast(transform.position, Vector3.forward,
+                out RaycastHit hit, 10f, dropArea))
+        {
             Interactions.Instance.PlayerIsDraging = false;
+            ActionSystem.Instance.Perform(new PlayCardGA(Card, HeroIndex));
+        }
+        else
+        {
+            ReturnDraggedCard();
         }
         
+    }
+
+    private void ReturnDraggedCard()
+    {
+        transform.position = dragStartPosition;
+        transform.rotation = dragStartRotation;
+
+        if (Interactions.Instance != null)
+            Interactions.Instance.PlayerIsDraging = false;
     }
 }

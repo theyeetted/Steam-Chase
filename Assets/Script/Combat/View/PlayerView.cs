@@ -2,8 +2,15 @@ using UnityEngine;
 
 public class PlayerView : CombatantView
 {
+    [SerializeField] private int heroIndex;
+
     public void Setup(CharData charData)
     {
-        SetupBase(charData.Health, charData.Image);
+        SetupBase(charData.Health, charData.Image, charData.MaxStun);
+    }
+
+    private void OnMouseDown()
+    {
+        CardSystem.Instance.SetActiveHero(heroIndex);
     }
 }

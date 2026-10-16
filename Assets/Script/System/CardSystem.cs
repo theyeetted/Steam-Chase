@@ -5,15 +5,30 @@ using UnityEngine;
 
 public class CardSystem : SingleTon<CardSystem>
 {
+    [Header("Card Positions")]
     [SerializeField] private HandView handView;
-
     [SerializeField] private Transform drawPilePoint;
-
     [SerializeField] private Transform discardPilePoint;
 
-    private readonly List<Card> drawPile = new();
-    private readonly List<Card> hand = new();
-    private readonly List<Card> discardPile = new();
+    private readonly List<Card>[] drawPiles = {
+        new List<Card>(),
+        new List<Card>()
+    };
+
+    private readonly List<Card>[] hands = {
+        new List<Card>(),
+        new List<Card>()
+    };
+
+    private readonly List<Card>[] discardPiles = {
+        new List<Card>(),
+        new List<Card>()
+    };
+
+    private int activeHeroIndex;
+    private Coroutine displayHandCoroutine;
+
+    public int ActiveHeroIndex => activeHeroIndex;
 
     void OnEnable()
     {
@@ -33,89 +48,302 @@ public class CardSystem : SingleTon<CardSystem>
 
     //Publics
 
+    // Added
     public void Setup(List<CardData> deckData)
     {
-        foreach (var cardData in deckData)
+        Setup(0, deckData);
+    }
+
+    public void Setup(int heroIndex, List<CardData> deckData)
+    {
+        if (!IsValidHero(heroIndex)) { return; }
+
+        ResetCards(heroIndex); // Reset card of that hero
+
+        foreach (CardData cardData in deckData) // Add card of specific hero to draw pile
         {
-            Card card = new(cardData);
-            drawPile.Add(card);
+            drawPiles[heroIndex].Add(new Card(cardData));
         }
     }
 
-    //Performer
-    private IEnumerator DrawCardsPerformer(DrawCardsGA drawcardGA)
+    
+    public void SetActiveHero(int heroIndex)
     {
-        for (int i = 0; i < drawcardGA.Amount; i++)
+        if (!IsValidHero(heroIndex)) {
+            Debug.LogWarning($"[CardSystem] Invalid hero index: {heroIndex}. Switch cancelled.");
+            return;
+        }
+
+        if (TurnSystem.Instance != null)
         {
-            if (drawPile.Count == 0)
+            Debug.Log($"[CardSystem] Current phase: {TurnSystem.Instance.CurrentPhase}");
+
+            var turn = TurnSystem.Instance;
+            if (!turn.CanPlayerAct) {
+                Debug.LogWarning("[CardSystem] Cannot switch heroes because it is not the player phase.");
+                return;
+            }
+
+            if (!turn.CanHeroPlayCards(heroIndex))
             {
-                RefillDeck();
+                Debug.LogWarning($"[CardSystem] Hero {heroIndex} cannot act. Checking the other hero...");
+
+                int otherHeroIndex = 1 - heroIndex; // Select another hero
+
+                Debug.LogWarning("[CardSystem] Neither hero can act. Clearing the active hand.");
+
+                if (!TurnSystem.Instance.CanHeroPlayCards(otherHeroIndex))
+                {
+                    if (displayHandCoroutine != null)
+                    {
+                        StopCoroutine(displayHandCoroutine);
+                        displayHandCoroutine = null;
+                    }
+
+                    activeHeroIndex = -1;
+                    handView.ResetHand();
+                    return;
+                }
+                Debug.Log($"[CardSystem] Switching request redirected to hero {otherHeroIndex}.");
+                heroIndex = otherHeroIndex;
+            }
+        }
+
+        if (displayHandCoroutine != null)
+        {
+            Debug.Log("[CardSystem] Stopping previous hand display coroutine.");
+            StopCoroutine(displayHandCoroutine);
+            displayHandCoroutine = null;
+        }
+
+        Debug.Log($"[CardSystem] Activating hero {heroIndex}. Hand size: {hands[heroIndex].Count}");
+        activeHeroIndex = heroIndex;
+        handView.ResetHand();
+        displayHandCoroutine = StartCoroutine(DisplayHand(heroIndex));
+    }
+
+    // Handles stopping the coroutine and resetting the hand in one place
+    private void ResetActiveHero()
+    {
+        if (displayHandCoroutine != null)
+        {
+            StopCoroutine(displayHandCoroutine);
+            displayHandCoroutine = null;
+        }
+
+        handView.ResetHand();
+    }
+
+
+    private IEnumerator DisplayHand(int heroIndex)
+    {
+        foreach (Card card in hands[heroIndex])
+        {
+            CardView cardView = CardViewCreator.Instance.CreateCardView(
+                card,
+                drawPilePoint.position,
+                drawPilePoint.rotation,
+                heroIndex
+            );
+
+            yield return handView.AddCard(cardView);
+        }
+        Debug.Log("[CardSystem] Displaying hand...");
+
+        displayHandCoroutine = null;
+    }
+
+    public void HideActiveHand()
+    {
+        if (displayHandCoroutine != null)
+        {
+            StopCoroutine(displayHandCoroutine);
+            displayHandCoroutine = null;
+        }
+
+        activeHeroIndex = -1;
+        handView.ResetHand();
+        Debug.Log("[CardSystem] Hiding hand...");
+    }
+
+    //Performer
+    private IEnumerator DrawCardsPerformer(DrawCardsGA drawcardsGA)
+    {
+        int heroIndex = drawcardsGA.HeroIndex;
+
+        if (!IsValidHero(heroIndex)) { yield break; }
+
+        for (int i = 0; i < drawcardsGA.Amount; i++)
+        {
+            if (drawPiles[heroIndex].Count == 0)
+            {
+                RefillDeck(heroIndex);
             }
 
             // There may be fewer cards available than the requested draw amount.
-            if (drawPile.Count == 0) yield break;
+            if (drawPiles[heroIndex].Count == 0) { yield break; }
 
-            yield return DrawCard();
+            yield return DrawCard(heroIndex);
         }
     }
 
     private IEnumerator DiscardAllCardsPerformer(DiscardAllCardsGA discardAllCardsGA)
     {
-        foreach(var card in hand)
+        for (int heroIndex = 0; heroIndex < hands.Length; heroIndex++)
         {
-            CardView cardView = handView.RemoveCard(card);
-            yield return DiscardCard(cardView);
+            List<Card> hand = hands[heroIndex];
+
+            foreach (Card card in hand)
+            {
+                CardView cardView = null;
+                if (heroIndex == activeHeroIndex) { cardView = handView.RemoveCard(card); }
+
+                if (cardView != null) {
+                    yield return DiscardCard(heroIndex, cardView);
+                } else { 
+                    discardPiles[heroIndex].Add(card); // Hidden cards must still be discarded.
+                }
+            }
+
+            hand.Clear();
         }
-        hand.Clear();
     }
 
     private IEnumerator PlayCardPerformer(PlayCardGA playCardGA)
     {
-        hand.Remove(playCardGA.Card);
-        discardPile.Add(playCardGA.Card);
-        CardView cardView = handView.RemoveCard(playCardGA.Card);
-        yield return DiscardCard(cardView);
+        int heroIndex = playCardGA.HeroIndex;
 
-        SpendEnergyGA spendEnergyGA = new(playCardGA.Card.Cost);
-        ActionSystem.Instance.AddReaction(spendEnergyGA);
+        if (!IsValidHero(heroIndex)) { yield break; }
 
-        if(playCardGA.Card.MannualTargetEffect != null)
-        {
-            PerformEffectGA performEffectGA = new(playCardGA.Card.MannualTargetEffect, new() { playCardGA.MannualTarget });
-            ActionSystem.Instance.AddReaction(performEffectGA);
+        // A hidden hero cannot play a card.
+        if (heroIndex != activeHeroIndex) {
+            yield break;
         }
 
-        foreach(var effectWrapper in playCardGA.Card.OtherEffects)
+        if (TurnSystem.Instance == null || !TurnSystem.Instance.CanHeroPlayCards(heroIndex))
         {
-            List<CombatantView> targets = effectWrapper.TargetMode.GetTargets(playCardGA.MannualTarget);
-            PerformEffectGA performEffectGA = new(effectWrapper.Effect, targets);
-            ActionSystem.Instance.AddReaction(performEffectGA);
+            Debug.Log($"Hero {heroIndex} cannot play cards right now.");
+            yield break;
+        }
+
+        if (!hands[heroIndex].Remove(playCardGA.Card)) {
+            yield break;
+        }
+
+        // discardPile.Add(playCardGA.Card);
+        CardView cardView = handView.RemoveCard(playCardGA.Card);
+        
+        if (cardView != null) {
+            yield return DiscardCard(heroIndex, cardView);
+        } else {
+            discardPiles[heroIndex].Add(playCardGA.Card);
+        }
+
+        ActionSystem.Instance.AddReaction(
+            new SpendEnergyGA(playCardGA.Card.Cost, heroIndex)
+        );
+
+        if (playCardGA.Card.MannualTargetEffect != null)
+        {
+            PerformEffectGA effectAction = new(
+                playCardGA.Card.MannualTargetEffect,
+                new List<CombatantView> { playCardGA.MannualTarget },
+                HeroSystem.Instance.GetHero(heroIndex)
+            );
+            ActionSystem.Instance.AddReaction(effectAction);
+        }
+
+        foreach (var effectWrapper in playCardGA.Card.OtherEffects)
+        {
+            List<CombatantView> targets = effectWrapper.TargetMode.GetTargets(HeroSystem.Instance.GetHero(heroIndex));
+
+            PerformEffectGA effectAction = new(
+                effectWrapper.Effect,
+                targets,
+                HeroSystem.Instance.GetHero(heroIndex)
+            );
+
+            ActionSystem.Instance.AddReaction(effectAction);
         }
 
     }
+
 
     //Helper
 
-    private IEnumerator DrawCard()
+    private IEnumerator DrawCard(int heroIndex)
     {
-        Card card = drawPile.Draw();
-        hand.Add(card);
-        CardView cardView = CardViewCreator.Instance.CreateCardView(card, drawPilePoint.position, drawPilePoint.rotation);
+        Card card = drawPiles[heroIndex].Draw();
+
+        if (card == null) { yield break; }
+
+        hands[heroIndex].Add(card);
+
+        // Only create visible card objects for the selected hero.
+        if (heroIndex != activeHeroIndex) { yield break; }
+
+        CardView cardView = CardViewCreator.Instance.CreateCardView(
+                    card,
+                    drawPilePoint.position,
+                    drawPilePoint.rotation,
+                    heroIndex
+                );
+        
+        Debug.Log("[CardSystem] Drawing cards...");
+
         yield return handView.AddCard(cardView);
     }
 
-    private void RefillDeck()
+    private void RefillDeck(int heroIndex)
     {
-        drawPile.AddRange(discardPile);
-        discardPile.Clear();
+        drawPiles[heroIndex].AddRange(discardPiles[heroIndex]);
+        discardPiles[heroIndex].Clear();
+        Debug.Log("[CardSystem] Refilling deck...");
     }
 
-    private IEnumerator DiscardCard(CardView cardView)
+    private IEnumerator DiscardCard(int heroIndex, CardView cardView)
     {
-        discardPile.Add(cardView.Card);
+        discardPiles[heroIndex].Add(cardView.Card);
+
+        Debug.Log("[CardSystem] Discarding card...");
+
         cardView.transform.DOScale(Vector3.zero, 0.15f);
         Tween tween = cardView.transform.DOMove(discardPilePoint.position, 0.15f);
         yield return tween.WaitForCompletion();
         Destroy(cardView.gameObject);
+    }
+
+    // Reseting cards
+    public void ResetCards()
+    {
+        for (int i = 0; i < hands.Length; i++)
+            ResetCards(i);
+
+        Debug.Log("[CardSystem] Resetting cards...");
+    }
+
+    public void ResetCards(int heroIndex)
+    {
+        if (!IsValidHero(heroIndex)) { return; }
+
+        if (heroIndex == activeHeroIndex)
+        {
+            if (displayHandCoroutine != null)
+            {
+                StopCoroutine(displayHandCoroutine);
+                displayHandCoroutine = null;
+            }
+            handView.ResetHand();
+        }
+        Debug.Log("[CardSystem] Resetting specific character cards...");
+
+        drawPiles[heroIndex].Clear();
+        hands[heroIndex].Clear();
+        discardPiles[heroIndex].Clear();
+    }
+
+    private bool IsValidHero(int heroIndex)
+    {
+        return heroIndex >= 0 && heroIndex < hands.Length;
     }
 }

@@ -15,3 +15,21 @@ MonoBehaviour:
   <Image>k__BackingField: {fileID: 5575842270196637367, guid: fb95c1889d08b064394e4bec475a8fb1, type: 3}
   <Health>k__BackingField: 80
   <AttackPower>k__BackingField: 8
+  <Rank>k__BackingField: 0
+  <Skills>k__BackingField:
+  - <SkillName>k__BackingField: Do stuff
+    <Description>k__BackingField: Do other stuff
+    <Category>k__BackingField: 0
+    <Purpose>k__BackingField: 0
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: -2
+      <Effect>k__BackingField:
+        rid: -2
+      <RepeatCount>k__BackingField: 0
+      <ChancePercent>k__BackingField: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

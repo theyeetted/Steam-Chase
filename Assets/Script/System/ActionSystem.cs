@@ -32,6 +32,7 @@ public class ActionSystem : SingleTon<ActionSystem>
         performers.Clear();
     }
 
+    // The one that do the action
     public void Perform(GameAction action, System.Action OnPerformFinished = null)
     {
         if (GameManager.Instance != null && !GameManager.Instance.IsPlaying) return;
@@ -54,6 +55,8 @@ public class ActionSystem : SingleTon<ActionSystem>
     {
         reactions?.Add(gameAction);
     }
+
+    // Tell the system what code runs when a specific action happens
     public static void AttachPerformer<T>(Func<T, IEnumerator> performer) where T : GameAction
     {
         Type type = typeof(T);
@@ -65,21 +68,25 @@ public class ActionSystem : SingleTon<ActionSystem>
 
     private IEnumerator Flow(GameAction action, Action OnFlowFinished = null)
     {
+        // Do stuff before action (early reaction)
         reactions = action.PreReactions;
         PerformSubscribers(action, PreSubs);
-        yield return PerformReactions();
+        yield return PerformReactions();  // Recursive
 
+        // Immediate reaction
         reactions = action.PerformReactions;
         yield return PerformPerformer(action);
         yield return PerformReactions();
 
+        // Reaction after action finished
         reactions = action.PostReactions;
         PerformSubscribers(action, postSubs);
         yield return PerformReactions();
 
-        OnFlowFinished?.Invoke();
+        OnFlowFinished?.Invoke(); // Mark as complete
     }
 
+    // For other code to call perform() // do the action
     private IEnumerator PerformPerformer(GameAction action) 
     {
         Type type = action.GetType();
@@ -88,6 +95,7 @@ public class ActionSystem : SingleTon<ActionSystem>
             yield return performers[type](action);
         }
     }
+
 
     private void PerformSubscribers(GameAction action, Dictionary<Type, List<ReactionSubscription>> subs)
     {
@@ -111,12 +119,14 @@ public class ActionSystem : SingleTon<ActionSystem>
         }
     }
 
+    // Remove
     public static void DetachPerformer<T>() where T : GameAction
     {
         Type type = typeof(T);
         if(performers.ContainsKey(type)) performers.Remove(type);
     }
 
+    // Listen and run
     public static void SubscribeReaction<T>(Action<T> reaction, ReactionTiming timing) where T : GameAction
     {
         var subs = timing == ReactionTiming.PRE ? PreSubs : postSubs;

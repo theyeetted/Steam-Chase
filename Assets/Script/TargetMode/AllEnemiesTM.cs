@@ -1,10 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AllEnemies : TargetMode
+public class AllEnemiesTM : TargetMode
 {
-    public override List<CombatantView> GetTargets()
+    public override List<CombatantView> GetTargets(CombatantView caster)
     {
-        return new(EnemySystem.Instance.Enemies);
+        List<CombatantView> targets = new List<CombatantView>();
+
+        if (EnemySystem.Instance == null)
+        {
+            return targets;
+        }
+
+        foreach (EnemyView enemy in EnemySystem.Instance.Enemies)
+        {
+            if (enemy != null && enemy.CurrentHealth > 0)
+            {
+                targets.Add(enemy);
+            }
+        }
+
+        return targets;
     }
 }

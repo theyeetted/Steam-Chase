@@ -5,6 +5,16 @@ using UnityEngine;
 public class DamageSystem : MonoBehaviour
 {
     [SerializeField] private GameObject damageVFX;
+    [SerializeField] private GameObject gameOverPanel;
+
+    private bool gameOverTriggered;
+
+    private void Start()
+    {
+        // Hide the panel until both heroes have been defeated.
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false);
+    }
 
     void OnEnable()
     {
@@ -22,6 +32,9 @@ public class DamageSystem : MonoBehaviour
 
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA)
     {
+        if (gameOverTriggered)
+            yield break;
+
         if (dealDamageGA.Caster is EnemyView enemyCaster &&
             (enemyCaster == null || enemyCaster.CurrentHealth <= 0))
             yield break;
@@ -34,6 +47,9 @@ public class DamageSystem : MonoBehaviour
             : dealDamageGA.Targets;
         foreach (var target in targets)
         {
+            if (gameOverTriggered)
+                yield break;
+
             if (target == null || target.CurrentHealth <= 0)
                 continue;
 
@@ -41,7 +57,13 @@ public class DamageSystem : MonoBehaviour
             if (aggravatedTarget != null && target == aggravatedTarget)
                 damage = Mathf.FloorToInt(damage * 0.85f);
             damage = VulnerableSystem.ModifyIncomingDamage(target, damage);
-            yield return ApplyDamage(target, damage);
+            // Apply the stunned-target bonus after the ordinary damage modifiers.
+            if (target.IsStunned)
+                damage = Mathf.CeilToInt(damage * 1.2f);
+
+            // Stun buildup uses the original amount, before bonuses or Block.
+            int stunAmount = Mathf.FloorToInt(dealDamageGA.Amount * 0.4f);
+            yield return ApplyDamage(target, damage, stunAmount);
             // A landed ordinary attack triggers Mark even when Block absorbs the hit.
             // Follow-Up damage and direct status ticks never enter this trigger path.
             QueueMarkFollowUp(target);
@@ -50,6 +72,9 @@ public class DamageSystem : MonoBehaviour
 
     private IEnumerator ExtraAttackPerformer(ExtraAttackGA extraAttackGA)
     {
+        if (gameOverTriggered)
+            yield break;
+
         CombatantView caster = extraAttackGA.Caster;
         if (caster == null || caster.CurrentHealth <= 0 ||
             caster.GetStatusEffectStacks(StatusEffectType.ExtraAttack) <= 0)
@@ -74,6 +99,9 @@ public class DamageSystem : MonoBehaviour
 
     private IEnumerator FollowUpAttackPerformer(FollowUpAttackGA followUpAttackGA)
     {
+        if (gameOverTriggered)
+            yield break;
+
         CombatantView caster = followUpAttackGA.Caster;
         if (caster == null || caster.CurrentHealth <= 0)
             yield break;
@@ -105,6 +133,9 @@ public class DamageSystem : MonoBehaviour
         int damage = StatusEffectSystem.ModifyStatusDamage(caster, damageBuffType, followUpAttackGA.Damage);
         foreach (var target in targets)
         {
+            if (gameOverTriggered)
+                yield break;
+
             if (target == null || target.CurrentHealth <= 0)
                 continue;
 
@@ -129,19 +160,53 @@ public class DamageSystem : MonoBehaviour
         ActionSystem.Instance.AddReaction(FollowUpAttackGA.CreateFromMark(target, applier));
     }
 
-    private IEnumerator ApplyDamage(CombatantView target, int damage)
+    private IEnumerator ApplyDamage(CombatantView target, int damage, int stunAmount = 0)
     {
         target.Damage(damage);
-        Instantiate(damageVFX, target.transform.position, Quaternion.identity);
+        if (stunAmount > 0)
+            target.AddStun(stunAmount);
+
+        if (damageVFX != null)
+            Instantiate(damageVFX, target.transform.position, Quaternion.identity);
         yield return new WaitForSeconds(0.15f);
         if (target != null && target.CurrentHealth <= 0)
         {
             if (target is EnemyView enemyView)
                 ActionSystem.Instance.AddReaction(new KillEnemyGA(enemyView));
-            else
-            {
-                //Open Game Over Scene
-            }
+            else if (target is PlayerView)
+                CheckGameOver();
         }
+    }
+
+    private void CheckGameOver()
+    {
+        HeroSystem heroSystem = HeroSystem.Instance;
+
+        bool firstHeroDead =
+            heroSystem.playerView == null ||
+            heroSystem.playerView.CurrentHealth <= 0;
+
+        bool secondHeroDead =
+            heroSystem.secondPlayerView == null ||
+            heroSystem.secondPlayerView.CurrentHealth <= 0;
+
+        // One defeated hero is okay. Both defeated means Game Over.
+        if (firstHeroDead && secondHeroDead && !gameOverTriggered)
+        {
+            gameOverTriggered = true;
+
+            if (gameOverPanel != null)
+                gameOverPanel.SetActive(true);
+
+            Debug.Log("GAME OVER: Both heroes have been defeated.");
+        }
+    }
+
+    public void ResetGameOverState()
+    {
+        gameOverTriggered = false;
+
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false);
     }
 }

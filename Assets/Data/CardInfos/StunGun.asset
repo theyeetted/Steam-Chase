@@ -54,3 +54,6 @@ MonoBehaviour:
       data:
         statusEffectType: 1
         stackCount: 3
+    - rid: 7746331273383903371
+      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+      data: 

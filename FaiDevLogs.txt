@@ -1,0 +1,25 @@
+NOTE: These might not have all details down.
+------------------------------------------------------------------------------------------------------
+
+
+Log2 : 15Oct2026 20:00 PM ; (TwoCharactersUpdate)
+- Major changes: 
+	+ EnemyAI (bot)
+	+ Stun system
+	+ Added TurnSystem.cs (handle turns and stun)
+	+ Added more TargetMode (TM)
+- Added a lot of Debug.Log() for turn checking.
+- EnemyAI (System folder) have prioritized action, saving buff, but didn't saving heal action yet (to not make enemy spam heal if their HP always ended up low).
+- Upgrade EnemySkill and Card to be able to repeat effect and chance (action in order; in the inspector). 
+- Upgrade game over UI.
+- CardSystem and TurnSystem managing when if one or both player are stunned, player can't switch to use them or the hand won't be shown to player, which only option is to end turn. In the hand area that is empty, maybe we can add notification window-like UI to show that both characters are stunned and can't act atm.
+
+------------------------------------------------------------------------------------------------------
+
+Log1 : 14Oct2026 ??:00 AM ; (TwoCharactersUpdate)
+- Major changes: 
+	+ Added Ade character with separated deck and draw/discard card pool.
+	+ Can swapping player by clicking.
+	+ Game Over UI (unfinshed).
+	+ Added restarting functions.
+- Changed CardSystem.Setup() to clear old card data before loading a deck again.
