@@ -18,6 +18,9 @@ public class Card
 
     public Sprite Image => data.Image;
 
+    public Character Character => data.Character;
+    public Rarity Rarity => data.Rarity;
+
     private readonly CardData data;
 
     public Card(CardData data)
