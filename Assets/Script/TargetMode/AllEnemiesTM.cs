@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+[UnityEngine.Scripting.APIUpdating.MovedFrom(false, sourceNamespace: "", sourceAssembly: "Assembly-CSharp", sourceClassName: "AllEnemies")]
 public class AllEnemiesTM : TargetMode
 {
     public override List<CombatantView> GetTargets(CombatantView caster)

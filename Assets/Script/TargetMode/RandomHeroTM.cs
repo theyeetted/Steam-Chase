@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class RandomHeroTM : TargetMode
 {
     public override List<CombatantView> GetTargets(CombatantView caster)

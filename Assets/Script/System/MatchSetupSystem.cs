@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
+
 
 public class MatchSetupSystem : MonoBehaviour
 {
@@ -21,7 +21,7 @@ public class MatchSetupSystem : MonoBehaviour
             yield return null;
         }
 
-        HeroSystem.Instance.Setup(charData);
+
         HeroSystem.Instance.Setup(firstCharData, secondCharData);
         EnemySystem.Instance.Setup(enemyDatas);
         
@@ -31,11 +31,7 @@ public class MatchSetupSystem : MonoBehaviour
 
         // Do we need seperated perk for each char?
         PerkSystem.Instance.AddPerk(new Perk(PerkData));
-        DrawCardsGA drawCardsGA = new(5);
-        RefillEnergyGA refillEnergyGA = new();
-        // Perform rejects overlapping actions, so refill after the opening draw.
-        ActionSystem.Instance.Perform(drawCardsGA, () => ActionSystem.Instance.Perform(refillEnergyGA));
-
+        // Use one sequence so the busy action system does not reject the second hero's draw.
         DrawOpeningHands();
     }
 

@@ -47,6 +47,12 @@ public class CombatantView : MonoBehaviour
 
     public void Damage(int damageAmount)
     {
+        Damage(damageAmount, null);
+    }
+
+    public void Damage(int damageAmount, CombatantView caster)
+    {
+        int healthBeforeDamage = CurrentHealth;
         int remainingDamage = damageAmount;
         int currentBlock = GetStatusEffectStacks(StatusEffectType.BLOCK);
         if (currentBlock > 0)
@@ -72,6 +78,8 @@ public class CombatantView : MonoBehaviour
                 CurrentHealth = 0;
             }
         }
+        string casterName = caster != null ? caster.name : "Unknown caster";
+        Debug.Log($"{casterName} deal {healthBeforeDamage - CurrentHealth} Damages to {name}", this);
         transform.DOShakePosition(0.2f, 0.5f);
         UpdateHealthText();
     }

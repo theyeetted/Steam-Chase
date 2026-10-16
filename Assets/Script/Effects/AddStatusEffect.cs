@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class AddStatusEffect : Effect
 {
     [SerializeField] private StatusEffectType statusEffectType;

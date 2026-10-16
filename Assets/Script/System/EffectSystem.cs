@@ -19,8 +19,7 @@ public class EffectSystem : MonoBehaviour
 
     private IEnumerator PerfromEffectPerformer(PerformEffectGA performEffectGA)
     {
-        GameAction effecAction = performEffectGA.Effect.GetGameAction(performEffectGA.Targets, performEffectGA.Caster);
-        ActionSystem.Instance.AddReaction(effecAction);
+        QueueEffect(performEffectGA.Effect, performEffectGA.Targets, performEffectGA.Caster);
         yield return null;
     }
 

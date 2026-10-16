@@ -63,7 +63,7 @@ public class DamageSystem : MonoBehaviour
 
             // Stun buildup uses the original amount, before bonuses or Block.
             int stunAmount = Mathf.FloorToInt(dealDamageGA.Amount * 0.4f);
-            yield return ApplyDamage(target, damage, stunAmount);
+            yield return ApplyDamage(target, damage, dealDamageGA.Caster, stunAmount);
             // A landed ordinary attack triggers Mark even when Block absorbs the hit.
             // Follow-Up damage and direct status ticks never enter this trigger path.
             QueueMarkFollowUp(target);
@@ -140,7 +140,7 @@ public class DamageSystem : MonoBehaviour
                 continue;
 
             // Base four, the dedicated card bonus, and the matching status bonus; Block still applies.
-            yield return ApplyDamage(target, damage);
+            yield return ApplyDamage(target, damage, caster);
         }
     }
 
@@ -160,9 +160,9 @@ public class DamageSystem : MonoBehaviour
         ActionSystem.Instance.AddReaction(FollowUpAttackGA.CreateFromMark(target, applier));
     }
 
-    private IEnumerator ApplyDamage(CombatantView target, int damage, int stunAmount = 0)
+    private IEnumerator ApplyDamage(CombatantView target, int damage, CombatantView caster, int stunAmount = 0)
     {
-        target.Damage(damage);
+        target.Damage(damage, caster);
         if (stunAmount > 0)
             target.AddStun(stunAmount);
 

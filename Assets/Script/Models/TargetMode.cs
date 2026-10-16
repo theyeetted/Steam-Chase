@@ -6,10 +6,9 @@ public abstract class TargetMode
 {
     public abstract List<CombatantView> GetTargets(CombatantView caster);
 
-    public virtual List<CombatantView> GetTargets(CombatantView manualTarget)
+    public virtual List<CombatantView> GetTargets(CombatantView caster, CombatantView manualTarget)
     {
-        // Existing automatic target modes do not need the card's manual selection.
-        return GetTargets();
+        // Automatic target modes use the caster and ignore the card's manual selection.
+        return GetTargets(caster);
     }
-    
 }

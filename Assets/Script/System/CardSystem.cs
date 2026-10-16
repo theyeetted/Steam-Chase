@@ -255,7 +255,8 @@ public class CardSystem : SingleTon<CardSystem>
 
         foreach (var effectWrapper in playCardGA.Card.OtherEffects)
         {
-            List<CombatantView> targets = effectWrapper.TargetMode.GetTargets(HeroSystem.Instance.GetHero(heroIndex));
+            List<CombatantView> targets = effectWrapper.TargetMode.GetTargets(
+                HeroSystem.Instance.GetHero(heroIndex), playCardGA.MannualTarget);
 
             PerformEffectGA effectAction = new(
                 effectWrapper.Effect,
