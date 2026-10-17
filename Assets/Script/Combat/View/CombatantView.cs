@@ -23,6 +23,7 @@ public class CombatantView : MonoBehaviour
     public CombatantView MarkApplier { get; private set; }
     public const int MaxMarkStacks = 5;
     public const int MaxStressStacks = 99;
+    public const int MaxShockStacks = 99;
 
     public bool WasAttackedLastTurn { get; private set; }
     public bool WasAttackedThisCombat { get; private set; }
@@ -122,6 +123,14 @@ public class CombatantView : MonoBehaviour
         Debug.Log($"{casterName} deal {healthBeforeDamage - CurrentHealth} Damages to {name}", this);
         transform.DOShakePosition(0.2f, 0.5f);
         UpdateHealthBar();
+
+        if (this is PlayerView && CurrentHealth < healthBeforeDamage)
+        {
+            PlayerAnimationController animationController =
+                GetComponentInChildren<PlayerAnimationController>(true);
+
+            animationController?.TriggerHurt();
+        }
     }
 
 
@@ -250,6 +259,15 @@ public class CombatantView : MonoBehaviour
             MarkApplier = applier;
             int currentStacks = Mathf.Clamp(GetStatusEffectStacks(type), 0, MaxMarkStacks);
             statusEffects[type] = currentStacks + Mathf.Min(stackCount, MaxMarkStacks - currentStacks);
+        }
+        else if (type == StatusEffectType.SHOCK)
+        {
+            if (CurrentHealth <= 0 || stackCount <= 0)
+                return;
+
+            // Cap both first application and reapplication without overflowing on large grants.
+            int currentStacks = Mathf.Clamp(GetStatusEffectStacks(type), 0, MaxShockStacks);
+            statusEffects[type] = currentStacks + Mathf.Min(stackCount, MaxShockStacks - currentStacks);
         }
         else if (statusEffects.ContainsKey(type)) 
         {

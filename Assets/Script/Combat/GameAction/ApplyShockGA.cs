@@ -1,14 +1,15 @@
 public class ApplyShockGA : GameAction
 {
     public int ShockDamage {  get; private set; }
+    public int ShockStacks { get; private set; }
     public CombatantView Target { get; private set; }
     public bool UseCurrentStacks { get; private set; }
     public StatusTriggerStackMode TriggerStacks { get; private set; }
     public StatusStackConsumption ConsumeStacks { get; private set; } = StatusStackConsumption.One;
 
-    public ApplyShockGA(int shockDamage, CombatantView target)
+    public ApplyShockGA(int shockStacks, CombatantView target)
     {
-        ShockDamage = shockDamage;
+        ShockStacks = shockStacks;
         Target = target;
     }
 

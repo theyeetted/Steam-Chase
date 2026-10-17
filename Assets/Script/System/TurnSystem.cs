@@ -75,8 +75,21 @@ public class TurnSystem : SingleTon<TurnSystem>
         {
             PlayerView hero = HeroSystem.Instance.GetHero(i);
 
+            if (hero == null)
+                continue;
+
+            VulnerableSystem.DecayAtEnemyTurnEnd(hero);
+            hero.AdvanceStatusDamageBuffs();
+            hero.AdvanceCounterTurn();
+
             heroMustSkipTurn[i] =
-                hero != null && hero.CurrentHealth > 0 && hero.IsStunned;
+                hero.CurrentHealth > 0 && hero.IsStunned;
+        }
+
+        if (EnemySystem.Instance != null)
+        {
+            foreach (EnemyView enemy in EnemySystem.Instance.Enemies)
+                VulnerableSystem.DecayAtEnemyTurnEnd(enemy);
         }
 
         CurrentPhase = TurnPhase.Player;

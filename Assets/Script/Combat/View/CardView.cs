@@ -149,6 +149,7 @@ public class CardView : MonoBehaviour
             !TurnSystem.Instance.CanHeroPlayCards(HeroIndex) ||
             ActionSystem.Instance.IsPerformingAction)
         {
+            TriggerAttackAnimation();
             ReturnDraggedCard();
             return;
         }
@@ -157,6 +158,7 @@ public class CardView : MonoBehaviour
             Physics.Raycast(transform.position, Vector3.forward,
                 out RaycastHit hit, 10f, dropArea))
         {
+            TriggerAttackAnimation();
             Interactions.Instance.PlayerIsDraging = false;
             ActionSystem.Instance.Perform(new PlayCardGA(Card, HeroIndex));
         }
@@ -173,5 +175,19 @@ public class CardView : MonoBehaviour
 
         if (Interactions.Instance != null)
             Interactions.Instance.PlayerIsDraging = false;
+    }
+
+    private void TriggerAttackAnimation()
+    {
+        if (Card == null || Card.Type != CardType.Attack || HeroSystem.Instance == null)
+            return;
+
+        PlayerView player = HeroSystem.Instance.GetHero(HeroIndex);
+        PlayerAnimationController animationController =
+            player != null
+                ? player.GetComponentInChildren<PlayerAnimationController>(true)
+                : null;
+
+        animationController?.TriggerAttack();
     }
 }

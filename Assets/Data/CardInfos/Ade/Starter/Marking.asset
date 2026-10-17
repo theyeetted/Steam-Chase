@@ -12,38 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
   m_Name: Marking
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <description>k__BackingField: Apply Mark on enemy
+  <description>k__BackingField: Apply 5 Vulnerable on enemy
   <Image>k__BackingField: {fileID: 0}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 0
   <Character>k__BackingField: 1
+  <Type>k__BackingField: 1
   <Disintegrate>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
     rid: 9151934942456578052
-  <OtherTargetEffects>k__BackingField:
-  - rid: 9151934958235025490
+  <OtherTargetEffects>k__BackingField: []
   references:
     version: 2
     RefIds:
     - rid: 9151934942456578052
       type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
       data:
-        statusEffectType: 5
+        statusEffectType: 0
         stackCount: 5
-    - rid: 9151934958235025490
-      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
-      data:
-        <TargetMode>k__BackingField:
-          rid: 9151934958235025491
-        <Effect>k__BackingField:
-          rid: 9151934958235025492
-        <RepeatCount>k__BackingField: 1
-        <ChancePercent>k__BackingField: 100
-    - rid: 9151934958235025491
-      type: {class: ManualTargetTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 9151934958235025492
-      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
-      data:
-        statusEffectType: 1
-        stackCount: 20

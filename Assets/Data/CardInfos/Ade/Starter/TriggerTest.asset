@@ -17,6 +17,7 @@ MonoBehaviour:
   <Cost>k__BackingField: 0
   <Rarity>k__BackingField: 3
   <Character>k__BackingField: 1
+  <Type>k__BackingField: 1
   <Disintegrate>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
     rid: 9151934958235025408

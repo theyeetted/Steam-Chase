@@ -20,6 +20,7 @@ public class Card
 
     public Character Character => data.Character;
     public Rarity Rarity => data.Rarity;
+    public CardType Type => data.Type;
 
     private readonly CardData data;
 

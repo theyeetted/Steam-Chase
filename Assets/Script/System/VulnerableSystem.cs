@@ -61,4 +61,9 @@ public class VulnerableSystem : MonoBehaviour
         }
         yield break;
     }
+
+    public static void DecayAtEnemyTurnEnd(CombatantView Target)
+    {
+        Target.RemoveStatusEffect(StatusEffectType.VULNERABLE, 1);
+    }
 }

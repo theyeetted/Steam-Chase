@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ShockSystem : MonoBehaviour
 {
+    private const int DamagePerStack = 4;
+
     [SerializeField] private GameObject ShockVFX;
 
     private void OnEnable()
@@ -45,11 +47,14 @@ public class ShockSystem : MonoBehaviour
         if (shockStacks <= 0)
             yield break;
 
-        int damage = applyShockGA.UseCurrentStacks
+        int triggeredStacks = applyShockGA.UseCurrentStacks
             ? (applyShockGA.TriggerStacks == StatusTriggerStackMode.One ? 1 : shockStacks)
-            : applyShockGA.ShockDamage;
-        if (damage <= 0)
+            : applyShockGA.ShockStacks;
+        if (triggeredStacks <= 0)
             yield break;
+
+        // Normal ticks and card triggers use the same four damage per stack.
+        int damage = Mathf.Clamp(triggeredStacks, 0, CombatantView.MaxShockStacks) * DamagePerStack;
 
         int consumedStacks = applyShockGA.ConsumeStacks switch
         {
