@@ -38,14 +38,31 @@ public class ShockSystem : MonoBehaviour
     {
         CombatantView target = applyShockGA.Target;
         // Queued targets may have died or lost Shock to an earlier card effect.
-        if (target == null || target.CurrentHealth <= 0 || applyShockGA.ShockDamage <= 0 ||
-            target.GetStatusEffectStacks(StatusEffectType.SHOCK) <= 0)
+        if (target == null || target.CurrentHealth <= 0)
             yield break;
+
+        int shockStacks = target.GetStatusEffectStacks(StatusEffectType.SHOCK);
+        if (shockStacks <= 0)
+            yield break;
+
+        int damage = applyShockGA.UseCurrentStacks
+            ? (applyShockGA.TriggerStacks == StatusTriggerStackMode.One ? 1 : shockStacks)
+            : applyShockGA.ShockDamage;
+        if (damage <= 0)
+            yield break;
+
+        int consumedStacks = applyShockGA.ConsumeStacks switch
+        {
+            StatusStackConsumption.One => 1,
+            StatusStackConsumption.All => shockStacks,
+            _ => 0
+        };
 
         if (ShockVFX != null)
             Instantiate(ShockVFX, target.transform.position, Quaternion.identity);
-        target.Damage(applyShockGA.ShockDamage);
-        target.RemoveStatusEffect(StatusEffectType.SHOCK, 1);
+        target.Damage(damage);
+        if (consumedStacks > 0)
+            target.RemoveStatusEffect(StatusEffectType.SHOCK, consumedStacks);
         yield return new WaitForSeconds(1f);
 
         // A lethal tick must remove the enemy before subsequent card effects resolve.

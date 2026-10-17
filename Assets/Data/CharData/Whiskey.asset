@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9f3eaa5c1431f743b6bc48670db899a, type: 3}
   m_Name: Whiskey
   m_EditorClassIdentifier: Assembly-CSharp::CharData
-  <Image>k__BackingField: {fileID: 2424721101523345921, guid: 0ddedd9178e08164e82d9b3aef79c6d9, type: 3}
+  <Image>k__BackingField: {fileID: -6951953231129395075, guid: 62bfaded500069a47b7d5255d097430c, type: 3}
   <Health>k__BackingField: 220
   <Deck>k__BackingField:
   - {fileID: 11400000, guid: 9c0d227722e0b7a4b977a332bad4c673, type: 2}

@@ -10,6 +10,7 @@ public class EnemySystem : SingleTon<EnemySystem>
     [SerializeField] private EnemyBoardView enemyBoardView;
 
     private readonly EnemyAI enemyAI = new EnemyAI();
+    private Coroutine prepareActionsRoutine;
 
     public List<EnemyView> Enemies => enemyBoardView.EnemyViews;
 
@@ -19,6 +20,7 @@ public class EnemySystem : SingleTon<EnemySystem>
         ActionSystem.AttachPerformer<EnemyTurnGA>(EnemyTurnPerformer);
         ActionSystem.AttachPerformer<AttackHeroGA>(AttackHeroPerformer);
         ActionSystem.AttachPerformer<KillEnemyGA>(KillEnemyPerformer);
+        ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnFinished, ReactionTiming.POST);
 
     }
 
@@ -27,25 +29,77 @@ public class EnemySystem : SingleTon<EnemySystem>
         ActionSystem.DetachPerformer<EnemyTurnGA>();
         ActionSystem.DetachPerformer<AttackHeroGA>();
         ActionSystem.DetachPerformer<KillEnemyGA>();
+        ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnFinished, ReactionTiming.POST);
+        ResetActionPlans();
     }
 
     public void Setup(List<EnemyData> enemyDatas)
     {
+        ResetActionPlans();
         foreach (var enemyData in enemyDatas)
         {
             enemyBoardView.AddEnemy(enemyData);
         }
+        // MatchSetupSystem has already initialized the heroes. Show turn-one intent now.
+        PrepareEnemyActions();
+    }
+
+    private void PrepareEnemyActions()
+    {
+        enemyAI.ClearPlans();
+        List<PlayerView> heroes = enemyAI.GetLivingHeroes();
+        foreach (EnemyView enemy in Enemies)
+            enemyAI.PlanTurn(enemy, heroes);
+    }
+
+    private void EnemyTurnFinished(EnemyTurnGA action)
+    {
+        if (prepareActionsRoutine != null)
+            StopCoroutine(prepareActionsRoutine);
+        prepareActionsRoutine = StartCoroutine(PrepareNextPlayerTurn());
+    }
+
+    private IEnumerator PrepareNextPlayerTurn()
+    {
+        // POST subscribers still queue draws, Shock and status decay. Wait for the
+        // entire action flow so the next intent sees the resulting health/targets.
+        do
+        {
+            yield return null;
+        }
+        while (ActionSystem.Instance != null && ActionSystem.Instance.IsPerformingAction);
+
+        prepareActionsRoutine = null;
+        if (GameManager.Instance == null || GameManager.Instance.IsPlaying)
+            PrepareEnemyActions();
+    }
+
+    private void ResetActionPlans()
+    {
+        if (prepareActionsRoutine != null)
+            StopCoroutine(prepareActionsRoutine);
+        prepareActionsRoutine = null;
+        enemyAI.ClearPlans();
     }
     private IEnumerator EnemyTurnPerformer(EnemyTurnGA enemyTurnGA)
     {
         foreach (EnemyView enemy in Enemies.ToList())
         {
-            if (enemy == null || enemy.CurrentHealth <= 0)
+            if (enemy == null)
                 continue;
+
+            if (enemy.CurrentHealth <= 0)
+            {
+                enemyAI.ForgetPlan(enemy);
+                enemy.ClearActionDisplay();
+                continue;
+            }
 
             // STUN: skip this enemy's turn.
             if (enemy.IsStunned)
             {
+                enemyAI.ForgetPlan(enemy);
+                enemy.ClearActionDisplay();
                 enemy.ConsumeStun();
                 continue;
             }
@@ -57,13 +111,7 @@ public class EnemySystem : SingleTon<EnemySystem>
             int shock = enemy.GetStatusEffectStacks(StatusEffectType.SHOCK);
             if (shock > 0) { ActionSystem.Instance.AddReaction(new ApplyShockGA(shock, enemy)); }
 
-            List<PlayerView> heroes = enemyAI.GetLivingHeroes();
-
-            if (heroes.Count > 0 && !enemyAI.TryAct(enemy, heroes)) {
-                // If no skill was used, attack a random living hero normally.
-                PlayerView target = heroes[Random.Range(0, heroes.Count)];
-                ActionSystem.Instance.AddReaction(new AttackHeroGA(enemy, target));
-            }
+            enemyAI.ExecutePlannedTurn(enemy);
 
             // Cooldown lasts until this enemy has completed
             // one turn after recovering from stun.
@@ -108,12 +156,14 @@ public class EnemySystem : SingleTon<EnemySystem>
 
     private IEnumerator KillEnemyPerformer(KillEnemyGA killEnemyGA)
     {
+        enemyAI.ForgetPlan(killEnemyGA.EnemyView);
         yield return enemyBoardView.RemoveEnemy(killEnemyGA.EnemyView);
     }
 
     // Removes all surviving enemies, waits for their removal animations, then creates fresh enemies from the original data.
     public IEnumerator ResetEnemies(List<EnemyData> enemyDatas)
     {
+        ResetActionPlans();
         List<EnemyView> oldEnemies = new(Enemies);
 
         foreach (EnemyView enemy in oldEnemies)
@@ -125,5 +175,6 @@ public class EnemySystem : SingleTon<EnemySystem>
         {
             enemyBoardView.AddEnemy(enemyData);
         }
+        PrepareEnemyActions();
     }
 }

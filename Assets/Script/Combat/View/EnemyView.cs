@@ -4,12 +4,19 @@ using System.Collections.Generic;
 
 public class EnemyView : CombatantView
 {
-    [SerializeField] private TMP_Text attackText;
+    //[SerializeField] private TMP_Text attackText;
+    [SerializeField] private ActionDisplayUI actionDisplayUI;
 
     public int AttackPower {  get; set; }
     public List<EnemySkill> Skills { get; private set; } = new();
 
     private readonly HashSet<EnemySkill> usedBuffSkills = new();
+
+    private void Awake()
+    {
+        if (actionDisplayUI == null)
+            actionDisplayUI = GetComponentInChildren<ActionDisplayUI>(true);
+    }
     
 
     public void Setup(EnemyData enemyData)
@@ -17,7 +24,8 @@ public class EnemyView : CombatantView
         AttackPower = enemyData.AttackPower;
         Skills = enemyData.Skills ?? new List<EnemySkill>();
         usedBuffSkills.Clear();
-        UpdateAttackText();
+        ClearActionDisplay();
+        //UpdateAttackText();
         SetupBase(enemyData.Health, enemyData.Image, enemyData.MaxStun);
     }
 
@@ -28,9 +36,27 @@ public class EnemyView : CombatantView
     public void MarkBuffUsed(EnemySkill skill) =>
         usedBuffSkills.Add(skill);
 
-
-    private void UpdateAttackText()
+    public void ClearActionDisplay()
     {
-        if (attackText != null) { attackText.text = "ATK: " + AttackPower; }
+        if (actionDisplayUI != null)
+            actionDisplayUI.Clear();
     }
+
+    public void ShowSkillActions(IReadOnlyList<EnemySkillEffect> queuedEffects)
+    {
+        if (actionDisplayUI != null)
+            actionDisplayUI.ShowEffects(queuedEffects);
+    }
+
+    public void ShowNormalAttack()
+    {
+        if (actionDisplayUI != null)
+            actionDisplayUI.ShowAttack(AttackPower);
+    }
+
+
+    //private void UpdateAttackText()
+    //{
+    //    if (attackText != null) { attackText.text = "ATK: " + AttackPower; }
+    //}
 }

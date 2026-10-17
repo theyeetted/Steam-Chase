@@ -1,5 +1,16 @@
 # Project instructions
 
+## Agent worktree policy
+
+Apply this policy to every task in this repository unless the user explicitly directs otherwise.
+
+1. Before starting work, inspect `git worktree list --porcelain` and verify the paths and branches. Identify the user's active checkout separately from the agent worktree. The user's current checkout is `D:/universityProject/Game Logic/Steam Chase` on `MergeforDemo`; verify this rather than assuming the chat's working directory is the user's checkout.
+2. Maintain one reusable agent worktree for this repository. If an agent worktree already exists, update and reuse it for the task. Do not create another worktree just because a new task or chat starts, or because the current chat points to a stale directory. Empty, unregistered directories do not count as existing worktrees.
+3. Create an agent worktree only when no agent worktree exists. Base it explicitly on the user's current working branch/commit (currently `MergeforDemo`), not an unrelated default branch or an old chat commit.
+4. Before implementing each task, bring the existing agent worktree up to date with the user's current project state. Inspect committed and uncommitted changes in both checkouts. Fast-forward or merge safely where appropriate, and incorporate any uncommitted source changes needed for the task without overwriting existing work. Preserve local changes and unpushed commits; never use a destructive reset, clean, or worktree deletion as a shortcut for updating.
+5. Perform implementation work in that reused or newly created agent worktree. Verify the target path before editing. Leave the user's active checkout and its uncommitted changes untouched unless the user explicitly requests edits there, such as updating this instruction file.
+6. If multiple agent worktrees already exist, select and update an existing one instead of creating another. Do not delete the others without the user's instruction. Report the worktree used and any synchronization conflict that cannot be resolved without losing work.
+
 ## Unity Editor restrictions
 
 These restrictions apply to all work in this project, not only status effects. Without the user's explicit permission for the action, do not:

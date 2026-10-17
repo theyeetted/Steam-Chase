@@ -205,20 +205,27 @@ public class DamageSystem : MonoBehaviour
 
         EnemyView target = action.Target;
         // An earlier reaction may have killed the enemy, cleared Stun, or consumed Stress.
-        if (target == null || target.CurrentHealth <= 0 || !target.IsStunned)
+        if (target == null || target.CurrentHealth <= 0 || (action.RequiresStun && !target.IsStunned))
             yield break;
 
         int stressStacks = target.GetStatusEffectStacks(StatusEffectType.Stress);
         if (stressStacks <= 0)
             yield break;
 
-        // One damage per stack plus Stun's 20%, rounded up to whole damage.
+        // One damage per triggered stack plus Stun's 20% when present, rounded up.
         // Exact integer arithmetic avoids floating-point over-rounding (25 stacks = 30 damage).
-        int damage = stressStacks + (stressStacks + 4) / 5;
+        int triggeredStacks = action.TriggerStacks == StatusTriggerStackMode.One ? 1 : stressStacks;
+        int damage = triggeredStacks + (target.IsStunned ? (triggeredStacks + 4) / 5 : 0);
+        int consumedStacks = action.ConsumeStacks switch
+        {
+            StatusStackConsumption.One => 1,
+            StatusStackConsumption.All => stressStacks,
+            _ => 0
+        };
         // Bypass attack/status bonuses, Vulnerable, and Mark triggers. Keep Block, VFX, and death handling.
         yield return ApplyDamage(target, damage, null);
-        if (target != null)
-            target.RemoveStatusEffect(StatusEffectType.Stress, stressStacks);
+        if (target != null && consumedStacks > 0)
+            target.RemoveStatusEffect(StatusEffectType.Stress, consumedStacks);
     }
 
     private static void QueueMarkFollowUp(CombatantView target)

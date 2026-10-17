@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-
-/// <summary>Immediately triggers one normal Shock tick on each selected target.</summary>
+/// <summary>
+/// Compatibility type for existing serialized card effects. Also exposes the status-trigger options.
+/// Defaults preserve the original Shock tick: all stacks for damage, consuming one stack.
+/// Use TriggerStatusEffect when configuring a new effect.
+/// </summary>
 [System.Serializable]
-public class TriggerShockEffect : Effect
+public class TriggerShockEffect : TriggerStatusEffect
 {
-    public override GameAction GetGameAction(List<CombatantView> targets, CombatantView caster)
-    {
-        return new TriggerShockGA(targets);
-    }
 }

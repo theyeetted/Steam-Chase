@@ -8,7 +8,7 @@ public enum EnemyRank { Common, Elite, Boss }
 
 public enum EnemySkillCategory { Basic, Ultimate }
 
-public enum EnemySkillPurpose { Attack, Heal, Buff, Other }
+public enum EnemySkillPurpose { Attack, Heal, Buff, Debuff, Other }
 
 [Serializable]
 public class EnemySkill

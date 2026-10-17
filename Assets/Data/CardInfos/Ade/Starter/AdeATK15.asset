@@ -15,6 +15,9 @@ MonoBehaviour:
   <description>k__BackingField: Ade attack
   <Image>k__BackingField: {fileID: 0}
   <Cost>k__BackingField: 1
+  <Rarity>k__BackingField: 2
+  <Character>k__BackingField: 1
+  <Disintegrate>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
     rid: 7746331273383903304
   <OtherTargetEffects>k__BackingField: []

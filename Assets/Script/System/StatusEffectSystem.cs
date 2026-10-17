@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class StatusEffectSystem : MonoBehaviour
@@ -48,6 +49,7 @@ public class StatusEffectSystem : MonoBehaviour
     void OnEnable()
     {
         ActionSystem.AttachPerformer<AddStatusEffectGA>(AddStatusEffectPerformer);
+        ActionSystem.AttachPerformer<TriggerStatusGA>(TriggerStatusPerformer);
         ActionSystem.AttachPerformer<DecayAttackUpGA>(DecayAttackUpPerformer);
         ActionSystem.AttachPerformer<DecayAttackDownGA>(DecayAttackDownPerformer);
         ActionSystem.AttachPerformer<ExpireAggravatedGA>(ExpireAggravatedPerformer);
@@ -69,6 +71,28 @@ public class StatusEffectSystem : MonoBehaviour
         ActionSystem.DetachPerformer<DecayStatusDamageBuffsGA>();
         ActionSystem.DetachPerformer<DecayCounterGA>();
         ActionSystem.DetachPerformer<AddStatusEffectGA>();
+        ActionSystem.DetachPerformer<TriggerStatusGA>();
+    }
+
+    private IEnumerator TriggerStatusPerformer(TriggerStatusGA action)
+    {
+        HashSet<CombatantView> triggeredTargets = new();
+        foreach (CombatantView target in action.Targets)
+        {
+            if (target == null || target.CurrentHealth <= 0 || !triggeredTargets.Add(target))
+                continue;
+
+            // Each child action reads stacks at execution, after earlier targets' reactions.
+            if (action.StatusEffectType == StatusEffectType.SHOCK)
+            {
+                ActionSystem.Instance.AddReaction(new ApplyShockGA(target, action.TriggerStacks, action.ConsumeStacks));
+            }
+            else if (action.StatusEffectType == StatusEffectType.Stress && target is EnemyView enemy)
+            {
+                ActionSystem.Instance.AddReaction(new DetonateStressGA(enemy, action.TriggerStacks, action.ConsumeStacks));
+            }
+        }
+        yield break;
     }
 
     private void EnemyTurnPreReaction(EnemyTurnGA enemyTurnGA)

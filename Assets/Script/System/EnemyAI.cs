@@ -5,19 +5,109 @@ using UnityEngine;
 
 public class EnemyAI
 {
+    private sealed class PlannedTurn
+    {
+        public readonly List<PerformEffectGA> Effects = new();
+        public readonly List<EnemySkillEffect> DisplayEffects = new();
+        public bool IsNormalAttack;
+        public PlayerView AttackTarget;
+        public EnemySkill BuffToMarkUsed;
+    }
+
+    private readonly Dictionary<EnemyView, PlannedTurn> plannedTurns = new();
+
+    // Selecting an intent must not execute effects or consume a once-per-fight buff.
+    public void PlanTurn(EnemyView enemy, List<PlayerView> heroes)
+    {
+        if (enemy == null)
+            return;
+
+        ForgetPlan(enemy);
+        enemy.ClearActionDisplay();
+        if (enemy.CurrentHealth <= 0 || enemy.IsStunned || heroes == null || heroes.Count == 0)
+            return;
+
+        PlannedTurn plan = new();
+        if (TryChooseSkill(enemy, heroes, plan))
+        {
+            enemy.ShowSkillActions(plan.DisplayEffects);
+        }
+        else
+        {
+            plan.IsNormalAttack = true;
+            plan.AttackTarget = heroes[Random.Range(0, heroes.Count)];
+            enemy.ShowNormalAttack();
+        }
+        plannedTurns[enemy] = plan;
+    }
+
+    public void ExecutePlannedTurn(EnemyView enemy)
+    {
+        if (enemy == null)
+            return;
+        if (enemy.CurrentHealth <= 0 || enemy.IsStunned)
+        {
+            ForgetPlan(enemy);
+            enemy.ClearActionDisplay();
+            return;
+        }
+
+        // Covers enemies added after the player-turn preview was prepared.
+        if (!plannedTurns.TryGetValue(enemy, out PlannedTurn plan))
+        {
+            PlanTurn(enemy, GetLivingHeroes());
+            if (!plannedTurns.TryGetValue(enemy, out plan))
+                return;
+        }
+        plannedTurns.Remove(enemy);
+
+        if (plan.IsNormalAttack)
+        {
+            PlayerView target = plan.AttackTarget;
+            if (target == null || target.CurrentHealth <= 0)
+                target = GetLivingHeroes().FirstOrDefault();
+            if (target != null)
+                ActionSystem.Instance.AddReaction(new AttackHeroGA(enemy, target));
+            return;
+        }
+
+        bool queuedAny = false;
+        foreach (PerformEffectGA effect in plan.Effects)
+        {
+            // The player may have killed a selected target after seeing the intent.
+            // Keep the chosen effects and successful rolls; never pick a new skill here.
+            List<CombatantView> targets = effect.Targets
+                .Where(target => target != null && target.CurrentHealth > 0).ToList();
+            if (targets.Count == 0)
+                continue;
+            ActionSystem.Instance.AddReaction(new PerformEffectGA(effect.Effect, targets, enemy));
+            queuedAny = true;
+        }
+        if (queuedAny && plan.BuffToMarkUsed != null)
+            enemy.MarkBuffUsed(plan.BuffToMarkUsed);
+    }
+
+    public void ForgetPlan(EnemyView enemy)
+    {
+        if (enemy != null)
+            plannedTurns.Remove(enemy);
+    }
+
+    public void ClearPlans() => plannedTurns.Clear();
+
     private void Log(string message) //For debug purpose
     {
         Debug.Log($"[EnemyAI] {message}");
     }
 
-    public bool TryAct(EnemyView enemy, List<PlayerView> heroes)
+    private bool TryChooseSkill(EnemyView enemy, List<PlayerView> heroes, PlannedTurn plan)
     {
         if (enemy == null || heroes == null || heroes.Count == 0) { 
             Log("Cannot act: enemy or living heroes are missing.");
             return false; 
         }
 
-        Log($"--- {enemy.name}'s turn | HP: {enemy.CurrentHealth}/{enemy.MaxHealth} ---");
+        Log($"--- Planning {enemy.name}'s next turn | HP: {enemy.CurrentHealth}/{enemy.MaxHealth} ---");
 
         // 1. 30% chance to use a random skill.
         float randomSkillRoll = Random.value;
@@ -27,7 +117,7 @@ public class EnemyAI
         {
             Log("Random skill roll SUCCESS. Trying a random skill.");
 
-            if (TrySkill(enemy, enemy.Skills))
+            if (TrySkill(enemy, enemy.Skills, plan))
                 return true;
 
             Log("Random skill attempt failed: no usable skill.  Go next >>>");
@@ -49,7 +139,7 @@ public class EnemyAI
             Log($"Priority 2: Low-HP target found: {weak.name} " +
                 $"({weak.CurrentHealth}/{weak.MaxHealth} HP). Trying an attack skill.");
 
-            if (TrySkill(enemy, Skills(enemy, EnemySkillPurpose.Attack), weak))
+            if (TrySkill(enemy, Skills(enemy, EnemySkillPurpose.Attack), plan, weak))
                 return true;
 
             Log("No usable attack skill for the low-HP target.  Go next >>>");
@@ -71,7 +161,7 @@ public class EnemyAI
             {
                 Log("Heal roll SUCCESS. Trying a healing skill.");
 
-                if (TrySkill(enemy, Skills(enemy, EnemySkillPurpose.Heal)))
+                if (TrySkill(enemy, Skills(enemy, EnemySkillPurpose.Heal), plan))
                     return true;
 
                 Log("Heal attempt failed: no usable healing skill.  Go next >>>");
@@ -94,7 +184,7 @@ public class EnemyAI
         {
             Log($"Priority 4: Stunned hero found: {stunned.name}. Trying an attack skill.");
 
-            if (TrySkill(enemy, Skills(enemy, EnemySkillPurpose.Attack), stunned))
+            if (TrySkill(enemy, Skills(enemy, EnemySkillPurpose.Attack), plan, stunned))
                 return true;
         }
         else
@@ -112,10 +202,10 @@ public class EnemyAI
         {
             Log($"Priority 5: Trying buff skill '{buff.SkillName}'.");
 
-            if (TrySkill(enemy, new List<EnemySkill> { buff }))
+            if (TrySkill(enemy, new List<EnemySkill> { buff }, plan))
             {
-                enemy.MarkBuffUsed(buff);
-                Log($"Buff skill '{buff.SkillName}' was used and marked as used.");
+                plan.BuffToMarkUsed = buff;
+                Log($"Buff skill '{buff.SkillName}' is planned; it will be marked used when queued.");
                 return true;
             }
 
@@ -136,7 +226,7 @@ public class EnemyAI
         {
             Log("Attack skill roll SUCCESS. Trying an attack skill.");
 
-            if (TrySkill(enemy, Skills(enemy, EnemySkillPurpose.Attack)))
+            if (TrySkill(enemy, Skills(enemy, EnemySkillPurpose.Attack), plan))
                 return true;
 
             Log("Attack skill attempt failed: no usable attack skill.  Go next >>>");
@@ -153,7 +243,7 @@ public class EnemyAI
 
     // METHODS -----------------------------------
 
-    private bool TrySkill(EnemyView enemy, List<EnemySkill> skills, PlayerView forcedTarget = null)
+    private bool TrySkill(EnemyView enemy, List<EnemySkill> skills, PlannedTurn plan, PlayerView forcedTarget = null)
     {
         if (skills == null || skills.Count == 0) { 
             Log($"{enemy.name}: No skills available for this decision.");
@@ -168,7 +258,9 @@ public class EnemyAI
 
             Log($"Checking skill: '{skill.SkillName}'");
 
-            bool queuedAny  = false;
+            // Resolve chance and targets once while planning, without queuing combat.
+            List<EnemySkillEffect> selectedEffects = new();
+            List<PerformEffectGA> plannedEffects = new();
 
             // Find the largest repeat count among this skill's effects.
             int maxRepeats = skill.Effects
@@ -228,7 +320,7 @@ public class EnemyAI
                     if (targets == null)
                         continue;
 
-                    // Ignore targets already dead when this effect is queued.
+                    // Ignore targets already dead when this effect is planned.
                     targets.RemoveAll(t => t == null || t.CurrentHealth <= 0);
 
                     if (targets.Count == 0)
@@ -243,18 +335,18 @@ public class EnemyAI
                             $"({target.CurrentHealth}/{target.MaxHealth} HP)");
                     }
 
-                    ActionSystem.Instance.AddReaction(
-                        new PerformEffectGA(effect.Effect, targets, enemy)
-                    );
+                    plannedEffects.Add(new PerformEffectGA(effect.Effect, targets, enemy));
 
-                    queuedAny = true;
-                    Log($"Queued {effect.Effect.GetType().Name}.");
+                    selectedEffects.Add(effect);
+                    Log($"Planned {effect.Effect.GetType().Name}.");
                 }
             }
 
-            if (queuedAny)
+            if (selectedEffects.Count > 0)
             {
-                Log($"Skill '{skill.SkillName}' queued successfully.");
+                plan.Effects.AddRange(plannedEffects);
+                plan.DisplayEffects.AddRange(selectedEffects);
+                Log($"Skill '{skill.SkillName}' planned successfully.");
                 return true;
             }
 
@@ -282,6 +374,9 @@ public class EnemyAI
 
     public List<PlayerView> GetLivingHeroes()
     {
+        if (HeroSystem.Instance == null)
+            return new List<PlayerView>();
+
         var heroes = new List<PlayerView>
         {
             HeroSystem.Instance.playerView,

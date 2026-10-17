@@ -5,10 +5,12 @@ using UnityEngine;
 
 public class CombatantView : MonoBehaviour
 {
-    [SerializeField] private TMP_Text healthText;
+    //[SerializeField] private TMP_Text healthText;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private StatusEffectsUI statusEffectsUI;
     [SerializeField] private StunBarUI stunBarUI;
+    [SerializeField] private HealthBarUI HealthBarUI;
+
 
     public int MaxHealth { get; private set; }
     public int CurrentHealth { get; private set; }
@@ -49,7 +51,7 @@ public class CombatantView : MonoBehaviour
         CurrentHealth = health;
         spriteRenderer.sprite = image;
         SetupStun(maxStun);
-        UpdateHealthText();
+        UpdateHealthBar();
 
         Debug.Log("Combatant setup Complete.");
     }
@@ -78,9 +80,9 @@ public class CombatantView : MonoBehaviour
         WasAttackedThisCombat = false;
     }
 
-    private void UpdateHealthText()
+    private void UpdateHealthBar()
     {
-        healthText.text = "HP: " + CurrentHealth;
+        HealthBarUI.UpdateBar(CurrentHealth, MaxHealth);
     }
 
     public void Damage(int damageAmount)
@@ -119,7 +121,7 @@ public class CombatantView : MonoBehaviour
         string casterName = caster != null ? caster.name : "Unknown caster";
         Debug.Log($"{casterName} deal {healthBeforeDamage - CurrentHealth} Damages to {name}", this);
         transform.DOShakePosition(0.2f, 0.5f);
-        UpdateHealthText();
+        UpdateHealthBar();
     }
 
 
@@ -319,7 +321,7 @@ public class CombatantView : MonoBehaviour
         statusEffects.Clear();
 
         SetupStun(MaxStun);
-        UpdateHealthText();
+        UpdateHealthBar();
 
         foreach (StatusEffectType type in System.Enum.GetValues(typeof(StatusEffectType)))
         {
