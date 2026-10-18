@@ -80,7 +80,7 @@ public class TurnSystem : SingleTon<TurnSystem>
 
             VulnerableSystem.DecayAtEnemyTurnEnd(hero);
             hero.AdvanceStatusDamageBuffs();
-            hero.AdvanceCounterTurn();
+            // Counter expiry is owned by StartPlayerPhaseGA after all end-phase reactions.
 
             heroMustSkipTurn[i] =
                 hero.CurrentHealth > 0 && hero.IsStunned;

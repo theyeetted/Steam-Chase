@@ -65,7 +65,10 @@ public class ShockSystem : MonoBehaviour
 
         if (ShockVFX != null)
             Instantiate(ShockVFX, target.transform.position, Quaternion.identity);
+        int healthBefore = target.CurrentHealth;
         target.Damage(damage);
+        applyShockGA.Results?.Add(new DamageResult(target.GetInstanceID(), damage,
+            healthBefore - target.CurrentHealth, false));
         if (consumedStacks > 0)
             target.RemoveStatusEffect(StatusEffectType.SHOCK, consumedStacks);
         yield return new WaitForSeconds(1f);

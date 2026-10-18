@@ -32,13 +32,16 @@ public class CombatantView : MonoBehaviour
     private Dictionary<StatusEffectType, int> statusEffects = new();
     private readonly StatusDamageBuffs statusDamageBuffs = new();
     private readonly CounterBuffs counterBuffs = new();
+    private readonly TriggeredEffectRules triggeredEffectRules = new();
     public bool HasTimedStatusDamageBuffs => statusDamageBuffs.HasTimedBuffs;
     public bool HasTimedCounter => counterBuffs.HasTimedBuffs;
+    public int CounterStunFillPercent => counterBuffs.AdditionalStunPercent;
 
 
     protected void SetupBase(int  health, Sprite image, int maxStun)
     {
         ResetAttackHistory();
+        triggeredEffectRules.Clear();
         if (counterBuffs.Damage > 0)
             RemoveStatusEffect(StatusEffectType.Counter, counterBuffs.Damage);
         // Reusing a unit for a new battle must also clear permanent damage bonuses.
@@ -48,6 +51,10 @@ public class CombatantView : MonoBehaviour
         int stressStacks = GetStatusEffectStacks(StatusEffectType.Stress);
         if (stressStacks > 0)
             RemoveStatusEffect(StatusEffectType.Stress, stressStacks);
+        // Got 'em lasts for one combat, including when the same hero view is reused.
+        int drawOnVulnerableStacks = GetStatusEffectStacks(StatusEffectType.DrawOnVulnerable);
+        if (drawOnVulnerableStacks > 0)
+            RemoveStatusEffect(StatusEffectType.DrawOnVulnerable, drawOnVulnerableStacks);
         MaxHealth = health;
         CurrentHealth = health;
         spriteRenderer.sprite = image;
@@ -84,6 +91,18 @@ public class CombatantView : MonoBehaviour
     private void UpdateHealthBar()
     {
         HealthBarUI.UpdateBar(CurrentHealth, MaxHealth);
+    }
+
+    public int Heal(int amount)
+    {
+        if (amount <= 0 || CurrentHealth <= 0 || CurrentHealth >= MaxHealth)
+            return 0;
+
+        // Clamp the increment before adding, avoiding overheal and integer overflow.
+        int restored = Mathf.Min(amount, MaxHealth - CurrentHealth);
+        CurrentHealth += restored;
+        UpdateHealthBar();
+        return restored;
     }
 
     public void Damage(int damageAmount)
@@ -217,25 +236,48 @@ public class CombatantView : MonoBehaviour
     // -------------- Status Effect stack --------------
 
     public void AddStatusEffect(StatusEffectType type, int stackCount, CombatantView applier = null,
-        int damageBuffTurns = 0)
+        int damageBuffTurns = 0, int counterStunFillPercent = 0)
     {
-        if (type == StatusEffectType.Counter)
+        TryAddStatusEffect(type, stackCount, applier, damageBuffTurns, out _, counterStunFillPercent);
+    }
+
+    // The action performer publishes a notification only when this method accepts stacks.
+    // Preserve the void API above for existing callers and keep all mutation/UI in one path.
+    public bool TryAddStatusEffect(StatusEffectType type, int stackCount, CombatantView applier,
+        int damageBuffTurns, out int appliedStacks, int counterStunFillPercent = 0)
+    {
+        appliedStacks = 0;
+        if (CurrentHealth <= 0 || stackCount <= 0)
+            return false;
+
+        int stacksBeforeApplication = Mathf.Max(0, GetStatusEffectStacks(type));
+        if (type == StatusEffectType.DrawOnVulnerable)
+        {
+            // Each activation adds cards per application, not charges or remaining turns.
+            if (!(this is PlayerView))
+                return false;
+
+            int currentStacks = Mathf.Max(0, GetStatusEffectStacks(type));
+            statusEffects[type] = currentStacks + Mathf.Min(stackCount, int.MaxValue - currentStacks);
+        }
+        else if (type == StatusEffectType.Counter)
         {
             // Counter belongs to heroes; stacks are damage, with independent grant durations.
-            if (!(this is PlayerView) || CurrentHealth <= 0 || !counterBuffs.Add(stackCount, damageBuffTurns))
-                return;
+            if (!(this is PlayerView) || CurrentHealth <= 0 ||
+                !counterBuffs.Add(stackCount, damageBuffTurns, counterStunFillPercent))
+                return false;
         }
         else if (StatusDamageBuffs.IsDamageBuff(type))
         {
             if (CurrentHealth <= 0 || !statusDamageBuffs.Add(type, stackCount, damageBuffTurns))
-                return;
+                return false;
         }
         else if (type == StatusEffectType.Aggravated)
         {
             // Aggravated is enemy-only and always lasts one turn, even when reapplied.
             if (!(this is EnemyView) || CurrentHealth <= 0 || stackCount <= 0 ||
                 applier == null || applier == this || applier.CurrentHealth <= 0)
-                return;
+                return false;
 
             AggravatedApplier = applier;
             statusEffects[type] = 1;
@@ -243,7 +285,7 @@ public class CombatantView : MonoBehaviour
         else if (type == StatusEffectType.Stress)
         {
             if (!(this is EnemyView) || CurrentHealth <= 0 || stackCount <= 0)
-                return;
+                return false;
 
             // Add only the available capacity, avoiding overflow even for a very large grant.
             int currentStacks = Mathf.Clamp(GetStatusEffectStacks(type), 0, MaxStressStacks);
@@ -252,7 +294,7 @@ public class CombatantView : MonoBehaviour
         else if (type == StatusEffectType.Mark)
         {
             if (CurrentHealth <= 0 || stackCount <= 0 || applier == null || applier.CurrentHealth <= 0)
-                return;
+                return false;
 
             // Reapplication transfers all remaining stacks to the latest applier.
             // Limit the increment before adding, so even a very large grant cannot overflow.
@@ -263,25 +305,31 @@ public class CombatantView : MonoBehaviour
         else if (type == StatusEffectType.SHOCK)
         {
             if (CurrentHealth <= 0 || stackCount <= 0)
-                return;
+                return false;
 
             // Cap both first application and reapplication without overflowing on large grants.
             int currentStacks = Mathf.Clamp(GetStatusEffectStacks(type), 0, MaxShockStacks);
             statusEffects[type] = currentStacks + Mathf.Min(stackCount, MaxShockStacks - currentStacks);
         }
-        else if (statusEffects.ContainsKey(type)) 
-        {
-            statusEffects[type] += stackCount;
-        }
         else
         {
-            statusEffects.Add(type, stackCount);
+            // A positive grant must not overflow into negative stacks or a false event.
+            statusEffects[type] = stacksBeforeApplication + Mathf.Min(stackCount, int.MaxValue - stacksBeforeApplication);
         }
+        // Aggravated accepts a one-turn refresh even when its displayed total stays one.
+        // Other capped statuses report only newly accepted stacks, not the requested amount.
+        appliedStacks = type == StatusEffectType.Aggravated
+            ? 1
+            : Mathf.Max(0, GetStatusEffectStacks(type) - stacksBeforeApplication);
+        RefreshTriggeredStatusAdapter(type);
         statusEffectsUI.UpdateStatusEffectUI(type, GetStatusEffectStacks(type));
+        return appliedStacks > 0;
     }
 
     public void RemoveStatusEffect(StatusEffectType type, int stackCount)
     {
+        if (stackCount <= 0)
+            return;
         if (type == StatusEffectType.Counter)
         {
             counterBuffs.Remove(stackCount);
@@ -302,7 +350,31 @@ public class CombatantView : MonoBehaviour
                     MarkApplier = null;
             }
         }
+        RefreshTriggeredStatusAdapter(type);
         statusEffectsUI.UpdateStatusEffectUI(type, GetStatusEffectStacks(type));
+    }
+
+    private void RefreshTriggeredStatusAdapter(StatusEffectType type)
+    {
+        if (StatusEffectTriggerAdapters.Supports(type))
+            triggeredEffectRules.Set(type, StatusEffectTriggerAdapters.Create(type, GetStatusEffectStacks(type)));
+    }
+
+    public void GrantTriggeredEffect(TriggeredEffectRule rule)
+    {
+        // Runtime lifetime and trigger limits belong to each independent hero-owned grant.
+        if (this is PlayerView && CurrentHealth > 0)
+            triggeredEffectRules.Add(rule);
+    }
+
+    public void QueueTriggeredEffects(GameAction combatEvent)
+    {
+        triggeredEffectRules.QueueReactions(combatEvent, this);
+    }
+
+    public void AdvanceTriggeredRulePhase()
+    {
+        triggeredEffectRules.AdvancePlayerPhase();
     }
 
     public int GetStatusEffectStacks(StatusEffectType type)
@@ -334,6 +406,7 @@ public class CombatantView : MonoBehaviour
     public void ResetCombatant()
     {
         ResetAttackHistory();
+        triggeredEffectRules.Clear();
         counterBuffs.Clear();
         CurrentHealth = MaxHealth;
         statusEffects.Clear();

@@ -16,6 +16,8 @@ public class AddCounterEffect : Effect
     [SerializeField] private DurationMode duration = DurationMode.Turns;
     [Tooltip("Number of enemy-turn ends until expiration. One turn covers the next enemy phase. Ignored for This Combat.")]
     [SerializeField, Min(1)] private int durationTurns = 1;
+    [Tooltip("Extra percentage of the attacker's maximum Stun gauge on this grant's counter hit. Overlapping grants add this bonus; normal attacks never receive it.")]
+    [SerializeField, Range(0, 100)] private int additionalStunPercent;
 
     public override GameAction GetGameAction(List<CombatantView> targets, CombatantView caster)
     {
@@ -28,6 +30,7 @@ public class AddCounterEffect : Effect
         if (turns < 0)
             return null;
 
-        return new AddStatusEffectGA(StatusEffectType.Counter, Mathf.Max(0, counterDamage), targets, caster, turns);
+        return new AddStatusEffectGA(StatusEffectType.Counter, Mathf.Max(0, counterDamage), targets, caster, turns,
+            Mathf.Clamp(additionalStunPercent, 0, 100));
     }
 }

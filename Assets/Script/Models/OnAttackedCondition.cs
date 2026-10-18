@@ -10,20 +10,42 @@ public class OnAttackedCondition : EffectCondition
         ThisCombat
     }
 
-    [Tooltip("Last Turn checks the most recently completed player or enemy turn. This Combat includes the current turn and earlier effects on this card. Blocked attacks count; Shock and Stress do not.")]
+    [Tooltip("Last Turn checks whether the selected enemy performed an attack during the latest enemy turn. This Combat checks whether it received an attack during this combat. Blocked attacks count; Shock and Stress do not.")]
     [SerializeField] private TimeWindow timeWindow = TimeWindow.LastTurn;
 
     public override bool IsMet(CombatantView target, CombatantView caster)
     {
         // This condition is enemy-only; missing, destroyed, or defeated targets never pass.
-        if (target == null || !(target is EnemyView) || target.CurrentHealth <= 0)
+        if (!(target is EnemyView enemyTarget) || enemyTarget.CurrentHealth <= 0)
             return false;
 
-        return timeWindow switch
+        HeroSystem heroSystem = HeroSystem.Instance;
+        if (heroSystem == null)
+            return false;
+
+        switch (timeWindow)
         {
-            TimeWindow.LastTurn => target.WasAttackedLastTurn,
-            TimeWindow.ThisCombat => target.WasAttackedThisCombat,
-            _ => false,
-        };
+            case TimeWindow.LastTurn:
+                return HasAttack(heroSystem, enemyTarget, AttackHistoryDirection.Performed,
+                    AttackHistoryWindow.SinceEnemyPhaseStart);
+            case TimeWindow.ThisCombat:
+                return HasAttack(heroSystem, enemyTarget, AttackHistoryDirection.Received,
+                    AttackHistoryWindow.ThisCombat);
+            default:
+                // Treat the removed serialized enum value as LastTurn for existing assets.
+                return HasAttack(heroSystem, enemyTarget, AttackHistoryDirection.Performed,
+                    AttackHistoryWindow.SinceEnemyPhaseStart);
+        }
+    }
+
+    private static bool HasAttack(HeroSystem heroSystem, EnemyView target,
+        AttackHistoryDirection direction, AttackHistoryWindow window)
+    {
+        return heroSystem.AttackHistory.Count(
+            direction,
+            window,
+            AttackKind.All,
+            target.GetInstanceID(),
+            bothHeroes: false) > 0;
     }
 }

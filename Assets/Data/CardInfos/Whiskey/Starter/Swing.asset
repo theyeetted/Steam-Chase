@@ -10,16 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
-  m_Name: a
+  m_Name: Swing
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <description>k__BackingField: 
+  <description>k__BackingField: Deal 6 Damage
   <Image>k__BackingField: {fileID: 0}
-  <Cost>k__BackingField: 0
+  <Cost>k__BackingField: 1
+  <Rarity>k__BackingField: 0
+  <Character>k__BackingField: 0
+  <Type>k__BackingField: 0
+  <Disintegrate>k__BackingField: 0
+  <ManualTargetKind>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
-    rid: -2
+    rid: 9151934962459738221
   <OtherTargetEffects>k__BackingField: []
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 9151934962459738221
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 6
+        damageValue:
+          rid: -2

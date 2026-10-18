@@ -27,6 +27,7 @@ public class CardView : MonoBehaviour
 
     private Vector3 dragStartPosition;
     private Quaternion dragStartRotation;
+    private bool isManualTargeting;
 
     public void Setup(Card card, int heroIndex = 0)
     {
@@ -106,6 +107,7 @@ public class CardView : MonoBehaviour
         if (Card.MannualTargetEffect != null)
         {
             ManualTargetSystem.Instance.StartTargeting(transform.position);
+            isManualTargeting = true;
         }
         else
         {
@@ -130,18 +132,27 @@ public class CardView : MonoBehaviour
     {
         if (Card.MannualTargetEffect != null)
         {
+            if (!isManualTargeting)
+                return;
+
+            isManualTargeting = false;
+            CombatantView target = ManualTargetSystem.Instance.EndTargeting(
+                MouseUtil.GetMousePositionInWorldSpace(-1), Card.ManualTargetKind);
+
             if (!Interactions.Instance.PlayerCanInteract() ||
                 TurnSystem.Instance == null ||
                 !TurnSystem.Instance.CanHeroPlayCards(HeroIndex))
                 return;
 
-            EnemyView target = ManualTargetSystem.Instance.EndTargeting(MouseUtil.GetMousePositionInWorldSpace(-1));
-
             if (target != null && EnergySystem.Instance.HasEnoughEnergy(Card.Cost, HeroIndex) &&
                 !ActionSystem.Instance.IsPerformingAction)
             {
+                TriggerAttackAnimation();
                 ActionSystem.Instance.Perform(new PlayCardGA(Card, target, HeroIndex));
             }
+            // Targeted cards never fall through into the untargeted drop-area path.
+            // An invalid hero/enemy selection leaves the card and its Energy untouched.
+            return;
         }
 
         if (!Interactions.Instance.PlayerCanInteract() ||
@@ -166,6 +177,13 @@ public class CardView : MonoBehaviour
         {
             ReturnDraggedCard();
         }
+    }
+
+    private void OnDisable()
+    {
+        if (isManualTargeting && ManualTargetSystem.Instance != null)
+            ManualTargetSystem.Instance.CancelTargeting();
+        isManualTargeting = false;
     }
 
     private void ReturnDraggedCard()

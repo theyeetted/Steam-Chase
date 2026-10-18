@@ -49,33 +49,43 @@ public class StatusEffectSystem : MonoBehaviour
     void OnEnable()
     {
         ActionSystem.AttachPerformer<AddStatusEffectGA>(AddStatusEffectPerformer);
+        ActionSystem.AttachPerformer<RemoveStatusEffectGA>(RemoveStatusEffectPerformer);
+        ActionSystem.AttachPerformer<TransformStatusGA>(TransformStatusPerformer);
         ActionSystem.AttachPerformer<TriggerStatusGA>(TriggerStatusPerformer);
         ActionSystem.AttachPerformer<DecayAttackUpGA>(DecayAttackUpPerformer);
         ActionSystem.AttachPerformer<DecayAttackDownGA>(DecayAttackDownPerformer);
         ActionSystem.AttachPerformer<ExpireAggravatedGA>(ExpireAggravatedPerformer);
         ActionSystem.AttachPerformer<DecayStatusDamageBuffsGA>(DecayStatusDamageBuffsPerformer);
+        // Retain the explicit action API; automatic phase expiry now has one coordinator.
         ActionSystem.AttachPerformer<DecayCounterGA>(DecayCounterPerformer);
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
-        ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
         ActionSystem.SubscribeReaction<AttackHeroGA>(AttackHeroPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<StatusAppliedGA>(StatusAppliedPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<AttackResolvedGA>(AttackResolvedPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<StartPlayerPhaseGA>(StartPlayerPhasePreReaction, ReactionTiming.PRE);
     }
 
     void OnDisable()
     {
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
-        ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
         ActionSystem.UnsubscribeReaction<AttackHeroGA>(AttackHeroPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<StatusAppliedGA>(StatusAppliedPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<AttackResolvedGA>(AttackResolvedPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<StartPlayerPhaseGA>(StartPlayerPhasePreReaction, ReactionTiming.PRE);
         ActionSystem.DetachPerformer<DecayAttackUpGA>();
         ActionSystem.DetachPerformer<DecayAttackDownGA>();
         ActionSystem.DetachPerformer<ExpireAggravatedGA>();
         ActionSystem.DetachPerformer<DecayStatusDamageBuffsGA>();
         ActionSystem.DetachPerformer<DecayCounterGA>();
         ActionSystem.DetachPerformer<AddStatusEffectGA>();
+        ActionSystem.DetachPerformer<RemoveStatusEffectGA>();
+        ActionSystem.DetachPerformer<TransformStatusGA>();
         ActionSystem.DetachPerformer<TriggerStatusGA>();
     }
 
     private IEnumerator TriggerStatusPerformer(TriggerStatusGA action)
     {
+        List<DamageResult> results = action.ResultStore.BeginDamage(action.ResultKey);
         HashSet<CombatantView> triggeredTargets = new();
         foreach (CombatantView target in action.Targets)
         {
@@ -85,11 +95,11 @@ public class StatusEffectSystem : MonoBehaviour
             // Each child action reads stacks at execution, after earlier targets' reactions.
             if (action.StatusEffectType == StatusEffectType.SHOCK)
             {
-                ActionSystem.Instance.AddReaction(new ApplyShockGA(target, action.TriggerStacks, action.ConsumeStacks));
+                ActionSystem.Instance.AddReaction(new ApplyShockGA(target, action.TriggerStacks, action.ConsumeStacks, results));
             }
             else if (action.StatusEffectType == StatusEffectType.Stress && target is EnemyView enemy)
             {
-                ActionSystem.Instance.AddReaction(new DetonateStressGA(enemy, action.TriggerStacks, action.ConsumeStacks));
+                ActionSystem.Instance.AddReaction(new DetonateStressGA(enemy, action.TriggerStacks, action.ConsumeStacks, results));
             }
         }
         yield break;
@@ -119,20 +129,18 @@ public class StatusEffectSystem : MonoBehaviour
         }
     }
 
-    private void EnemyTurnPostReaction(EnemyTurnGA action)
+    private void StartPlayerPhasePreReaction(StartPlayerPhaseGA action)
     {
-        // All enemy attacks and their counters have resolved. Tick each hero once per phase.
-        if (HeroSystem.Instance == null)
+        if (action.Advanced || EnemySystem.Instance == null)
             return;
-
-        QueueCounterDecay(HeroSystem.Instance.playerView);
-        QueueCounterDecay(HeroSystem.Instance.secondPlayerView);
-    }
-
-    private static void QueueCounterDecay(PlayerView hero)
-    {
-        if (hero != null && hero.HasTimedCounter)
-            ActionSystem.Instance.AddReaction(new DecayCounterGA(hero));
+        // Skills and skipped turns do not execute AttackHeroGA's expiry callback.
+        // Remove remaining one-turn Aggravated after all enemy/end-phase actions,
+        // before the new player phase can deliver scheduled rewards.
+        foreach (EnemyView enemy in EnemySystem.Instance.Enemies)
+        {
+            if (enemy != null && enemy.GetStatusEffectStacks(StatusEffectType.Aggravated) > 0)
+                ActionSystem.Instance.AddReaction(new ExpireAggravatedGA(enemy));
+        }
     }
 
     private IEnumerator DecayCounterPerformer(DecayCounterGA action)
@@ -225,9 +233,85 @@ public class StatusEffectSystem : MonoBehaviour
             if (target == null || target.CurrentHealth <= 0)
                 continue;
 
-            target.AddStatusEffect(addStatusEffectGA.StatusEffectType, addStatusEffectGA.StackCount,
-                addStatusEffectGA.Caster, addStatusEffectGA.DamageBuffTurns);
+            ApplyStatus(target, addStatusEffectGA.StatusEffectType, addStatusEffectGA.StackCount,
+                addStatusEffectGA.Caster, addStatusEffectGA.DamageBuffTurns, addStatusEffectGA.CounterStunFillPercent);
             yield return null;
+        }
+    }
+
+    private static void ApplyStatus(CombatantView target, StatusEffectType type, int stacks,
+        CombatantView caster, int duration = 0, int counterStunFillPercent = 0)
+    {
+        // Ordinary application and calculated stack increases share caps, ownership,
+        // UI refresh and exactly one notification of the accepted increase.
+        if (target.TryAddStatusEffect(type, stacks, caster, duration, out int appliedStacks, counterStunFillPercent))
+            ActionSystem.Instance.AddReaction(new StatusAppliedGA(type, appliedStacks, caster, target));
+    }
+
+    private IEnumerator TransformStatusPerformer(TransformStatusGA action)
+    {
+        if (action.StackValue == null)
+            yield break;
+        HashSet<CombatantView> processed = new();
+        foreach (CombatantView target in action.Context.ResolveTargets())
+        {
+            if (target == null || target.CurrentHealth <= 0 || !processed.Add(target))
+                continue;
+
+            EffectContext targetContext = action.Context.WithTargets(new() { target });
+            if (!action.StackValue.TryGetValue(targetContext, out int value))
+                continue;
+            int desired = Mathf.Max(0, value);
+            int current = Mathf.Max(0, target.GetStatusEffectStacks(action.StatusEffectType));
+            if (desired > current)
+                ApplyStatus(target, action.StatusEffectType, desired - current, action.Caster);
+            else if (desired < current)
+                target.RemoveStatusEffect(action.StatusEffectType, current - desired);
+        }
+        yield break;
+    }
+
+    private IEnumerator RemoveStatusEffectPerformer(RemoveStatusEffectGA action)
+    {
+        if (action.StackCount <= 0)
+            yield break;
+
+        HashSet<CombatantView> processedTargets = new();
+        foreach (CombatantView target in action.Targets)
+        {
+            if (target == null || target.CurrentHealth <= 0 || !processedTargets.Add(target))
+                continue;
+
+            // Read after preceding damage/reactions: Bolt Stripper removes remaining Block.
+            // Reuse removal so icons, ownership, timed grants, and trigger adapters stay in sync.
+            int removed = Mathf.Min(action.StackCount, Mathf.Max(0, target.GetStatusEffectStacks(action.StatusEffectType)));
+            if (removed > 0)
+                target.RemoveStatusEffect(action.StatusEffectType, removed);
+        }
+        yield break;
+    }
+
+    private void StatusAppliedPostReaction(StatusAppliedGA application)
+    {
+        QueueTriggeredRules(application);
+    }
+
+    private void AttackResolvedPostReaction(AttackResolvedGA attack)
+    {
+        QueueTriggeredRules(attack);
+    }
+
+    private static void QueueTriggeredRules(GameAction combatEvent)
+    {
+        HeroSystem heroes = HeroSystem.Instance;
+        if (heroes == null)
+            return;
+
+        for (int i = 0; i < 2; i++)
+        {
+            PlayerView owner = heroes.GetHero(i);
+            if (owner != null && owner.CurrentHealth > 0)
+                owner.QueueTriggeredEffects(combatEvent);
         }
     }
 }

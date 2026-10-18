@@ -76,7 +76,8 @@ public class ActionDisplayUI : MonoBehaviour
             {
                 case DealDamageEffect damage:
                     sprite = attackSprite;
-                    value = damage.DamageAmount.ToString();
+                    // An execution-time value must not be displayed as its unused fixed default.
+                    value = damage.HasCalculatedDamage ? "?" : damage.DamageAmount.ToString();
                     label = "Attack";
                     break;
                 case AddStatusEffect status:
@@ -129,7 +130,8 @@ public class ActionDisplayUI : MonoBehaviour
             StatusEffectType.ATTACKUP or StatusEffectType.ExtraAttack or
             StatusEffectType.FollowUpAttack or StatusEffectType.DefenseUp or
             StatusEffectType.MarkFollowUpDamageUp or StatusEffectType.FollowUpAttackDamageUp or
-            StatusEffectType.ExtraAttackDamageUp or StatusEffectType.Counter => buffSprite,
+            StatusEffectType.ExtraAttackDamageUp or StatusEffectType.Counter or
+            StatusEffectType.DrawOnVulnerable => buffSprite,
             _ => otherActionSprite,
         };
     }

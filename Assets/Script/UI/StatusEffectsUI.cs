@@ -15,6 +15,8 @@ public class StatusEffectsUI : MonoBehaviour
     [SerializeField] private Sprite extraAttackSprite;
     [SerializeField] private Sprite stressSprite;
     [SerializeField] private Sprite counterSprite;
+    [Tooltip("Got 'em icon. Its stack count shows cards drawn per enemy Vulnerable application.")]
+    [SerializeField] private Sprite drawOnVulnerableSprite;
     private Dictionary<StatusEffectType, StatusEffectUI> statusEffectUIs = new();
 
     public void UpdateStatusEffectUI(StatusEffectType statusEffectType, int stackCount)
@@ -55,6 +57,7 @@ public class StatusEffectsUI : MonoBehaviour
             StatusEffectType.Stress => stressSprite,
             // Counter's count is its total base damage, not remaining turns or charges.
             StatusEffectType.Counter => counterSprite,
+            StatusEffectType.DrawOnVulnerable => drawOnVulnerableSprite,
             // Damage-buff icons show bonus damage points, independently of attack charges.
             StatusEffectType.MarkFollowUpDamageUp => markSprite,
             StatusEffectType.FollowUpAttackDamageUp => followUpAttackSprite,

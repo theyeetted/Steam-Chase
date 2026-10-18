@@ -68,6 +68,7 @@ public class MatchSetupSystem : MonoBehaviour
         FindFirstObjectByType<DamageSystem>()?.ResetGameOverState();
 
         // Restore both heroes.
+        HeroSystem.Instance.ResetCombatState();
         HeroSystem.Instance.playerView.ResetCombatant();
         HeroSystem.Instance.secondPlayerView.ResetCombatant();
 

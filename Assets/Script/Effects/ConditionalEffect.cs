@@ -3,9 +3,9 @@ using SerializeReferenceEditor;
 using UnityEngine;
 
 /// <summary>
-/// Wraps any effect with a rule, checked separately for each living target at execution.
-/// The inner effect runs once with all matching targets; no matches means no inner action.
-/// With no selected targets, the rule receives null and can check the caster instead.
+/// Gates a payload using live condition subjects, with independently selected recipients.
+/// Defaults preserve the original behavior: filter incoming targets, then run one payload
+/// with all matches. Any checks the subject set once and keeps the incoming recipients.
 /// </summary>
 /// <remarks>
 /// Example card: MannualTargetEffect = DealDamageEffect (5).
@@ -19,14 +19,29 @@ using UnityEngine;
 [System.Serializable]
 public class ConditionalEffect : Effect
 {
+    // Zero keeps the behavior of existing serialized cards.
+    public enum Evaluation { FilterTargets, Any }
+
     [Tooltip("A missing condition skips the inner effect.")]
     [SerializeReference, SR] private EffectCondition condition;
-    [Tooltip("Runs with the matching targets when the condition passes. May be another ConditionalEffect.")]
+    [Tooltip("Runs once when the condition passes, using the recipients below. May contain a SequenceEffect or another condition.")]
     [SerializeReference, SR] private Effect effect;
+    [Tooltip("Empty inspects incoming targets. Set AllEnemiesTM to inspect the board or SelfTM to inspect the caster.")]
+    [SerializeReference, SR] private TargetMode subjectTargetMode;
+    [Tooltip("Filter Targets forwards matching subjects. Any gates one payload with the original recipients; an empty subject set fails.")]
+    [SerializeField] private Evaluation evaluation = Evaluation.FilterTargets;
+    [Tooltip("Empty uses the evaluation's default recipients. Set SelfTM to reward the caster after checking an enemy.")]
+    [SerializeReference, SR] private TargetMode recipientTargetMode;
 
     public override GameAction GetGameAction(List<CombatantView> targets, CombatantView caster)
     {
+        return GetGameAction(new EffectContext(targets, caster));
+    }
+
+    public override GameAction GetGameAction(EffectContext context)
+    {
         // Defer evaluation until execution so earlier card effects/reactions can change the result.
-        return new ConditionalEffectGA(condition, effect, targets, caster);
+        return new ConditionalEffectGA(condition, effect, context,
+            subjectTargetMode, evaluation, recipientTargetMode);
     }
 }

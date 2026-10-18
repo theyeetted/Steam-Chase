@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayCardGA : GameAction
 {
-    public EnemyView MannualTarget {  get; private set; }
+    public CombatantView MannualTarget {  get; private set; }
     public Card Card { get; set; }
     public int HeroIndex { get; private set; }
 
@@ -13,7 +13,7 @@ public class PlayCardGA : GameAction
         HeroIndex = heroIndex;
     }
 
-    public PlayCardGA(Card card, EnemyView mannualTarget, int heroIndex = 0)
+    public PlayCardGA(Card card, CombatantView mannualTarget, int heroIndex = 0)
     {
         Card = card;
         MannualTarget = mannualTarget;

@@ -15,14 +15,18 @@ MonoBehaviour:
   <description>k__BackingField: Apply 2 Vulnerable.
   <Image>k__BackingField: {fileID: -9120369034046867018, guid: 7637c505ef0f16f4e8460382c94f35ca, type: 3}
   <Cost>k__BackingField: 0
+  <Rarity>k__BackingField: 0
+  <Character>k__BackingField: 0
+  <Type>k__BackingField: 0
+  <Disintegrate>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
-    rid: 4419360084440645989
+    rid: 9151934962459738216
   <OtherTargetEffects>k__BackingField: []
   references:
     version: 2
     RefIds:
-    - rid: 4419360084440645989
+    - rid: 9151934962459738216
       type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 0
-        stackCount: 10
+        stackCount: 5

@@ -18,5 +18,7 @@ public enum StatusEffectType
     FollowUpAttackDamageUp,
     ExtraAttackDamageUp,
     Stress,
-    Counter
+    Counter,
+    // Got 'em: cards drawn per enemy Vulnerable application by this hero, for this combat.
+    DrawOnVulnerable
 }

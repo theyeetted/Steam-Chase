@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
+  m_Name: Opportunist
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <description>k__BackingField: 'Deal 5 damage. If the target is Stunned, draw 2
+    cards '
+  <Image>k__BackingField: {fileID: 0}
+  <Cost>k__BackingField: 1
+  <Rarity>k__BackingField: 1
+  <Character>k__BackingField: 0
+  <Type>k__BackingField: 0
+  <Disintegrate>k__BackingField: 0
+  <ManualTargetKind>k__BackingField: 0
+  <MannualTargetEffect>k__BackingField:
+    rid: 9151934980418437398
+  <OtherTargetEffects>k__BackingField:
+  - rid: 9151934980418437400
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 9151934980418437398
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 5
+        damageValue:
+          rid: -2
+    - rid: 9151934980418437400
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 9151934980418437401
+        <Effect>k__BackingField:
+          rid: 9151934980418437402
+        <RepeatMode>k__BackingField: 0
+        <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
+        <ChancePercent>k__BackingField: 100
+    - rid: 9151934980418437401
+      type: {class: ManualTargetTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151934980418437402
+      type: {class: ConditionalEffect, ns: , asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 9151934980418437403
+        effect:
+          rid: 9151934980418437404
+        subjectTargetMode:
+          rid: -2
+        evaluation: 0
+        recipientTargetMode:
+          rid: 9151934980418437405
+    - rid: 9151934980418437403
+      type: {class: IsStunnedCondition, ns: , asm: Assembly-CSharp}
+      data:
+        subject: 0
+        invert: 0
+    - rid: 9151934980418437404
+      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+      data:
+        drawAmount: 2
+        recipient: 0
+    - rid: 9151934980418437405
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 

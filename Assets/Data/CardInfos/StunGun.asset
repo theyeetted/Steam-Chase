@@ -15,45 +15,71 @@ MonoBehaviour:
   <description>k__BackingField: 'Apply 3 Shocks  and Deal 5 damage to all Enemy '
   <Image>k__BackingField: {fileID: 2715435097457428830, guid: 1a4fd1d1ce7cadf4883ee4e3763b4600, type: 3}
   <Cost>k__BackingField: 0
+  <Rarity>k__BackingField: 0
+  <Character>k__BackingField: 0
+  <Type>k__BackingField: 0
+  <Disintegrate>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
-    rid: -2
+    rid: 9151934962459738197
   <OtherTargetEffects>k__BackingField:
-  - rid: 4419360113213571148
-  - rid: 9151934852312858714
+  - rid: 9151934962459738198
+  - rid: 9151934962459738201
+  - rid: 9151934962459738206
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 4419360113213571148
-      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
-      data:
-        <TargetMode>k__BackingField:
-          rid: 4419360113213571149
-        <Effect>k__BackingField:
-          rid: 4419360113213571150
-    - rid: 4419360113213571149
-      type: {class: AllEnemies, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 4419360113213571150
+    - rid: 9151934962459738197
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         damageAmount: 5
-    - rid: 9151934852312858714
+    - rid: 9151934962459738198
       type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
       data:
         <TargetMode>k__BackingField:
-          rid: 9151934852312858716
+          rid: 9151934962459738199
         <Effect>k__BackingField:
-          rid: 9151934852312858717
-    - rid: 9151934852312858716
-      type: {class: AllEnemies, ns: , asm: Assembly-CSharp}
+          rid: 9151934962459738200
+        <RepeatCount>k__BackingField: 1
+        <ChancePercent>k__BackingField: 100
+    - rid: 9151934962459738199
+      type: {class: ManualTargetTM, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 9151934852312858717
+    - rid: 9151934962459738200
       type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
       data:
-        statusEffectType: 1
-        stackCount: 3
-    - rid: 7746331273383903371
-      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+        statusEffectType: 5
+        stackCount: 5
+    - rid: 9151934962459738201
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 9151934962459738202
+        <Effect>k__BackingField:
+          rid: 9151934962459738204
+        <RepeatCount>k__BackingField: 1
+        <ChancePercent>k__BackingField: 100
+    - rid: 9151934962459738202
+      type: {class: ManualTargetTM, ns: , asm: Assembly-CSharp}
       data: 
+    - rid: 9151934962459738204
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 0
+        stackCount: 5
+    - rid: 9151934962459738206
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 9151934962459738209
+        <Effect>k__BackingField:
+          rid: 9151934962459738211
+        <RepeatCount>k__BackingField: 1
+        <ChancePercent>k__BackingField: 100
+    - rid: 9151934962459738209
+      type: {class: ManualTargetTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151934962459738211
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 10
+        stackCount: 5

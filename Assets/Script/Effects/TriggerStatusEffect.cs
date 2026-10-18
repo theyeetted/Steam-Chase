@@ -17,10 +17,18 @@ public class TriggerStatusEffect : Effect
     [SerializeField] private StatusTriggerStackMode triggerStacks = StatusTriggerStackMode.All;
     [Tooltip("Stacks removed after damage, independently of how many stacks were used for damage.")]
     [SerializeField] private StatusStackConsumption consumeStacks = StatusStackConsumption.One;
+    [Tooltip("Optional unique name for the triggered damage results, shared with later steps in this SequenceEffect.")]
+    [SerializeField] private string resultKey;
 
     public override GameAction GetGameAction(List<CombatantView> targets, CombatantView caster)
     {
+        return GetGameAction(new EffectContext(targets, caster));
+    }
+
+    public override GameAction GetGameAction(EffectContext context)
+    {
         StatusEffectType type = status == StatusKind.Stress ? StatusEffectType.Stress : StatusEffectType.SHOCK;
-        return new TriggerStatusGA(type, targets, triggerStacks, consumeStacks);
+        return new TriggerStatusGA(type, context.ResolveTargets(), triggerStacks, consumeStacks,
+            context.Results, resultKey);
     }
 }

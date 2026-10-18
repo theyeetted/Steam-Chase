@@ -83,6 +83,10 @@ public class EnemySystem : SingleTon<EnemySystem>
     }
     private IEnumerator EnemyTurnPerformer(EnemyTurnGA enemyTurnGA)
     {
+        // All player-end PRE reactions have finished. Begin one received-attack window
+        // here, independent of subscriber registration order or the end-turn UI entry point.
+        HeroSystem.Instance?.AttackHistory.BeginEnemyPhase();
+
         foreach (EnemyView enemy in Enemies.ToList())
         {
             if (enemy == null)

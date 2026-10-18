@@ -13,6 +13,7 @@ public class Card
     public string Description => data.description;
 
     public Effect MannualTargetEffect => data.MannualTargetEffect;
+    public ManualTargetKind ManualTargetKind => data.ManualTargetKind;
 
     public List<AutoTargetEffect> OtherEffects => data.OtherTargetEffects;
 

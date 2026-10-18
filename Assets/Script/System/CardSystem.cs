@@ -5,6 +5,23 @@ using UnityEngine;
 
 public class CardSystem : SingleTon<CardSystem>
 {
+    private sealed class PlayedAttackCard
+    {
+        public Card Card { get; }
+        public CombatantView Caster { get; }
+        public CombatantView ManualTarget { get; }
+        public List<List<CombatantView>> OtherEffectTargets { get; }
+
+        public PlayedAttackCard(Card card, CombatantView caster, CombatantView manualTarget,
+            List<List<CombatantView>> otherEffectTargets)
+        {
+            Card = card;
+            Caster = caster;
+            ManualTarget = manualTarget;
+            OtherEffectTargets = otherEffectTargets;
+        }
+    }
+
     [Header("Card Positions")]
     [SerializeField] private HandView handView;
     [SerializeField] private Transform drawPilePoint;
@@ -27,6 +44,9 @@ public class CardSystem : SingleTon<CardSystem>
 
     private int activeHeroIndex;
     private Coroutine displayHandCoroutine;
+    private PlayedAttackCard firstAttackCardPlayedThisTurn;
+    private bool repeatedThisTurn;
+    private bool repeatFirstAttackEachTurn;
 
     public int ActiveHeroIndex => activeHeroIndex;
 
@@ -35,6 +55,9 @@ public class CardSystem : SingleTon<CardSystem>
         ActionSystem.AttachPerformer<DrawCardsGA>(DrawCardsPerformer);
         ActionSystem.AttachPerformer<DiscardAllCardsGA>(DiscardAllCardsPerformer);
         ActionSystem.AttachPerformer<PlayCardGA>(PlayCardPerformer);
+        ActionSystem.AttachPerformer<RepeatFirstAttackCardGA>(RepeatFirstAttackCardPerformer);
+        ActionSystem.AttachPerformer<PlayRandomAttackCardGA>(PlayRandomAttackCardPerformer);
+        ActionSystem.SubscribeReaction<EnemyTurnGA>(ResetAttackCardRecord, ReactionTiming.POST);
 
     }
 
@@ -43,6 +66,9 @@ public class CardSystem : SingleTon<CardSystem>
         ActionSystem.DetachPerformer<DrawCardsGA>();
         ActionSystem.DetachPerformer<DiscardAllCardsGA>();
         ActionSystem.DetachPerformer<PlayCardGA>();
+        ActionSystem.DetachPerformer<RepeatFirstAttackCardGA>();
+        ActionSystem.DetachPerformer<PlayRandomAttackCardGA>();
+        ActionSystem.UnsubscribeReaction<EnemyTurnGA>(ResetAttackCardRecord, ReactionTiming.POST);
         
     }
 
@@ -58,6 +84,8 @@ public class CardSystem : SingleTon<CardSystem>
     {
         if (!IsValidHero(heroIndex)) { return; }
 
+        repeatFirstAttackEachTurn = false;
+        ResetAttackCardRecord();
         ResetCards(heroIndex); // Reset card of that hero
 
         foreach (CardData cardData in deckData) // Add card of specific hero to draw pile
@@ -213,7 +241,7 @@ public class CardSystem : SingleTon<CardSystem>
     {
         int heroIndex = playCardGA.HeroIndex;
 
-        if (!IsValidHero(heroIndex)) { yield break; }
+        if (!IsValidHero(heroIndex) || playCardGA.Card == null) { yield break; }
 
         // A hidden hero cannot play a card.
         if (heroIndex != activeHeroIndex) {
@@ -226,55 +254,195 @@ public class CardSystem : SingleTon<CardSystem>
             yield break;
         }
 
+        // Revalidate before paying or moving the card, including plays created outside CardView.
+        // A manual healing card accepts heroes, while old cards remain enemy-only by default.
+        if (playCardGA.Card.MannualTargetEffect != null &&
+            !ManualTargetRules.IsValid(playCardGA.MannualTarget, playCardGA.Card.ManualTargetKind))
+            yield break;
+
+        if (EnergySystem.Instance == null ||
+            !EnergySystem.Instance.HasEnoughEnergy(playCardGA.Card.Cost, heroIndex))
+            yield break;
+
         if (!hands[heroIndex].Remove(playCardGA.Card)) {
             yield break;
         }
 
-        CardView cardView = handView.RemoveCard(playCardGA.Card);
-        
-        if (playCardGA.Card.Disintegrate) {
-            // Remove only this runtime copy; Setup rebuilds the deck for the next combat.
-            // Keep it out of discard before resolving effects so it cannot draw itself again.
-            if (cardView != null)
-                yield return DisintegrateCard(cardView);
-        } else if (cardView != null) {
-            yield return DiscardCard(heroIndex, cardView);
-        } else {
-            discardPiles[heroIndex].Add(playCardGA.Card);
-        }
+        yield return MovePlayedCard(heroIndex, playCardGA.Card);
 
         ActionSystem.Instance.AddReaction(
             new SpendEnergyGA(playCardGA.Card.Cost, heroIndex)
         );
 
-        if (playCardGA.Card.MannualTargetEffect != null)
+        CombatantView caster = HeroSystem.Instance.GetHero(heroIndex);
+        List<List<CombatantView>> otherEffectTargets = ResolveOtherEffectTargets(
+            playCardGA.Card, caster, playCardGA.MannualTarget);
+
+        QueuePlayedCardEffects(playCardGA.Card, caster, playCardGA.MannualTarget, otherEffectTargets);
+
+    }
+
+    private IEnumerator PlayRandomAttackCardPerformer(PlayRandomAttackCardGA action)
+    {
+        // A selected card can contain compositions/replay effects. It must not
+        // recursively execute more random cards from this same action tree.
+        for (GameAction ancestor = action.ParentAction; ancestor != null; ancestor = ancestor.ParentAction)
         {
-            PerformEffectGA effectAction = new(
-                playCardGA.Card.MannualTargetEffect,
-                new List<CombatantView> { playCardGA.MannualTarget },
-                HeroSystem.Instance.GetHero(heroIndex)
-            );
-            ActionSystem.Instance.AddReaction(effectAction);
+            if (ancestor is PlayRandomAttackCardGA)
+                yield break;
         }
 
-        foreach (var effectWrapper in playCardGA.Card.OtherEffects)
+        HeroSystem heroes = HeroSystem.Instance;
+        if (heroes == null || action.Owner == null || action.Owner.CurrentHealth <= 0 ||
+            !heroes.TryGetHeroIndex(action.Owner, out int heroIndex) || !IsValidHero(heroIndex))
+            yield break;
+
+        // Finish a hand-switch animation before changing the list it enumerates.
+        if (heroIndex == activeHeroIndex && displayHandCoroutine != null)
+            yield return displayHandCoroutine;
+
+        if (action.Owner == null || action.Owner.CurrentHealth <= 0)
+            yield break;
+        List<CombatantView> enemies = new AllEnemiesTM().GetTargets(action.Owner);
+        if (enemies.Count == 0)
+            yield break;
+
+        List<Card> candidates = new();
+        foreach (Card candidate in hands[heroIndex])
         {
-            List<CombatantView> targets = effectWrapper.TargetMode.GetTargets(
-                HeroSystem.Instance.GetHero(heroIndex), playCardGA.MannualTarget);
+            // Enemy-directed auto play cannot supply a manual hero target.
+            if (candidate != null && candidate.Type == CardType.Attack &&
+                (candidate.MannualTargetEffect == null || candidate.ManualTargetKind == ManualTargetKind.Enemy))
+                candidates.Add(candidate);
+        }
+        if (candidates.Count == 0)
+            yield break;
 
-            PerformEffectGA effectAction = new(
-                effectWrapper.Effect,
-                targets,
-                HeroSystem.Instance.GetHero(heroIndex)
-            );
+        Card card = candidates[Random.Range(0, candidates.Count)];
+        CombatantView target = enemies[Random.Range(0, enemies.Count)];
+        List<List<CombatantView>> otherTargets = ResolveOtherEffectTargets(card, action.Owner, target);
+        if (!hands[heroIndex].Remove(card))
+            yield break;
 
-            ActionSystem.Instance.AddReaction(effectAction);
+        // Use the normal destination rules once, including hidden hands and
+        // Disintegrate. This is effect execution, not a paid/manual card play.
+        yield return MovePlayedCard(heroIndex, card);
+        QueuePlayedCardEffects(card, action.Owner, target, otherTargets);
+    }
+
+    private IEnumerator RepeatFirstAttackCardPerformer(RepeatFirstAttackCardGA action)
+    {
+        repeatFirstAttackEachTurn = true;
+        if (repeatedThisTurn || firstAttackCardPlayedThisTurn == null ||
+            firstAttackCardPlayedThisTurn.Card == null ||
+            firstAttackCardPlayedThisTurn.Card.Type != CardType.Attack)
+            yield break;
+
+        repeatedThisTurn = true;
+        QueueCardEffects(
+            firstAttackCardPlayedThisTurn.Card,
+            firstAttackCardPlayedThisTurn.Caster,
+            firstAttackCardPlayedThisTurn.ManualTarget,
+            firstAttackCardPlayedThisTurn.OtherEffectTargets);
+        yield break;
+    }
+
+    private void QueuePlayedCardEffects(Card card, CombatantView caster, CombatantView manualTarget,
+        List<List<CombatantView>> otherEffectTargets)
+    {
+        bool repeatAttack = false;
+        if (card.Type == CardType.Attack && firstAttackCardPlayedThisTurn == null)
+        {
+            firstAttackCardPlayedThisTurn = new PlayedAttackCard(
+                card, caster, manualTarget, otherEffectTargets);
+            repeatAttack = repeatFirstAttackEachTurn && !repeatedThisTurn;
+            if (repeatAttack)
+                repeatedThisTurn = true;
         }
 
+        QueueCardEffects(card, caster, manualTarget, otherEffectTargets);
+        if (repeatAttack)
+            QueueCardEffects(card, caster, manualTarget, otherEffectTargets);
+    }
+
+    private List<List<CombatantView>> ResolveOtherEffectTargets(Card card,
+        CombatantView caster, CombatantView manualTarget)
+    {
+        List<List<CombatantView>> resolvedTargets = new();
+        if (card.OtherEffects == null)
+            return resolvedTargets;
+
+        foreach (AutoTargetEffect effectWrapper in card.OtherEffects)
+        {
+            if (effectWrapper == null || effectWrapper.TargetMode == null || effectWrapper.Effect == null)
+            {
+                resolvedTargets.Add(new());
+                continue;
+            }
+
+            List<CombatantView> targets = effectWrapper.TargetMode.GetTargets(caster, manualTarget);
+            resolvedTargets.Add(targets == null ? new() : new(targets));
+        }
+
+        return resolvedTargets;
+    }
+
+    private void QueueCardEffects(Card card, CombatantView caster, CombatantView manualTarget,
+        List<List<CombatantView>> otherEffectTargets)
+    {
+        if (card.MannualTargetEffect != null)
+        {
+            ActionSystem.Instance.AddReaction(new PerformEffectGA(
+                card.MannualTargetEffect,
+                new List<CombatantView> { manualTarget },
+                caster,
+                manualTarget));
+        }
+
+        if (card.OtherEffects == null)
+            return;
+
+        for (int i = 0; i < card.OtherEffects.Count; i++)
+        {
+            AutoTargetEffect effectWrapper = card.OtherEffects[i];
+            if (effectWrapper == null || effectWrapper.TargetMode == null || effectWrapper.Effect == null)
+                continue;
+
+            List<CombatantView> targets = i < otherEffectTargets.Count && otherEffectTargets[i] != null
+                ? new(otherEffectTargets[i])
+                : new();
+            EffectContext context = new(targets, caster, manualTarget);
+            ActionSystem.Instance.AddReaction(new RepeatAutoTargetEffectGA(effectWrapper, context));
+        }
+    }
+
+    private void ResetAttackCardRecord(EnemyTurnGA action = null)
+    {
+        firstAttackCardPlayedThisTurn = null;
+        repeatedThisTurn = false;
     }
 
 
     //Helper
+
+    private IEnumerator MovePlayedCard(int heroIndex, Card card)
+    {
+        CardView cardView = heroIndex == activeHeroIndex ? handView.RemoveCard(card) : null;
+        if (card.Disintegrate)
+        {
+            // Keep this runtime copy out of discard before its effects can draw cards.
+            if (cardView != null)
+                yield return DisintegrateCard(cardView);
+        }
+        else if (cardView != null)
+        {
+            yield return DiscardCard(heroIndex, cardView);
+        }
+        else
+        {
+            discardPiles[heroIndex].Add(card);
+        }
+    }
 
     private IEnumerator DrawCard(int heroIndex)
     {
@@ -337,6 +505,9 @@ public class CardSystem : SingleTon<CardSystem>
     public void ResetCards(int heroIndex)
     {
         if (!IsValidHero(heroIndex)) { return; }
+
+        if (HeroSystem.Instance != null)
+            HeroSystem.Instance.ScheduledEffects.CancelPlayerPhaseEnd(HeroSystem.Instance.GetHero(heroIndex));
 
         if (heroIndex == activeHeroIndex)
         {

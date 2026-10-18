@@ -9,6 +9,7 @@ public sealed class CounterBuffs
         public int Damage;
         // Zero means the rest of this combat; timed grants are removed upon reaching zero.
         public int RemainingTurns;
+        public int AdditionalStunPercent;
     }
 
     private readonly List<Grant> grants = new();
@@ -26,7 +27,20 @@ public sealed class CounterBuffs
         }
     }
 
-    public bool Add(int damage, int turns)
+    // Damage combines into one strike. Each surviving grant contributes its own bonus;
+    // the final percentage is bounded because a gauge cannot fill past its maximum.
+    public int AdditionalStunPercent
+    {
+        get
+        {
+            int total = 0;
+            foreach (Grant grant in grants)
+                total = Math.Min(100, total + grant.AdditionalStunPercent);
+            return total;
+        }
+    }
+
+    public bool Add(int damage, int turns, int additionalStunPercent = 0)
     {
         if (damage <= 0 || turns < 0)
             return false;
@@ -35,7 +49,12 @@ public sealed class CounterBuffs
         if (acceptedDamage == 0)
             return false;
 
-        grants.Add(new Grant { Damage = acceptedDamage, RemainingTurns = turns });
+        grants.Add(new Grant
+        {
+            Damage = acceptedDamage,
+            RemainingTurns = turns,
+            AdditionalStunPercent = Math.Max(0, Math.Min(100, additionalStunPercent))
+        });
         return true;
     }
 

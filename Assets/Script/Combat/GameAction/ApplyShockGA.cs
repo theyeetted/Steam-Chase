@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class ApplyShockGA : GameAction
 {
     public int ShockDamage {  get; private set; }
@@ -6,6 +8,7 @@ public class ApplyShockGA : GameAction
     public bool UseCurrentStacks { get; private set; }
     public StatusTriggerStackMode TriggerStacks { get; private set; }
     public StatusStackConsumption ConsumeStacks { get; private set; } = StatusStackConsumption.One;
+    public List<DamageResult> Results { get; }
 
     public ApplyShockGA(int shockStacks, CombatantView target)
     {
@@ -15,11 +18,12 @@ public class ApplyShockGA : GameAction
 
     // Card triggers read their damage and consumption from the stacks present at execution.
     public ApplyShockGA(CombatantView target, StatusTriggerStackMode triggerStacks,
-        StatusStackConsumption consumeStacks)
+        StatusStackConsumption consumeStacks, List<DamageResult> results = null)
     {
         Target = target;
         UseCurrentStacks = true;
         TriggerStacks = triggerStacks;
         ConsumeStacks = consumeStacks;
+        Results = results;
     }
 }

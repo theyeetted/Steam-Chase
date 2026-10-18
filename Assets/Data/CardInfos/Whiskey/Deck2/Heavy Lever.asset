@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
+  m_Name: Heavy Lever
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <description>k__BackingField: 'Gain 14 Block and deal 14 damage. If the target
+    is Aggravated, fill their Stun gauge by an additional 25%. '
+  <Image>k__BackingField: {fileID: 0}
+  <Cost>k__BackingField: 3
+  <Rarity>k__BackingField: 1
+  <Character>k__BackingField: 0
+  <Type>k__BackingField: 0
+  <Disintegrate>k__BackingField: 0
+  <ManualTargetKind>k__BackingField: 0
+  <MannualTargetEffect>k__BackingField:
+    rid: 9151934980418437267
+  <OtherTargetEffects>k__BackingField:
+  - rid: 9151934980418437268
+  - rid: 9151934980418437271
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 9151934980418437267
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 14
+        damageValue:
+          rid: -2
+    - rid: 9151934980418437268
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 9151934980418437269
+        <Effect>k__BackingField:
+          rid: 9151934980418437270
+        <RepeatMode>k__BackingField: 0
+        <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
+        <ChancePercent>k__BackingField: 100
+    - rid: 9151934980418437269
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151934980418437270
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 2
+        stackCount: 14
+    - rid: 9151934980418437271
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 9151934980418437272
+        <Effect>k__BackingField:
+          rid: 9151934980418437273
+        <RepeatMode>k__BackingField: 0
+        <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
+        <ChancePercent>k__BackingField: 100
+    - rid: 9151934980418437272
+      type: {class: ManualTargetTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151934980418437273
+      type: {class: ConditionalEffect, ns: , asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 9151934980418437274
+        effect:
+          rid: 9151934980418437275
+        subjectTargetMode:
+          rid: -2
+        evaluation: 0
+        recipientTargetMode:
+          rid: 9151934980418437276
+    - rid: 9151934980418437274
+      type: {class: HasStatusEffectCondition, ns: , asm: Assembly-CSharp}
+      data:
+        subject: 0
+        statusEffectType: 10
+        minimumStacks: 1
+        invert: 0
+    - rid: 9151934980418437275
+      type: {class: FillStunGaugeEffect, ns: , asm: Assembly-CSharp}
+      data:
+        stunFillPercent: 25
+    - rid: 9151934980418437276
+      type: {class: ManualTargetTM, ns: , asm: Assembly-CSharp}
+      data: 

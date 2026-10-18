@@ -57,8 +57,19 @@ public class DamageSystem : MonoBehaviour
         if (gameOverTriggered)
             yield break;
 
-        if (dealDamageGA.Caster is EnemyView enemyCaster &&
-            (enemyCaster == null || enemyCaster.CurrentHealth <= 0))
+        if (dealDamageGA.Caster is CombatantView source &&
+            (source == null || source.CurrentHealth <= 0))
+            yield break;
+
+        // Resolve once after this action's PRE reactions, but before any of its own hits.
+        // Area hits use the same amount, even as they add new history entries.
+        if (dealDamageGA.AmountSource != null)
+        {
+            if (!dealDamageGA.AmountSource.TryGetValue(dealDamageGA.ValueContext, out int amount))
+                yield break;
+            dealDamageGA.Amount = Mathf.Max(0, amount);
+        }
+        if (dealDamageGA.Amount <= 0)
             yield break;
 
         int outgoingDamage = StatusEffectSystem.ModifyOutgoingDamage(dealDamageGA.Caster, dealDamageGA.Amount);
@@ -85,10 +96,13 @@ public class DamageSystem : MonoBehaviour
 
             // Stun buildup uses the original amount, before bonuses or Block.
             int stunAmount = Mathf.FloorToInt(dealDamageGA.Amount * 0.4f);
-            // Record the actual target after redirection, before Block can absorb the hit.
-            // Extra Attack also resolves through this path.
+            // Keep the legacy enemy-only predicate. New numeric history is recorded
+            // inside ApplyDamage after the hit actually mutates health/Block.
             target.RecordAttack();
-            yield return ApplyDamage(target, damage, dealDamageGA.Caster, stunAmount);
+            yield return ApplyDamage(target, damage, dealDamageGA.Caster, stunAmount,
+                stunFillPercent: dealDamageGA.AdditionalStunFillPercent,
+                attackKind: dealDamageGA.Kind);
+
             // A landed ordinary attack triggers Mark even when Block absorbs the hit.
             // Follow-Up damage and direct status ticks never enter this trigger path.
             QueueMarkFollowUp(target);
@@ -119,7 +133,7 @@ public class DamageSystem : MonoBehaviour
         // Keep the original targets so Aggravated can be resolved again at execution.
         ActionSystem.Instance.AddReaction(new DealDamageGA(
             StatusEffectSystem.ModifyStatusDamage(caster, StatusEffectType.ExtraAttackDamageUp, ExtraAttackGA.BaseDamage),
-            extraAttackGA.Targets, caster));
+            extraAttackGA.Targets, caster, AttackKind.ExtraAttack));
         yield break;
     }
 
@@ -168,7 +182,8 @@ public class DamageSystem : MonoBehaviour
             // Base four, the dedicated card bonus, and the matching status bonus; Block still applies.
             // Includes Mark-triggered Follow-Up attacks during either side's turn.
             target.RecordAttack();
-            yield return ApplyDamage(target, damage, caster, stunFillPercent: followUpAttackGA.StunFillPercent);
+            yield return ApplyDamage(target, damage, caster, stunFillPercent: followUpAttackGA.StunFillPercent,
+                attackKind: AttackKind.FollowUp);
             QueueCounterAttack(target, caster);
         }
     }
@@ -182,7 +197,7 @@ public class DamageSystem : MonoBehaviour
 
         int damage = hero.GetStatusEffectStacks(StatusEffectType.Counter);
         if (damage > 0)
-            ActionSystem.Instance.AddReaction(new CounterAttackGA(hero, enemy, damage));
+            ActionSystem.Instance.AddReaction(new CounterAttackGA(hero, enemy, damage, hero.CounterStunFillPercent));
     }
 
     private IEnumerator CounterAttackPerformer(CounterAttackGA action)
@@ -194,7 +209,9 @@ public class DamageSystem : MonoBehaviour
 
         // Normal hero attack: applies damage modifiers, Block, Stun buildup, Mark, and attack history.
         // Counter is hero-only and responds only to enemy casters, so it cannot counter itself.
-        ActionSystem.Instance.AddReaction(new DealDamageGA(action.Damage, new() { action.Target }, action.Caster));
+        ActionSystem.Instance.AddReaction(new DealDamageGA(
+            action.Damage, new() { action.Target }, action.Caster, AttackKind.Counter,
+            additionalStunFillPercent: action.AdditionalStunPercent));
         yield break;
     }
 
@@ -223,7 +240,7 @@ public class DamageSystem : MonoBehaviour
             _ => 0
         };
         // Bypass attack/status bonuses, Vulnerable, and Mark triggers. Keep Block, VFX, and death handling.
-        yield return ApplyDamage(target, damage, null);
+        yield return ApplyDamage(target, damage, null, results: action.Results);
         if (target != null && consumedStacks > 0)
             target.RemoveStatusEffect(StatusEffectType.Stress, consumedStacks);
     }
@@ -245,13 +262,23 @@ public class DamageSystem : MonoBehaviour
     }
 
     private IEnumerator ApplyDamage(CombatantView target, int damage, CombatantView caster, int stunAmount = 0,
-        int stunFillPercent = 0)
+        int stunFillPercent = 0, AttackKind attackKind = AttackKind.None,
+        List<DamageResult> results = null)
     {
+        int healthBefore = target.CurrentHealth;
         target.Damage(damage, caster);
+        // Capture immediately: later reactions and death removal cannot overwrite this hit.
+        results?.Add(new DamageResult(target.GetInstanceID(), damage,
+            healthBefore - target.CurrentHealth, false));
         if (stunAmount > 0)
             target.AddStun(stunAmount);
         if (stunFillPercent > 0)
             target.AddStunPercent(stunFillPercent);
+
+        // Record before presentation yields or death removal. Blocked and lethal hits
+        // count; direct status damage uses the default None and never publishes this fact.
+        if (attackKind != AttackKind.None)
+            RecordResolvedAttack(caster, target, attackKind);
 
         if (damageVFX != null)
             Instantiate(damageVFX, target.transform.position, Quaternion.identity);
@@ -263,6 +290,18 @@ public class DamageSystem : MonoBehaviour
             else if (target is PlayerView)
                 CheckGameOver();
         }
+    }
+
+    private static void RecordResolvedAttack(CombatantView caster, CombatantView target, AttackKind kind)
+    {
+        HeroSystem heroes = HeroSystem.Instance;
+        if (heroes == null)
+            return;
+
+        ResolvedAttack attack = heroes.AttackHistory.RecordHit(caster, target, kind,
+            heroes.TryGetHeroIndex(caster, out _), heroes.TryGetHeroIndex(target, out _));
+        if (attack != null)
+            ActionSystem.Instance.AddReaction(new AttackResolvedGA(attack, caster, target));
     }
 
     private void CheckGameOver()

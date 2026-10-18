@@ -66,22 +66,29 @@ public class ActionSystem : SingleTon<ActionSystem>
 
     }
 
-    private IEnumerator Flow(GameAction action, Action OnFlowFinished = null)
+    private IEnumerator Flow(GameAction action, Action OnFlowFinished = null, GameAction parent = null)
     {
+        action.ParentAction = parent;
+        reactions = action.OpeningReactions;
+        yield return PerformReactions(action.OpeningReactions, action);
+
         // Do stuff before action (early reaction)
         reactions = action.PreReactions;
         PerformSubscribers(action, PreSubs);
-        yield return PerformReactions();  // Recursive
+        yield return PerformReactions(action.PreReactions, action);  // Recursive
 
         // Immediate reaction
         reactions = action.PerformReactions;
         yield return PerformPerformer(action);
-        yield return PerformReactions();
+        yield return PerformReactions(action.PerformReactions, action);
 
         // Reaction after action finished
         reactions = action.PostReactions;
         PerformSubscribers(action, postSubs);
-        yield return PerformReactions();
+        yield return PerformReactions(action.PostReactions, action);
+
+        reactions = action.CompletionReactions;
+        yield return PerformReactions(action.CompletionReactions, action);
 
         OnFlowFinished?.Invoke(); // Mark as complete
     }
@@ -111,11 +118,11 @@ public class ActionSystem : SingleTon<ActionSystem>
 
     }
 
-    private IEnumerator PerformReactions() 
+    private IEnumerator PerformReactions(List<GameAction> queuedReactions, GameAction parent)
     {
-        foreach(var reaction in reactions)
+        foreach(var reaction in queuedReactions)
         {
-            yield return Flow(reaction);
+            yield return Flow(reaction, parent: parent);
         }
     }
 
