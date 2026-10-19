@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfc36edc2d5c3d94cb6c5eedd7dafff0, type: 3}
   m_Name: Werewolf
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -737834021620278050, guid: ab0b9e3942cc7f046a11c81b6699dd43, type: 3}
   <Health>k__BackingField: 120
-  <AttackPower>k__BackingField: 0
+  <AttackPower>k__BackingField: 12
   <MaxStun>k__BackingField: 100
   <Rank>k__BackingField: 1
+  <Animator>k__BackingField: {fileID: 9100000, guid: 482c5c9b8b2ac4b46bbf84b3c2c7e314, type: 2}
   <Skills>k__BackingField:
   - <SkillName>k__BackingField: Scratch
     <Description>k__BackingField: Deal 12 damage to 1 target

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "c\u2019mon"
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: gain 7 block apply 1 vulnerable
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -9062639760465018090, guid: 4c07862413798364cba0dcdfaf4ca168, type: 3}
   <Cost>k__BackingField: 0
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0
@@ -39,7 +39,13 @@ MonoBehaviour:
           rid: 9151934962459738275
         <Effect>k__BackingField:
           rid: 9151934962459738276
+        <RepeatMode>k__BackingField: 0
         <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
         <ChancePercent>k__BackingField: 100
     - rid: 9151934962459738275
       type: {class: SelfTM, ns: , asm: Assembly-CSharp}

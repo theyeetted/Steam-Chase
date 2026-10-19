@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: deal 8 damage if enemy has vulnerable deal another
     time
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -4736254421223710118, guid: 4b89b64cdf4ecbc4cb4ff70fca509180, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0

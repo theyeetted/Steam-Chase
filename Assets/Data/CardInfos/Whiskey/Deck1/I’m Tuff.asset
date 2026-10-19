@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "I\u2019m Tuff"
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Gain 3 Attack up if any enemy has Vulnerable
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: 5159794821234132988, guid: 9339718a90e425d4290fd665c178f7c6, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 2
   <Character>k__BackingField: 0

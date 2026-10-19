@@ -15,6 +15,11 @@ MonoBehaviour:
   <description>k__BackingField: 
   <Image>k__BackingField: {fileID: 0}
   <Cost>k__BackingField: 0
+  <Rarity>k__BackingField: 0
+  <Character>k__BackingField: 0
+  <Type>k__BackingField: 0
+  <Disintegrate>k__BackingField: 0
+  <ManualTargetKind>k__BackingField: 0
   <MannualTargetEffect>k__BackingField:
     rid: -2
   <OtherTargetEffects>k__BackingField:
@@ -28,14 +33,22 @@ MonoBehaviour:
       type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
       data:
         <TargetMode>k__BackingField:
-          rid: 7746331273383903321
+          rid: 9151935010024456192
         <Effect>k__BackingField:
           rid: 7746331273383903322
-    - rid: 7746331273383903321
-      type: {class: OneHeroTM, ns: , asm: Assembly-CSharp}
-      data: 
+        <RepeatMode>k__BackingField: 0
+        <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
+        <ChancePercent>k__BackingField: 100
     - rid: 7746331273383903322
       type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 3
         stackCount: 50
+    - rid: 9151935010024456192
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 

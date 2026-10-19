@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Whiskey Deck 1
   m_EditorClassIdentifier: Assembly-CSharp::CharData
   <Image>k__BackingField: {fileID: -6951953231129395075, guid: 62bfaded500069a47b7d5255d097430c, type: 3}
-  <Health>k__BackingField: 150
+  <Health>k__BackingField: 100
   <Deck>k__BackingField:
   - {fileID: 11400000, guid: f56f3a6c67548ad44b499cb0b97fb6ca, type: 2}
   - {fileID: 11400000, guid: f56f3a6c67548ad44b499cb0b97fb6ca, type: 2}
@@ -26,4 +26,19 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0051b05822c58334b9ef7b2d7f7f047f, type: 2}
   - {fileID: 11400000, guid: 0051b05822c58334b9ef7b2d7f7f047f, type: 2}
   - {fileID: 11400000, guid: c0423d93851901b4fa93e5e69a81e4cf, type: 2}
+  - {fileID: 11400000, guid: 785c26af65fd2d5459c3074a75cc1b80, type: 2}
+  - {fileID: 11400000, guid: e29e70b8597b0db41ac5fd5a032876ee, type: 2}
+  - {fileID: 11400000, guid: f9aa6ba4fc7c1be4bacdf7674ea82b92, type: 2}
+  - {fileID: 11400000, guid: 2b23852b30d604b4695b710054f35bba, type: 2}
+  - {fileID: 11400000, guid: 1960983c0b7933643872137af4af7bdc, type: 2}
+  - {fileID: 11400000, guid: 02a7ad9a9c38bb44a9ac4b5418d09137, type: 2}
+  - {fileID: 11400000, guid: 680af432f5ffa6247947480b81248772, type: 2}
+  - {fileID: 11400000, guid: c44e570f1cbba5e40a87ab13aa049c72, type: 2}
+  - {fileID: 11400000, guid: ae5e3a4dc91401c4a93b64732a453906, type: 2}
+  - {fileID: 11400000, guid: 4bfdcd3f72b95f5498fc3e897f08fbe1, type: 2}
+  - {fileID: 11400000, guid: 0c641494d15a32c4facd894ebe529ca3, type: 2}
+  - {fileID: 11400000, guid: 000d340b9a9f965499bc703ca99444d6, type: 2}
+  - {fileID: 11400000, guid: 21f115f9a862b884796e37d134644ed2, type: 2}
+  - {fileID: 11400000, guid: efc83ff3700e92248afed9f6008640b7, type: 2}
+  - {fileID: 11400000, guid: bf2b776e4436a1c4a8609c82a1450bc0, type: 2}
   <MaxStun>k__BackingField: 100

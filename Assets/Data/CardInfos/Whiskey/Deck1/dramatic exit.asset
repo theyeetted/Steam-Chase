@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: 'Deal 6 damage and 5 more damage x times both character
     has deal '
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -35035996026498392, guid: 3ca02379dfdb7494fb6f62275483534e, type: 3}
   <Cost>k__BackingField: 2
   <Rarity>k__BackingField: 3
   <Character>k__BackingField: 0

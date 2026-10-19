@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Block
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Gain 5 Block
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: 8118066430107275596, guid: 0f82bdf52064f5b4fbbea851c6c7b9cb, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 0
   <Character>k__BackingField: 0
@@ -36,7 +36,13 @@ MonoBehaviour:
           rid: 9151934962459738223
         <Effect>k__BackingField:
           rid: 9151934962459738226
+        <RepeatMode>k__BackingField: 0
         <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
         <ChancePercent>k__BackingField: 100
     - rid: 9151934962459738223
       type: {class: SelfTM, ns: , asm: Assembly-CSharp}

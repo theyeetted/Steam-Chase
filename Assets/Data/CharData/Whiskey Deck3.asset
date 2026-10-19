@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Whiskey Deck3
   m_EditorClassIdentifier: Assembly-CSharp::CharData
   <Image>k__BackingField: {fileID: -6951953231129395075, guid: 62bfaded500069a47b7d5255d097430c, type: 3}
-  <Health>k__BackingField: 150
+  <Health>k__BackingField: 100
   <Deck>k__BackingField:
   - {fileID: 11400000, guid: f56f3a6c67548ad44b499cb0b97fb6ca, type: 2}
   - {fileID: 11400000, guid: f56f3a6c67548ad44b499cb0b97fb6ca, type: 2}
@@ -24,7 +24,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0051b05822c58334b9ef7b2d7f7f047f, type: 2}
   - {fileID: 11400000, guid: 0051b05822c58334b9ef7b2d7f7f047f, type: 2}
   - {fileID: 11400000, guid: 0051b05822c58334b9ef7b2d7f7f047f, type: 2}
-  - {fileID: 11400000, guid: c0423d93851901b4fa93e5e69a81e4cf, type: 2}
   - {fileID: 11400000, guid: c0423d93851901b4fa93e5e69a81e4cf, type: 2}
   - {fileID: 11400000, guid: 500bbbf09a9ca3b429cae9a9ed29a478, type: 2}
   - {fileID: 11400000, guid: 4fd23ca3ba7ef174bb7cb8f606429368, type: 2}

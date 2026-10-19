@@ -13,18 +13,17 @@ MonoBehaviour:
   m_Name: Ade
   m_EditorClassIdentifier: Assembly-CSharp::CharData
   <Image>k__BackingField: {fileID: -6713952168519612241, guid: 000877f4fd4ee9a4db5510a8c2ed14af, type: 3}
-  <Health>k__BackingField: 220
+  <Health>k__BackingField: 80
   <Deck>k__BackingField:
-  - {fileID: 11400000, guid: 1e0637957449c09429bd9a34befbc3d4, type: 2}
-  - {fileID: 11400000, guid: 1e0637957449c09429bd9a34befbc3d4, type: 2}
-  - {fileID: 11400000, guid: 50ff86404027dbd4a8f0cc3fb7c8537e, type: 2}
-  - {fileID: 11400000, guid: 50ff86404027dbd4a8f0cc3fb7c8537e, type: 2}
-  - {fileID: 11400000, guid: 50ff86404027dbd4a8f0cc3fb7c8537e, type: 2}
-  - {fileID: 11400000, guid: 48f91b58fe176c448a0807b9bdbddeff, type: 2}
-  - {fileID: 11400000, guid: 48f91b58fe176c448a0807b9bdbddeff, type: 2}
-  - {fileID: 11400000, guid: 48f91b58fe176c448a0807b9bdbddeff, type: 2}
-  - {fileID: 11400000, guid: 48f91b58fe176c448a0807b9bdbddeff, type: 2}
-  - {fileID: 11400000, guid: 1cc19ae97311c3d41824f453485407f7, type: 2}
-  - {fileID: 11400000, guid: 1cc19ae97311c3d41824f453485407f7, type: 2}
-  - {fileID: 11400000, guid: 1cc19ae97311c3d41824f453485407f7, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
+  - {fileID: 11400000, guid: d5546c0eb6a4ecb4badd79950a77d5dd, type: 2}
   <MaxStun>k__BackingField: 100

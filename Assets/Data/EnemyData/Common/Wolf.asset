@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   <Image>k__BackingField: {fileID: 0}
   <Health>k__BackingField: 90
-  <AttackPower>k__BackingField: 1
+  <AttackPower>k__BackingField: 8
   <MaxStun>k__BackingField: 100
   <Rank>k__BackingField: 0
+  <Animator>k__BackingField: {fileID: 9100000, guid: 0728ac4269b3a664cbce818bf1d3d999, type: 2}
   <Skills>k__BackingField:
   - <SkillName>k__BackingField: Bite
     <Description>k__BackingField: Deal 8 damage to 1 target

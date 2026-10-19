@@ -50,6 +50,17 @@ public class CardSystem : SingleTon<CardSystem>
 
     public int ActiveHeroIndex => activeHeroIndex;
 
+    // Read-only counts for the HUD; no active hero (-1) displays empty piles.
+    public int GetDrawPileCount(int heroIndex)
+    {
+        return IsValidHero(heroIndex) ? drawPiles[heroIndex].Count : 0;
+    }
+
+    public int GetDiscardPileCount(int heroIndex)
+    {
+        return IsValidHero(heroIndex) ? discardPiles[heroIndex].Count : 0;
+    }
+
     void OnEnable()
     {
         ActionSystem.AttachPerformer<DrawCardsGA>(DrawCardsPerformer);

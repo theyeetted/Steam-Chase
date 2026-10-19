@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: improvise mid fight
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: gain attack up
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -726098750996046807, guid: fb8a80e2d193c654e833c9d7eaefbecc, type: 3}
   <Cost>k__BackingField: 0
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0
@@ -36,7 +36,13 @@ MonoBehaviour:
           rid: 9151934962459738279
         <Effect>k__BackingField:
           rid: 9151934962459738280
+        <RepeatMode>k__BackingField: 0
         <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
         <ChancePercent>k__BackingField: 100
     - rid: 9151934962459738279
       type: {class: SelfTM, ns: , asm: Assembly-CSharp}

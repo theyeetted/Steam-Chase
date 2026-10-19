@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: smack!
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: deal 8 damage and apply 1 vulnerable
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: 1412381745524899733, guid: 9ae38e330175cfd479112aef9c48d20a, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0
@@ -42,7 +42,13 @@ MonoBehaviour:
           rid: 9151934962459738245
         <Effect>k__BackingField:
           rid: 9151934962459738246
+        <RepeatMode>k__BackingField: 0
         <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
         <ChancePercent>k__BackingField: 100
     - rid: 9151934962459738245
       type: {class: ManualTargetTM, ns: , asm: Assembly-CSharp}

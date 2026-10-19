@@ -1,0 +1,624 @@
+fileFormatVersion: 2
+guid: 309e14846d4579247acaa47c732d5eec
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2398099424156643019
+    second: Werepunk_d_0
+  - first:
+      213: -3134212972043113550
+    second: Werepunk_d_1
+  - first:
+      213: -9084977683996889535
+    second: Werepunk_d_2
+  - first:
+      213: 6111410819953096415
+    second: Werepunk_d_3
+  - first:
+      213: 4094514285653998384
+    second: Werepunk_d_4
+  - first:
+      213: 8280280748271876333
+    second: Werepunk_d_5
+  - first:
+      213: -2694937543332589522
+    second: Werepunk_d_6
+  - first:
+      213: -7354294413346699367
+    second: Werepunk_d_7
+  - first:
+      213: -5014723168362899862
+    second: Werepunk_d_8
+  - first:
+      213: 7386247362089089152
+    second: Werepunk_d_9
+  - first:
+      213: 5232736726478764085
+    second: Werepunk_d_10
+  - first:
+      213: -689209364245616725
+    second: Werepunk_d_11
+  - first:
+      213: 7656353386778359546
+    second: Werepunk_d_12
+  - first:
+      213: -927219365085218725
+    second: Werepunk_d_13
+  - first:
+      213: 975120786004631753
+    second: Werepunk_d_14
+  - first:
+      213: 5323780357252950830
+    second: Werepunk_d_15
+  - first:
+      213: 7721904270855492309
+    second: Werepunk_d_16
+  - first:
+      213: -6722865160099138448
+    second: Werepunk_d_17
+  - first:
+      213: -1933164178578872894
+    second: Werepunk_d_18
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Werepunk_d_0
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 919
+        width: 99
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5311317874d38bed0800000000000000
+      internalID: -2398099424156643019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_1
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 917
+        width: 101
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bbe2fe58e90184d0800000000000000
+      internalID: -3134212972043113550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_2
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 919
+        width: 101
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14ea3014eecabe180800000000000000
+      internalID: -9084977683996889535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_3
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 734
+        width: 88
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd678c7d2c710d450800000000000000
+      internalID: 6111410819953096415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_4
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 734
+        width: 88
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03b3b249c03a2d830800000000000000
+      internalID: 4094514285653998384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_5
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 550
+        width: 101
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de83041487779e270800000000000000
+      internalID: 8280280748271876333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_6
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 555
+        width: 101
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e201ccd2598a99ad0800000000000000
+      internalID: -2694937543332589522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_7
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 555
+        width: 101
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99784de123c40f990800000000000000
+      internalID: -7354294413346699367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_8
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 555
+        width: 101
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a66dec6f8df186ab0800000000000000
+      internalID: -5014723168362899862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_9
+      rect:
+        serializedVersion: 2
+        x: 789
+        y: 555
+        width: 101
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0887c7087d8318660800000000000000
+      internalID: 7386247362089089152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_10
+      rect:
+        serializedVersion: 2
+        x: 970
+        y: 555
+        width: 101
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53838e8145a6e9840800000000000000
+      internalID: 5232736726478764085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_11
+      rect:
+        serializedVersion: 2
+        x: 1151
+        y: 553
+        width: 101
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba7644c1cbf6f66f0800000000000000
+      internalID: -689209364245616725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_12
+      rect:
+        serializedVersion: 2
+        x: 1333
+        y: 555
+        width: 101
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af678c517d4d04a60800000000000000
+      internalID: 7656353386778359546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_13
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 370
+        width: 99
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b587b3b66ead123f0800000000000000
+      internalID: -927219365085218725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_14
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 370
+        width: 99
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c0e7ee3033588d00800000000000000
+      internalID: 975120786004631753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_15
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 370
+        width: 99
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2ba340470ed1e940800000000000000
+      internalID: 5323780357252950830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_16
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 370
+        width: 94
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d2d9ed9507b92b60800000000000000
+      internalID: 7721904270855492309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_17
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 199
+        width: 101
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 074f07391c593b2a0800000000000000
+      internalID: -6722865160099138448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Werepunk_d_18
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 199
+        width: 100
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c5eb430c650c25e0800000000000000
+      internalID: -1933164178578872894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Werepunk_d_0: -2398099424156643019
+      Werepunk_d_1: -3134212972043113550
+      Werepunk_d_10: 5232736726478764085
+      Werepunk_d_11: -689209364245616725
+      Werepunk_d_12: 7656353386778359546
+      Werepunk_d_13: -927219365085218725
+      Werepunk_d_14: 975120786004631753
+      Werepunk_d_15: 5323780357252950830
+      Werepunk_d_16: 7721904270855492309
+      Werepunk_d_17: -6722865160099138448
+      Werepunk_d_18: -1933164178578872894
+      Werepunk_d_2: -9084977683996889535
+      Werepunk_d_3: 6111410819953096415
+      Werepunk_d_4: 4094514285653998384
+      Werepunk_d_5: 8280280748271876333
+      Werepunk_d_6: -2694937543332589522
+      Werepunk_d_7: -7354294413346699367
+      Werepunk_d_8: -5014723168362899862
+      Werepunk_d_9: 7386247362089089152
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
