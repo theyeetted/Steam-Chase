@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f3eaa5c1431f743b6bc48670db899a, type: 3}
+  m_Name: Whiskey Deck3
+  m_EditorClassIdentifier: Assembly-CSharp::CharData
+  <Image>k__BackingField: {fileID: -6951953231129395075, guid: 62bfaded500069a47b7d5255d097430c, type: 3}
+  <Health>k__BackingField: 150
+  <Deck>k__BackingField:
+  - {fileID: 11400000, guid: f56f3a6c67548ad44b499cb0b97fb6ca, type: 2}
+  - {fileID: 11400000, guid: f56f3a6c67548ad44b499cb0b97fb6ca, type: 2}
+  - {fileID: 11400000, guid: f56f3a6c67548ad44b499cb0b97fb6ca, type: 2}
+  - {fileID: 11400000, guid: f56f3a6c67548ad44b499cb0b97fb6ca, type: 2}
+  - {fileID: 11400000, guid: f56f3a6c67548ad44b499cb0b97fb6ca, type: 2}
+  - {fileID: 11400000, guid: 0051b05822c58334b9ef7b2d7f7f047f, type: 2}
+  - {fileID: 11400000, guid: 0051b05822c58334b9ef7b2d7f7f047f, type: 2}
+  - {fileID: 11400000, guid: 0051b05822c58334b9ef7b2d7f7f047f, type: 2}
+  - {fileID: 11400000, guid: 0051b05822c58334b9ef7b2d7f7f047f, type: 2}
+  - {fileID: 11400000, guid: c0423d93851901b4fa93e5e69a81e4cf, type: 2}
+  - {fileID: 11400000, guid: c0423d93851901b4fa93e5e69a81e4cf, type: 2}
+  - {fileID: 11400000, guid: 500bbbf09a9ca3b429cae9a9ed29a478, type: 2}
+  - {fileID: 11400000, guid: 4fd23ca3ba7ef174bb7cb8f606429368, type: 2}
+  - {fileID: 11400000, guid: 97f0dd63694894c43a03fa0b4418bb4f, type: 2}
+  - {fileID: 11400000, guid: 23e0a02e79a8ce34abf18cad5932bc53, type: 2}
+  - {fileID: 11400000, guid: e756bd362bfe6af44a13817cf930ea77, type: 2}
+  - {fileID: 11400000, guid: e94f1c2217fa03f418e25eb81b52a472, type: 2}
+  - {fileID: 11400000, guid: 62fb3cacc47440049a76bdce53fffceb, type: 2}
+  - {fileID: 11400000, guid: affce1ed9f914e449a2c2961dccb2e30, type: 2}
+  - {fileID: 11400000, guid: 0caca3f908a959a46a147c80b7928a37, type: 2}
+  - {fileID: 11400000, guid: 9f16e054dcc878f44933bd7987310d73, type: 2}
+  - {fileID: 11400000, guid: 4db177ec8e5bd7f44808bde40d9bdfc1, type: 2}
+  - {fileID: 11400000, guid: 8f21244c966ac6e4d9538ba5a4aa1aa6, type: 2}
+  - {fileID: 11400000, guid: 0cbcd9a7580010d40b7bf872f0eae77d, type: 2}
+  - {fileID: 11400000, guid: 4e018d5ec938e2a479531bda0b432520, type: 2}
+  - {fileID: 11400000, guid: d6e2a7315d5a9894bac5e08285b6393d, type: 2}
+  <MaxStun>k__BackingField: 100

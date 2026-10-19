@@ -38,10 +38,33 @@ public class ActionSystem : SingleTon<ActionSystem>
         if (GameManager.Instance != null && !GameManager.Instance.IsPlaying) return;
         if(IsPerformingAction) return;
         IsPerformingAction = true;
-        StartCoroutine(Flow(action, ()=> {
+        StartCoroutine(RunPausable(Flow(action, ()=> {
             IsPerformingAction = false;
             OnPerformFinished?.Invoke();
-        }));
+        }), () => GameManager.Instance != null && GameManager.Instance.IsPaused));
+    }
+
+    private static IEnumerator RunPausable(IEnumerator routine, Func<bool> isPaused)
+    {
+        // timeScale alone does not suspend yield-null routines or nested performers.
+        // Keep the enumerators alive, advancing each only after Resume.
+        try
+        {
+            while (true)
+            {
+                while (isPaused())
+                    yield return null;
+                if (!routine.MoveNext()) yield break;
+                if (routine.Current is IEnumerator nested)
+                    yield return RunPausable(nested, isPaused);
+                else
+                    yield return routine.Current;
+            }
+        }
+        finally
+        {
+            (routine as IDisposable)?.Dispose();
+        }
     }
 
     public void StopActions()

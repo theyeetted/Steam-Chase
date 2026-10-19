@@ -28,6 +28,7 @@ public class CardView : MonoBehaviour
     private Vector3 dragStartPosition;
     private Quaternion dragStartRotation;
     private bool isManualTargeting;
+    private bool isDragging;
 
     public void Setup(Card card, int heroIndex = 0)
     {
@@ -111,6 +112,7 @@ public class CardView : MonoBehaviour
         }
         else
         {
+            isDragging = true;
             Interactions.Instance.PlayerIsDraging = true;
             CardViewHoverSystem.Instance.Hide();
             Wrapper.SetActive(true);
@@ -123,6 +125,7 @@ public class CardView : MonoBehaviour
 
     void OnMouseDrag()
     {
+        if (!isDragging) return;
         if (!Interactions.Instance.PlayerCanInteract()) return;
         if (Card.MannualTargetEffect != null) return;
         transform.position = MouseUtil.GetMousePositionInWorldSpace(-1);
@@ -155,6 +158,8 @@ public class CardView : MonoBehaviour
             return;
         }
 
+        if (!isDragging) return;
+        isDragging = false;
         if (!Interactions.Instance.PlayerCanInteract() ||
             TurnSystem.Instance == null ||
             !TurnSystem.Instance.CanHeroPlayCards(HeroIndex) ||
@@ -181,9 +186,17 @@ public class CardView : MonoBehaviour
 
     private void OnDisable()
     {
+        CancelInteraction();
+    }
+
+    public void CancelInteraction()
+    {
         if (isManualTargeting && ManualTargetSystem.Instance != null)
             ManualTargetSystem.Instance.CancelTargeting();
         isManualTargeting = false;
+        if (isDragging) ReturnDraggedCard();
+        isDragging = false;
+        if (Wrapper != null) Wrapper.SetActive(true);
     }
 
     private void ReturnDraggedCard()

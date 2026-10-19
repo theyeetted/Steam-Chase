@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfc36edc2d5c3d94cb6c5eedd7dafff0, type: 3}
+  m_Name: Wolf
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: 0}
+  <Health>k__BackingField: 90
+  <AttackPower>k__BackingField: 1
+  <MaxStun>k__BackingField: 100
+  <Rank>k__BackingField: 0
+  <Skills>k__BackingField:
+  - <SkillName>k__BackingField: Bite
+    <Description>k__BackingField: Deal 8 damage to 1 target
+    <Category>k__BackingField: 0
+    <Purpose>k__BackingField: 0
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: 9151935003057717334
+      <Effect>k__BackingField:
+        rid: 9151935003057717324
+      <RepeatCount>k__BackingField: 1
+      <ChancePercent>k__BackingField: 0
+  - <SkillName>k__BackingField: AWOOOOOOO
+    <Description>k__BackingField: 
+    <Category>k__BackingField: 0
+    <Purpose>k__BackingField: 2
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: 9151935003057717325
+      <Effect>k__BackingField:
+        rid: 9151935003057717326
+      <RepeatCount>k__BackingField: 0
+      <ChancePercent>k__BackingField: 100
+  - <SkillName>k__BackingField: Piercing Gaze
+    <Description>k__BackingField: Apply 2 Vulnerable on 1 target
+    <Category>k__BackingField: 0
+    <Purpose>k__BackingField: 3
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: 9151935003057717328
+      <Effect>k__BackingField:
+        rid: 9151935003057717330
+      <RepeatCount>k__BackingField: 0
+      <ChancePercent>k__BackingField: 100
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 9151935003057717324
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 0
+        damageValue:
+          rid: -2
+    - rid: 9151935003057717325
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151935003057717326
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 3
+        stackCount: 1
+    - rid: 9151935003057717328
+      type: {class: OneHeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151935003057717330
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 0
+        stackCount: 2
+    - rid: 9151935003057717334
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data: 

@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfc36edc2d5c3d94cb6c5eedd7dafff0, type: 3}
+  m_Name: Werewolf
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: 0}
+  <Health>k__BackingField: 120
+  <AttackPower>k__BackingField: 0
+  <MaxStun>k__BackingField: 100
+  <Rank>k__BackingField: 1
+  <Skills>k__BackingField:
+  - <SkillName>k__BackingField: Scratch
+    <Description>k__BackingField: Deal 12 damage to 1 target
+    <Category>k__BackingField: 0
+    <Purpose>k__BackingField: 0
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: 9151935003057717332
+      <Effect>k__BackingField:
+        rid: 9151935003057717333
+      <RepeatCount>k__BackingField: 1
+      <ChancePercent>k__BackingField: 100
+  - <SkillName>k__BackingField: Hidden meat
+    <Description>k__BackingField: 'Heal self 12 HP '
+    <Category>k__BackingField: 0
+    <Purpose>k__BackingField: 1
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: 9151935003057717335
+      <Effect>k__BackingField:
+        rid: 9151935003057717336
+      <RepeatCount>k__BackingField: 0
+      <ChancePercent>k__BackingField: 100
+  - <SkillName>k__BackingField: Aggression
+    <Description>k__BackingField: Deal 5 damage, apply 1 Aggravated to 1 target
+    <Category>k__BackingField: 0
+    <Purpose>k__BackingField: 3
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: 9151935003057717337
+      <Effect>k__BackingField:
+        rid: 9151935003057717338
+      <RepeatCount>k__BackingField: 0
+      <ChancePercent>k__BackingField: 100
+    - <TargetMode>k__BackingField:
+        rid: 9151935003057717337
+      <Effect>k__BackingField:
+        rid: 9151935003057717339
+      <RepeatCount>k__BackingField: 1
+      <ChancePercent>k__BackingField: 100
+  - <SkillName>k__BackingField: Red eyes
+    <Description>k__BackingField: Deal 5 damage, apply 1 Aggravated to 1 target
+    <Category>k__BackingField: 0
+    <Purpose>k__BackingField: 2
+    <Effects>k__BackingField:
+    - <TargetMode>k__BackingField:
+        rid: 9151935003057717340
+      <Effect>k__BackingField:
+        rid: 9151935003057717342
+      <RepeatCount>k__BackingField: 0
+      <ChancePercent>k__BackingField: 100
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 9151935003057717332
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151935003057717333
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 12
+        damageValue:
+          rid: -2
+    - rid: 9151935003057717335
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151935003057717336
+      type: {class: HealEffect, ns: , asm: Assembly-CSharp}
+      data:
+        healAmount: 12
+    - rid: 9151935003057717337
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151935003057717338
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 5
+        damageValue:
+          rid: -2
+    - rid: 9151935003057717339
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 0
+        stackCount: 1
+    - rid: 9151935003057717340
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 9151935003057717342
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 3
+        stackCount: 1

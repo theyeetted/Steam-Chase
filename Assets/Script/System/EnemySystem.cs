@@ -67,7 +67,8 @@ public class EnemySystem : SingleTon<EnemySystem>
         {
             yield return null;
         }
-        while (ActionSystem.Instance != null && ActionSystem.Instance.IsPerformingAction);
+        while ((ActionSystem.Instance != null && ActionSystem.Instance.IsPerformingAction) ||
+            (GameManager.Instance != null && GameManager.Instance.IsPaused));
 
         prepareActionsRoutine = null;
         if (GameManager.Instance == null || GameManager.Instance.IsPlaying)
