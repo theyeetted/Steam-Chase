@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Heavy Follow-Through
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Deal 8 damage. Apply 10 Stress.
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -3809395999728401774, guid: 7106174a1c7de6341969059531358757, type: 3}
   <Cost>k__BackingField: 2
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0

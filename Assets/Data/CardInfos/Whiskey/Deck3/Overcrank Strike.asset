@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Deal 12 damage, Apply 10 Stress if the enemy has
     5 Stress on the target.
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -7772322197739728965, guid: bba69b0a5aed2534b90b4b626323a5c8, type: 3}
   <Cost>k__BackingField: 2
   <Rarity>k__BackingField: 2
   <Character>k__BackingField: 0

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: 'Deal 6 damage. Fill the target''s Stun gauge by
     an additional 50%. '
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: 3306544734677957714, guid: a1260fd2bb27d8f4aac5a7cc08dcd9b3, type: 3}
   <Cost>k__BackingField: 2
   <Rarity>k__BackingField: 3
   <Character>k__BackingField: 0

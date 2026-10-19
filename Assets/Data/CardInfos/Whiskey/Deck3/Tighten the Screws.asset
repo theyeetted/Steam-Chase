@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Tighten the Screws
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: 'Deal 2 damage, Apply 6 Stress to an enemy. '
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: 3674787446457654163, guid: c248e5a6c79195343bb5cadd4ea58fa8, type: 3}
   <Cost>k__BackingField: 0
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0

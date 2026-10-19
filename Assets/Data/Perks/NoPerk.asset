@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7c8dc239976f274a833f4de9da1d31e, type: 3}
   m_Name: NoPerk
   m_EditorClassIdentifier: Assembly-CSharp::PerkData
-  <Image>k__BackingField: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  <Image>k__BackingField: {fileID: 0}
   <PerkCondition>k__BackingField:
     rid: 4419360084440646033
   <AutoTargetEffect>k__BackingField:
@@ -33,6 +33,14 @@ MonoBehaviour:
           rid: 4419360084440646035
         <Effect>k__BackingField:
           rid: 4419360084440646036
+        <RepeatMode>k__BackingField: 0
+        <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
+        <ChancePercent>k__BackingField: 100
     - rid: 4419360084440646035
       type: {class: HeroTM, ns: , asm: Assembly-CSharp}
       data: 

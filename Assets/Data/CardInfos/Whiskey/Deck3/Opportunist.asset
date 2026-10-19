@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: 'Deal 5 damage. If the target is Stunned, draw 2
     cards '
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -2079971472163528567, guid: 58e4f50f5ea0c05448d242efaffab217, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0

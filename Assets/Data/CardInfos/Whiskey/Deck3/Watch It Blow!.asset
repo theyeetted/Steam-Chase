@@ -15,7 +15,7 @@ MonoBehaviour:
   <description>k__BackingField: Apply 20 Stress, immediately trigger their Stress
     detonation now without consuming or resetting the stacks. Fill the stun gauge
     40% of the damage Disintegrate.
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -7198261859331608417, guid: 2b58621e4f1adbd42b7216a04abc7de1, type: 3}
   <Cost>k__BackingField: 2
   <Rarity>k__BackingField: 3
   <Character>k__BackingField: 0
