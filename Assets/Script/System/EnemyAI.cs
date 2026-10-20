@@ -177,7 +177,7 @@ public class EnemyAI
         }
 
 
-        // 4. Attack a stunned hero (placeholder until stun exists).
+        // 4. Attack a stunned hero.
         PlayerView stunned = heroes.FirstOrDefault(IsStunned);
 
         if (stunned != null)
@@ -189,7 +189,7 @@ public class EnemyAI
         }
         else
         {
-            Log("Priority 4: No stunned hero found (stun detection is not implemented yet).  Go next >>>");
+            Log("Priority 4: No stunned hero found.  Go next >>>");
         }
 
 
@@ -368,8 +368,7 @@ public class EnemyAI
 
     private bool IsStunned(PlayerView hero)
     {
-        // TODO: Connect to the actual stun gauge/stunned state.
-        return false;
+        return hero != null && hero.CurrentHealth > 0 && hero.IsStunned;
     }
 
     public List<PlayerView> GetLivingHeroes()
