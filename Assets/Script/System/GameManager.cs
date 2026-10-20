@@ -43,6 +43,8 @@ public class GameManager : SingleTon<GameManager>
         public Difficulty Difficulty;
         public int WhiskeyDeck;
         public int AdeDeck;
+        public CharData WhiskeyDeckData;
+        public CharData AdeDeckData;
     }
     private static ReloadRequest pendingReload;
 
@@ -71,7 +73,8 @@ public class GameManager : SingleTon<GameManager>
             if (request.Destination != FlowState.StartMenu)
             {
                 SetState(FlowState.DeckChooseMenu);
-                if (request.Destination == FlowState.Combat) ConfirmDecks();
+                if (request.Destination == FlowState.Combat)
+                    ConfirmDecks(request.WhiskeyDeckData, request.AdeDeckData);
             }
         }
         RefreshDeckButtons();
@@ -150,13 +153,22 @@ public class GameManager : SingleTon<GameManager>
 
     public void ConfirmDecks()
     {
+        ConfirmDecks(null, null);
+    }
+
+    private void ConfirmDecks(CharData whiskeyDeckData, CharData adeDeckData)
+    {
         if (State != FlowState.DeckChooseMenu || reloading) return;
         if (matchSetup == null)
         {
             Debug.LogError("GameManager needs an active MatchSetupSystem.", this);
             return;
         }
-        if (!matchSetup.ConfigureMatch(SelectedDifficulty, SelectedWhiskeyDeck, SelectedAdeDeck, out string error))
+        string error;
+        bool configured = whiskeyDeckData != null && adeDeckData != null
+            ? matchSetup.ConfigureMatch(SelectedDifficulty, whiskeyDeckData, adeDeckData, out error)
+            : matchSetup.ConfigureMatch(SelectedDifficulty, SelectedWhiskeyDeck, SelectedAdeDeck, out error);
+        if (!configured)
         {
             Debug.LogError(error, matchSetup);
             return;
@@ -240,7 +252,13 @@ public class GameManager : SingleTon<GameManager>
             Destination = destination,
             Difficulty = destination == FlowState.StartMenu ? Difficulty.Normal : SelectedDifficulty,
             WhiskeyDeck = destination == FlowState.StartMenu ? 0 : SelectedWhiskeyDeck,
-            AdeDeck = destination == FlowState.StartMenu ? 0 : SelectedAdeDeck
+            AdeDeck = destination == FlowState.StartMenu ? 0 : SelectedAdeDeck,
+            WhiskeyDeckData = destination == FlowState.Combat && matchSetup != null
+                ? matchSetup.ConfiguredWhiskeyData
+                : null,
+            AdeDeckData = destination == FlowState.Combat && matchSetup != null
+                ? matchSetup.ConfiguredAdeData
+                : null
         };
         reloading = true;
         ActionSystem.Instance?.StopActions();
@@ -350,7 +368,7 @@ public class GameManager : SingleTon<GameManager>
 
     private void BindCombatMenu(GameObject menu)
     {
-        BindButton(menu, RestartGame, "Restart");
+        BindButton(menu, RestartGame, "Restart", "Retry", "RestartButton", "RetryButton");
         BindButton(menu, ChooseDeck, "Choose Deck", "ChooseDeck");
         BindButton(menu, MainMenu, "Mainmenu", "MainMenu");
         BindButton(menu, ExitGame, "Exit");
@@ -363,7 +381,7 @@ public class GameManager : SingleTon<GameManager>
         {
             Transform child = menu.transform.Find(path);
             if (child == null || !child.TryGetComponent(out UnityEngine.UI.Button button)) continue;
-            // Replace only old flow listeners at runtime, including Resume -> RestartFight.
+            // Replace old flow listeners, including serialized calls to the removed partial-reset method.
             // Unrelated effects/listeners and all EndTurn listeners remain intact.
             for (int i = 0; i < button.onClick.GetPersistentEventCount(); i++)
             {

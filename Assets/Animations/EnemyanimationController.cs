@@ -30,14 +30,12 @@ public class EnemyanimationController : MonoBehaviour
     {
         ActionSystem.SubscribeReaction<AttackHeroGA>(OnAttack, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<PerformEffectGA>(OnSkillEffect, ReactionTiming.PRE);
-        ActionSystem.SubscribeReaction<AttackResolvedGA>(OnHit, ReactionTiming.PRE);
     }
 
     private void OnDisable()
     {
         ActionSystem.UnsubscribeReaction<AttackHeroGA>(OnAttack, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<PerformEffectGA>(OnSkillEffect, ReactionTiming.PRE);
-        ActionSystem.UnsubscribeReaction<AttackResolvedGA>(OnHit, ReactionTiming.PRE);
     }
 
     private void OnAttack(AttackHeroGA action)
@@ -76,12 +74,9 @@ public class EnemyanimationController : MonoBehaviour
         }
     }
 
-    private void OnHit(AttackResolvedGA action)
+    public void TriggerHurt()
     {
-        // This event identifies the actual recipient after target redirection,
-        // including hits absorbed by Block.
-        if (enemyView != null && action.Target == enemyView)
-            PlayTrigger(HurtTrigger);
+        PlayTrigger(HurtTrigger);
     }
 
     private void PlayTrigger(int trigger)

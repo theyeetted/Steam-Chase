@@ -8,7 +8,7 @@ public class EnemyView : CombatantView
     [SerializeField] private ActionDisplayUI actionDisplayUI;
     [SerializeField] private Animator imageAnimator;
 
-    public int AttackPower {  get; set; }
+    public int AttackPower { get; set; }
     public List<EnemySkill> Skills { get; private set; } = new();
 
     private readonly HashSet<EnemySkill> usedBuffSkills = new();
@@ -20,7 +20,7 @@ public class EnemyView : CombatantView
         if (actionDisplayUI == null)
             actionDisplayUI = GetComponentInChildren<ActionDisplayUI>(true);
     }
-    
+
 
     public void Setup(EnemyData enemyData)
     {
@@ -76,6 +76,11 @@ public class EnemyView : CombatantView
     {
         if (actionDisplayUI != null)
             actionDisplayUI.ShowAttack(AttackPower);
+    }
+
+    public void TriggerHurtAnimation()
+    {
+        GetComponentInChildren<EnemyanimationController>(true)?.TriggerHurt();
     }
 
 

@@ -559,6 +559,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.8
       objectReference: {fileID: 0}
+    - target: {fileID: 3692558587839549817, guid: 63432ec8264eb664a93f54012260d642, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 4217022115070193536, guid: 63432ec8264eb664a93f54012260d642, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -656,6 +660,7 @@ MonoBehaviour:
   stunBarUI: {fileID: 232131061803726331}
   HealthBarUI: {fileID: 1435329065612218006}
   actionDisplayUI: {fileID: 8897195743345548442}
+  imageAnimator: {fileID: 0}
 --- !u!65 &8311987016467867502
 BoxCollider:
   m_ObjectHideFlags: 0

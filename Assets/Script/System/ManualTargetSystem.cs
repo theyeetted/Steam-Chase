@@ -6,10 +6,16 @@ public class ManualTargetSystem : SingleTon<ManualTargetSystem>
     [Tooltip("Include enemy and hero collider layers. The card's Manual Target Kind filters which combatants can be selected.")]
     [SerializeField] private LayerMask targetLayerMask;
 
-    public void StartTargeting(Vector3 startPosition)
+    public bool StartTargeting(Vector3 startPosition)
     {
+        if (arrowView == null || !arrowView.SetupArrow(startPosition))
+        {
+            CancelTargeting();
+            return false;
+        }
+
         arrowView.gameObject.SetActive(true);
-        arrowView.SetupArrow(startPosition);
+        return true;
     }
 
     // Preserve the enemy-only API for existing callers.

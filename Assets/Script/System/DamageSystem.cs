@@ -266,6 +266,10 @@ public class DamageSystem : MonoBehaviour
         List<DamageResult> results = null)
     {
         int healthBefore = target.CurrentHealth;
+        // Start the enemy's hit animation with card damage and its VFX. AttackResolvedGA
+        // is queued after the presentation wait below, which made that reaction appear late.
+        if (target is EnemyView enemy)
+            enemy.TriggerHurtAnimation();
         target.Damage(damage, caster);
         // Capture immediately: later reactions and death removal cannot overwrite this hit.
         results?.Add(new DamageResult(target.GetInstanceID(), damage,

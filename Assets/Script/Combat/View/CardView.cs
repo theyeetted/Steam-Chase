@@ -101,17 +101,23 @@ public class CardView : MonoBehaviour
     {
         if (!Interactions.Instance.PlayerCanInteract()) return;
 
+        if (CardSystem.Instance != null && CardSystem.Instance.IsDisplayingHand)
+            return;
+
         if (TurnSystem.Instance == null ||
             !TurnSystem.Instance.CanHeroPlayCards(HeroIndex))
             return;
 
         if (Card.MannualTargetEffect != null)
         {
-            ManualTargetSystem.Instance.StartTargeting(transform.position);
-            isManualTargeting = true;
+            isManualTargeting = ManualTargetSystem.Instance != null &&
+                ManualTargetSystem.Instance.StartTargeting(transform.position);
         }
         else
         {
+            if (!MouseUtil.TryGetMousePositionInWorldSpace(-1f, out Vector3 mousePosition))
+                return;
+
             isDragging = true;
             Interactions.Instance.PlayerIsDraging = true;
             CardViewHoverSystem.Instance.Hide();
@@ -119,7 +125,7 @@ public class CardView : MonoBehaviour
             dragStartPosition = transform.position;
             dragStartRotation = transform.rotation;
             transform.rotation = Quaternion.Euler(0, 0, 0);
-            transform.position = MouseUtil.GetMousePositionInWorldSpace(-1);
+            transform.position = mousePosition;
         }
     }
 
@@ -128,19 +134,37 @@ public class CardView : MonoBehaviour
         if (!isDragging) return;
         if (!Interactions.Instance.PlayerCanInteract()) return;
         if (Card.MannualTargetEffect != null) return;
-        transform.position = MouseUtil.GetMousePositionInWorldSpace(-1);
+        if (!MouseUtil.TryGetMousePositionInWorldSpace(-1f, out Vector3 mousePosition))
+        {
+            CancelInteraction();
+            return;
+        }
+
+        transform.position = mousePosition;
     }
 
     void OnMouseUp()
     {
+        if (CardSystem.Instance != null && CardSystem.Instance.IsDisplayingHand)
+        {
+            CancelInteraction();
+            return;
+        }
+
         if (Card.MannualTargetEffect != null)
         {
             if (!isManualTargeting)
                 return;
 
             isManualTargeting = false;
+            if (!MouseUtil.TryGetMousePositionInWorldSpace(-1f, out Vector3 targetPosition))
+            {
+                ManualTargetSystem.Instance?.CancelTargeting();
+                return;
+            }
+
             CombatantView target = ManualTargetSystem.Instance.EndTargeting(
-                MouseUtil.GetMousePositionInWorldSpace(-1), Card.ManualTargetKind);
+                targetPosition, Card.ManualTargetKind);
 
             if (!Interactions.Instance.PlayerCanInteract() ||
                 TurnSystem.Instance == null ||

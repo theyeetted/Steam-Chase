@@ -25,10 +25,16 @@ public class MatchSetupSystem : MonoBehaviour
     [SerializeField] private List<EnemyData> eliteEnemyDatas = new();
 
     public bool IsSetupComplete { get; private set; }
+    public CharData ConfiguredWhiskeyData => firstCharData;
+    public CharData ConfiguredAdeData => secondCharData;
 
     public bool IsDeckAvailable(int heroIndex, int deckNumber)
     {
-        CharData data = GetDeck(heroIndex, deckNumber);
+        return IsDeckDataAvailable(GetDeck(heroIndex, deckNumber));
+    }
+
+    private static bool IsDeckDataAvailable(CharData data)
+    {
         return data != null && data.Health > 0 && data.Deck != null &&
             data.Deck.Count > 0 && !data.Deck.Exists(card => card == null);
     }
@@ -51,8 +57,14 @@ public class MatchSetupSystem : MonoBehaviour
 
     public bool CanConfigureMatch(GameManager.Difficulty difficulty, int whiskeyDeck, int adeDeck, out string error)
     {
+        return CanConfigureMatch(difficulty, GetDeck(0, whiskeyDeck), GetDeck(1, adeDeck), out error);
+    }
+
+    private bool CanConfigureMatch(GameManager.Difficulty difficulty, CharData whiskeyData,
+        CharData adeData, out string error)
+    {
         error = null;
-        if (!IsDeckAvailable(0, whiskeyDeck) || !IsDeckAvailable(1, adeDeck))
+        if (!IsDeckDataAvailable(whiskeyData) || !IsDeckDataAvailable(adeData))
             error = "Select a configured deck for both Whiskey and Ade. Each CharData needs positive health and a nonempty deck without missing cards.";
         List<EnemyData> encounter = GetEncounter(difficulty);
         if (error == null && (encounter == null || encounter.Count == 0 || encounter.Exists(enemy => enemy == null)))
@@ -62,12 +74,18 @@ public class MatchSetupSystem : MonoBehaviour
 
     public bool ConfigureMatch(GameManager.Difficulty difficulty, int whiskeyDeck, int adeDeck, out string error)
     {
+        return ConfigureMatch(difficulty, GetDeck(0, whiskeyDeck), GetDeck(1, adeDeck), out error);
+    }
+
+    public bool ConfigureMatch(GameManager.Difficulty difficulty, CharData whiskeyData,
+        CharData adeData, out string error)
+    {
         if (IsSetupComplete)
         {
             error = "Reload the fight before changing its configuration.";
             return false;
         }
-        if (!CanConfigureMatch(difficulty, whiskeyDeck, adeDeck, out error)) return false;
+        if (!CanConfigureMatch(difficulty, whiskeyData, adeData, out error)) return false;
         if (HeroSystem.Instance == null || HeroSystem.Instance.playerView == null ||
             HeroSystem.Instance.secondPlayerView == null || EnemySystem.Instance == null ||
             CardSystem.Instance == null || ActionSystem.Instance == null || EnergySystem.Instance == null ||
@@ -76,8 +94,8 @@ public class MatchSetupSystem : MonoBehaviour
             error = "Keep both hero views and the hero, enemy, card, action, energy and perk systems active and configured.";
             return false;
         }
-        firstCharData = GetDeck(0, whiskeyDeck);
-        secondCharData = GetDeck(1, adeDeck);
+        firstCharData = whiskeyData;
+        secondCharData = adeData;
         enemyDatas = new List<EnemyData>(GetEncounter(difficulty));
         return true;
     }
@@ -118,45 +136,5 @@ public class MatchSetupSystem : MonoBehaviour
                 EnergySystem.Instance.ResetEnergy();
             });
         });
-    }
-
-
-    public void RestartFight()
-    {
-        // Existing Inspector events also use the full reset when GameManager owns the flow.
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.RestartGame();
-            return;
-        }
-        StartCoroutine(RestartFightRoutine());
-    }
-
-    private IEnumerator RestartFightRoutine()
-    {
-        // Wait until the current action finishes.
-        while (ActionSystem.Instance.IsPerformingAction)
-        {
-            yield return null;
-        }
-
-        // Reset game over state
-        FindFirstObjectByType<DamageSystem>()?.ResetGameOverState();
-
-        // Restore both heroes.
-        HeroSystem.Instance.ResetCombatState();
-        HeroSystem.Instance.playerView.ResetCombatant();
-        HeroSystem.Instance.secondPlayerView.ResetCombatant();
-
-        // Rebuild the enemy
-        yield return EnemySystem.Instance.ResetEnemies(enemyDatas);
-
-        // Restore both decks and energy counters
-        CardSystem.Instance.Setup(0, firstCharData.Deck);
-        CardSystem.Instance.Setup(1, secondCharData.Deck);
-        EnergySystem.Instance.ResetEnergy();
-
-        // Draw five cards for each hero.
-        DrawOpeningHands();
     }
 }

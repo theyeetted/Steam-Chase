@@ -44,11 +44,13 @@ public class CardSystem : SingleTon<CardSystem>
 
     private int activeHeroIndex;
     private Coroutine displayHandCoroutine;
+    private bool isDisplayingHand;
     private PlayedAttackCard firstAttackCardPlayedThisTurn;
     private bool repeatedThisTurn;
     private bool repeatFirstAttackEachTurn;
 
     public int ActiveHeroIndex => activeHeroIndex;
+    public bool IsDisplayingHand => isDisplayingHand;
 
     // Read-only counts for the HUD; no active hero (-1) displays empty piles.
     public int GetDrawPileCount(int heroIndex)
@@ -74,13 +76,20 @@ public class CardSystem : SingleTon<CardSystem>
 
     void OnDisable()
     {
+        if (displayHandCoroutine != null)
+        {
+            StopCoroutine(displayHandCoroutine);
+            displayHandCoroutine = null;
+        }
+        isDisplayingHand = false;
+
         ActionSystem.DetachPerformer<DrawCardsGA>();
         ActionSystem.DetachPerformer<DiscardAllCardsGA>();
         ActionSystem.DetachPerformer<PlayCardGA>();
         ActionSystem.DetachPerformer<RepeatFirstAttackCardGA>();
         ActionSystem.DetachPerformer<PlayRandomAttackCardGA>();
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(ResetAttackCardRecord, ReactionTiming.POST);
-        
+
     }
 
     //Publics
@@ -105,10 +114,11 @@ public class CardSystem : SingleTon<CardSystem>
         }
     }
 
-    
+
     public void SetActiveHero(int heroIndex)
     {
-        if (!IsValidHero(heroIndex)) {
+        if (!IsValidHero(heroIndex))
+        {
             Debug.LogWarning($"[CardSystem] Invalid hero index: {heroIndex}. Switch cancelled.");
             return;
         }
@@ -118,7 +128,8 @@ public class CardSystem : SingleTon<CardSystem>
             Debug.Log($"[CardSystem] Current phase: {TurnSystem.Instance.CurrentPhase}");
 
             var turn = TurnSystem.Instance;
-            if (!turn.CanPlayerAct) {
+            if (!turn.CanPlayerAct)
+            {
                 Debug.LogWarning("[CardSystem] Cannot switch heroes because it is not the player phase.");
                 return;
             }
@@ -139,6 +150,7 @@ public class CardSystem : SingleTon<CardSystem>
                         displayHandCoroutine = null;
                     }
 
+                    isDisplayingHand = false;
                     activeHeroIndex = -1;
                     handView.ResetHand();
                     return;
@@ -158,6 +170,7 @@ public class CardSystem : SingleTon<CardSystem>
         Debug.Log($"[CardSystem] Activating hero {heroIndex}. Hand size: {hands[heroIndex].Count}");
         activeHeroIndex = heroIndex;
         handView.ResetHand();
+        isDisplayingHand = true;
         displayHandCoroutine = StartCoroutine(DisplayHand(heroIndex));
     }
 
@@ -170,6 +183,7 @@ public class CardSystem : SingleTon<CardSystem>
             displayHandCoroutine = null;
         }
 
+        isDisplayingHand = false;
         handView.ResetHand();
     }
 
@@ -189,6 +203,7 @@ public class CardSystem : SingleTon<CardSystem>
         }
         Debug.Log("[CardSystem] Displaying hand...");
 
+        isDisplayingHand = false;
         displayHandCoroutine = null;
     }
 
@@ -200,6 +215,7 @@ public class CardSystem : SingleTon<CardSystem>
             displayHandCoroutine = null;
         }
 
+        isDisplayingHand = false;
         activeHeroIndex = -1;
         handView.ResetHand();
         Debug.Log("[CardSystem] Hiding hand...");
@@ -237,9 +253,12 @@ public class CardSystem : SingleTon<CardSystem>
                 CardView cardView = null;
                 if (heroIndex == activeHeroIndex) { cardView = handView.RemoveCard(card); }
 
-                if (cardView != null) {
+                if (cardView != null)
+                {
                     yield return DiscardCard(heroIndex, cardView);
-                } else { 
+                }
+                else
+                {
                     discardPiles[heroIndex].Add(card); // Hidden cards must still be discarded.
                 }
             }
@@ -254,8 +273,18 @@ public class CardSystem : SingleTon<CardSystem>
 
         if (!IsValidHero(heroIndex) || playCardGA.Card == null) { yield break; }
 
+        // DisplayHand iterates this hero's hand while cards are animating into view.
+        // Reject plays until the animation is complete so removing a card cannot
+        // invalidate that enumeration.
+        if (isDisplayingHand)
+        {
+            Debug.Log("Cannot play a card while the hand is being displayed.");
+            yield break;
+        }
+
         // A hidden hero cannot play a card.
-        if (heroIndex != activeHeroIndex) {
+        if (heroIndex != activeHeroIndex)
+        {
             yield break;
         }
 
@@ -275,7 +304,8 @@ public class CardSystem : SingleTon<CardSystem>
             !EnergySystem.Instance.HasEnoughEnergy(playCardGA.Card.Cost, heroIndex))
             yield break;
 
-        if (!hands[heroIndex].Remove(playCardGA.Card)) {
+        if (!hands[heroIndex].Remove(playCardGA.Card))
+        {
             yield break;
         }
 
@@ -472,7 +502,7 @@ public class CardSystem : SingleTon<CardSystem>
                     drawPilePoint.rotation,
                     heroIndex
                 );
-        
+
         Debug.Log("[CardSystem] Drawing cards...");
 
         yield return handView.AddCard(cardView);
