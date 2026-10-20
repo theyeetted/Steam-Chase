@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bread
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Heal an ally 10 HP
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -1660761858345613354, guid: d4521994770484547833619c0bc98de5, type: 3}
   <Cost>k__BackingField: 2
   <Rarity>k__BackingField: 3
   <Character>k__BackingField: 0
