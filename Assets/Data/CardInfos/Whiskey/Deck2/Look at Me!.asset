@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Apply Aggravated to all enemies for 1 turn. Gain
     8 Blocks.
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -3408505397446664530, guid: 15a19368937d6514ab4734e971760aec, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0

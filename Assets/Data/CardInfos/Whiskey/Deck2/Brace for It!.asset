@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: 'Gain 12 Blocks. If Whiskey is attacked this turn,
     draw 1 card next turn. '
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -591446080306467075, guid: a42566cf570614140aaa4db8827e048f, type: 3}
   <Cost>k__BackingField: 2
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0
