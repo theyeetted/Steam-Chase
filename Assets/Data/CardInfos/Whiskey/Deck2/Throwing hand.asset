@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: 'Deal 7 damage. Deals 5 more damage if Whiskey was
     attacked this turn. '
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -631115674309525732, guid: d12e5f54065f1c24eb44250549e49f57, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0
