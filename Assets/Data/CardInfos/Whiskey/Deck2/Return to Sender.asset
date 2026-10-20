@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Deal 10 damage + 6 additional damage for times that
     Whiskey was attacked this combat. Disintegrate.
-  <Image>k__BackingField: {fileID: -5555744957447895701, guid: db234dda4078a534b949af94b78ee915, type: 3}
+  <Image>k__BackingField: {fileID: -5555744957447895701, guid: e2ae253fb3315ee4891046236017b302, type: 3}
   <Cost>k__BackingField: 2
   <Rarity>k__BackingField: 3
   <Character>k__BackingField: 0

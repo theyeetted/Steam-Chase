@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Deal 8 damage. If the target is Aggravated, remove
     up to 10 of their Block and apply 1 Vulnerable.
-  <Image>k__BackingField: {fileID: -3050256866397167100, guid: d5c67aca561154e45af8596d589914a0, type: 3}
+  <Image>k__BackingField: {fileID: -3050256866397167100, guid: 27fa45e959563dc4880878bbb792d725, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 2
   <Character>k__BackingField: 0
