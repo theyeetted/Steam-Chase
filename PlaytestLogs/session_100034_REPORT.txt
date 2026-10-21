@@ -1,0 +1,123 @@
+﻿STEAMCHASING PLAYTEST REPORT
+============================
+Session ID: 100034
+Exported UTC: 2026-10-21T03:00:57.7515318Z
+Duration: 00:11
+Total events: 101
+Warnings: 1
+Errors / exceptions / asserts: 0
+Average of FPS samples: 230.5 FPS (2 samples)
+Unreadable log lines: 0
+
+EVENT TIMELINE
+--------------
+[00:00] #1 [Session] Session started
+    Details: Unity=6000.3.24f1; Platform=WindowsEditor
+[00:00] #2 [UnityConsole/Log] [SessionIdDisplay] Displaying session 100034
+[00:01] #3 [UnityConsole/Log] [SessionIdDisplay] Displaying session 100034
+[00:02] #4 [UnityConsole/Log] [SessionIdDisplay] Displaying session 100034
+[00:03] #5 [UnityConsole/Log] [CombatFeedUI] Connected to game event recorder.
+[00:03] #6 [UnityConsole/Log] Combatant setup Complete.
+[00:03] #7 [UnityConsole/Log] Combatant setup Complete.
+[00:03] #8 [UnityConsole/Log] Combatant setup Complete.
+[00:03] #9 [UnityConsole/Log] Combatant setup Complete.
+[00:03] #10 [UnityConsole/Log] Combatant setup Complete.
+[00:03] #11 [UnityConsole/Log] [EnemyAI] --- Planning Wolf's next turn | HP: 90/90 ---
+[00:03] #12 [UnityConsole/Log] [EnemyAI] Priority 1: Random skill chance = 30%, roll = 92.4 %
+[00:03] #13 [UnityConsole/Log] [EnemyAI] Random skill roll FAILED. Go next >>>
+[00:03] #14 [UnityConsole/Log] [EnemyAI] Priority 2: No hero below 10% HP.  Go next >>>
+[00:03] #15 [UnityConsole/Log] [EnemyAI] Priority 3: Enemy HP is not below 15%; skipping heal.  Go next >>>
+[00:03] #16 [UnityConsole/Log] [EnemyAI] Priority 4: No stunned hero found.  Go next >>>
+[00:03] #17 [UnityConsole/Log] [EnemyAI] Priority 5: Trying buff skill 'AWOOOOOOO'.
+[00:03] #18 [UnityConsole/Log] [EnemyAI] Checking skill: 'AWOOOOOOO'
+[00:03] #19 [UnityConsole/Log] [EnemyAI] Skill 'AWOOOOOOO' had no successful effects.
+[00:03] #20 [UnityConsole/Log] [EnemyAI] Buff skill 'AWOOOOOOO' could not be used.  Go next >>>
+[00:03] #21 [UnityConsole/Log] [EnemyAI] Priority 6: Attack skill chance = 40%, roll = 23.6 %
+[00:03] #22 [UnityConsole/Log] [EnemyAI] Attack skill roll SUCCESS. Trying an attack skill.
+[00:03] #23 [UnityConsole/Log] [EnemyAI] Checking skill: 'Bite'
+[00:03] #24 [UnityConsole/Log] [EnemyAI] 'Bite': Repeat round 1/1
+[00:03] #25 [UnityConsole/Log] [EnemyAI] Effect DealDamageEffect | Repeat 1/1 | Chance 0% | Roll 49 | FAILED
+[00:03] #26 [UnityConsole/Log] [EnemyAI] Skill 'Bite' had no successful effects.
+[00:03] #27 [UnityConsole/Log] [EnemyAI] Attack skill attempt failed: no usable attack skill.  Go next >>>
+[00:03] #28 [UnityConsole/Log] [EnemyAI] Wolf did not use a skill. Normal attack fallback will be used.
+[00:03] #29 [UnityConsole/Log] [EnemyAI] --- Planning Wolf's next turn | HP: 90/90 ---
+[00:03] #30 [UnityConsole/Log] [EnemyAI] Priority 1: Random skill chance = 30%, roll = 69.1 %
+[00:03] #31 [UnityConsole/Log] [EnemyAI] Random skill roll FAILED. Go next >>>
+[00:03] #32 [UnityConsole/Log] [EnemyAI] Priority 2: No hero below 10% HP.  Go next >>>
+[00:03] #33 [UnityConsole/Log] [EnemyAI] Priority 3: Enemy HP is not below 15%; skipping heal.  Go next >>>
+[00:03] #34 [UnityConsole/Log] [EnemyAI] Priority 4: No stunned hero found.  Go next >>>
+[00:03] #35 [UnityConsole/Log] [EnemyAI] Priority 5: Trying buff skill 'AWOOOOOOO'.
+[00:03] #36 [UnityConsole/Log] [EnemyAI] Checking skill: 'AWOOOOOOO'
+[00:03] #37 [UnityConsole/Log] [EnemyAI] Skill 'AWOOOOOOO' had no successful effects.
+[00:03] #38 [UnityConsole/Log] [EnemyAI] Buff skill 'AWOOOOOOO' could not be used.  Go next >>>
+[00:03] #39 [UnityConsole/Log] [EnemyAI] Priority 6: Attack skill chance = 40%, roll = 7.8 %
+[00:03] #40 [UnityConsole/Log] [EnemyAI] Attack skill roll SUCCESS. Trying an attack skill.
+[00:03] #41 [UnityConsole/Log] [EnemyAI] Checking skill: 'Bite'
+[00:03] #42 [UnityConsole/Log] [EnemyAI] 'Bite': Repeat round 1/1
+[00:03] #43 [UnityConsole/Log] [EnemyAI] Effect DealDamageEffect | Repeat 1/1 | Chance 0% | Roll 13 | FAILED
+[00:03] #44 [UnityConsole/Log] [EnemyAI] Skill 'Bite' had no successful effects.
+[00:03] #45 [UnityConsole/Log] [EnemyAI] Attack skill attempt failed: no usable attack skill.  Go next >>>
+[00:03] #46 [UnityConsole/Log] [EnemyAI] Wolf did not use a skill. Normal attack fallback will be used.
+[00:03] #47 [UnityConsole/Log] [EnemyAI] --- Planning Wolf's next turn | HP: 90/90 ---
+[00:03] #48 [UnityConsole/Log] [EnemyAI] Priority 1: Random skill chance = 30%, roll = 18.7 %
+[00:03] #49 [UnityConsole/Log] [EnemyAI] Random skill roll SUCCESS. Trying a random skill.
+[00:03] #50 [UnityConsole/Log] [EnemyAI] Checking skill: 'Bite'
+[00:03] #51 [UnityConsole/Log] [EnemyAI] 'Bite': Repeat round 1/1
+[00:03] #52 [UnityConsole/Log] [EnemyAI] Effect DealDamageEffect | Repeat 1/1 | Chance 0% | Roll 91 | FAILED
+[00:03] #53 [UnityConsole/Log] [EnemyAI] Skill 'Bite' had no successful effects.
+[00:03] #54 [UnityConsole/Log] [EnemyAI] Checking skill: 'Piercing Gaze'
+[00:03] #55 [UnityConsole/Log] [EnemyAI] Skill 'Piercing Gaze' had no successful effects.
+[00:03] #56 [UnityConsole/Log] [EnemyAI] Checking skill: 'AWOOOOOOO'
+[00:03] #57 [UnityConsole/Log] [EnemyAI] Skill 'AWOOOOOOO' had no successful effects.
+[00:03] #58 [UnityConsole/Log] [EnemyAI] Random skill attempt failed: no usable skill.  Go next >>>
+[00:03] #59 [UnityConsole/Log] [EnemyAI] Priority 2: No hero below 10% HP.  Go next >>>
+[00:03] #60 [UnityConsole/Log] [EnemyAI] Priority 3: Enemy HP is not below 15%; skipping heal.  Go next >>>
+[00:03] #61 [UnityConsole/Log] [EnemyAI] Priority 4: No stunned hero found.  Go next >>>
+[00:03] #62 [UnityConsole/Log] [EnemyAI] Priority 5: Trying buff skill 'AWOOOOOOO'.
+[00:03] #63 [UnityConsole/Log] [EnemyAI] Checking skill: 'AWOOOOOOO'
+[00:03] #64 [UnityConsole/Log] [EnemyAI] Skill 'AWOOOOOOO' had no successful effects.
+[00:03] #65 [UnityConsole/Log] [EnemyAI] Buff skill 'AWOOOOOOO' could not be used.  Go next >>>
+[00:03] #66 [UnityConsole/Log] [EnemyAI] Priority 6: Attack skill chance = 40%, roll = 71.9 %
+[00:03] #67 [UnityConsole/Log] [EnemyAI] Attack skill roll FAILED.  Go next >>>
+[00:03] #68 [UnityConsole/Log] [EnemyAI] Wolf did not use a skill. Normal attack fallback will be used.
+[00:03] #69 [UnityConsole/Log] [CardSystem] Resetting specific character cards...
+[00:03] #70 [UnityConsole/Warning] [CardSystem] No Unique card found in this deck.
+    Details: UnityEngine.Debug:LogWarning (object)
+CardSystem:Setup (int,System.Collections.Generic.List`1<CardData>) (at Assets/Script/System/CardSystem.cs:130)
+MatchSetupSystem/<Start>d__24:MoveNext () (at Assets/Script/System/MatchSetupSystem.cs:116)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+[00:03] #71 [UnityConsole/Log] [CardSystem] Roll=55, rarity=Common, selected=Wack ‘em
+[00:03] #72 [UnityConsole/Log] [CardSystem] Roll=10, rarity=Rare, selected=I’m Tuff
+[00:03] #73 [UnityConsole/Log] [CardSystem] Roll=47, rarity=Common, selected=steam cloud
+[00:03] #74 [UnityConsole/Log] [CardSystem] Roll=2, rarity=Legendary, selected=This gear is for you!
+[00:03] #75 [UnityConsole/Log] [CardSystem] Roll=28, rarity=Rare, selected=Got 'em
+[00:03] #76 [UnityConsole/Log] [CardSystem] Roll=66, rarity=Common, selected=smack!
+[00:03] #77 [UnityConsole/Log] [CardSystem] Roll=13, rarity=Rare, selected=resonance
+[00:03] #78 [UnityConsole/Log] [CardSystem] Roll=61, rarity=Common, selected=improvise mid fight
+[00:03] #79 [UnityConsole/Log] [CardSystem] Roll=86, rarity=Common, selected=Beat down
+[00:03] #80 [UnityConsole/Log] [CardSystem] Hero 0: 9 battle cards randomly selected.
+[00:03] #81 [UnityConsole/Log] [CardSystem] Resetting specific character cards...
+[00:03] #82 [UnityConsole/Log] [CardSystem] Guaranteed Unique: Suppressing Fire
+[00:03] #83 [UnityConsole/Log] [CardSystem] Roll=49, rarity=Common, selected=Hair Trigger
+[00:03] #84 [UnityConsole/Log] [CardSystem] Roll=31, rarity=Rare, selected=Iron Stance
+[00:03] #85 [UnityConsole/Log] [CardSystem] Roll=14, rarity=Rare, selected=Shrapnel Spread
+[00:03] #86 [UnityConsole/Log] [CardSystem] Roll=65, rarity=Common, selected=Twin Barrel
+[00:03] #87 [UnityConsole/Log] [CardSystem] Roll=20, rarity=Rare, selected=Hollow Core
+[00:03] #88 [UnityConsole/Log] [CardSystem] Roll=46, rarity=Common, selected=Chain Chamber
+[00:03] #89 [UnityConsole/Log] [CardSystem] Roll=86, rarity=Common, selected=Standard Cylinder
+[00:03] #90 [UnityConsole/Log] [CardSystem] Roll=11, rarity=Rare, selected=Fan the Hammer
+[00:03] #91 [UnityConsole/Log] [CardSystem] Hero 1: 9 battle cards randomly selected.
+[00:03] #92 [UnityConsole/Log] [CardSystem] Drawing cards...
+[00:04] #93 [UnityConsole/Log] [CardSystem] Drawing cards...
+[00:04] #94 [UnityConsole/Log] [CardSystem] Drawing cards...
+[00:04] #95 [UnityConsole/Log] [CardSystem] Drawing cards...
+[00:04] #96 [UnityConsole/Log] [CardSystem] Drawing cards...
+[00:04] #97 [Performance] FPS sample
+    Details: AverageFPS=228.5; SampleSeconds=5.0
+[00:05] #98 [UnityConsole/Log] [SessionIdDisplay] Displaying session 100034
+[00:05] #99 [UnityConsole/Log] [CombatFeedUI] Connected to game event recorder.
+[00:09] #100 [Performance] FPS sample
+    Details: AverageFPS=232.5; SampleSeconds=5.0
+[00:11] #101 [Session] Session ended
+    Details: DurationSeconds=11.2

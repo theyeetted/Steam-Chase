@@ -1,0 +1,3 @@
+{"sessionId":"095536","eventIndex":1,"utcTime":"2026-10-21T02:55:31.6168656Z","elapsedSeconds":0.0059754978865385059,"category":"Session","message":"Session started","details":"Unity=6000.3.24f1; Platform=WindowsEditor"}
+{"sessionId":"095536","eventIndex":2,"utcTime":"2026-10-21T02:55:36.5831815Z","elapsedSeconds":4.970462799072266,"category":"Performance","message":"FPS sample","details":"AverageFPS=206.4; SampleSeconds=5.0"}
+{"sessionId":"095536","eventIndex":3,"utcTime":"2026-10-21T02:55:37.9647345Z","elapsedSeconds":6.351734638214111,"category":"Session","message":"Session ended","details":"DurationSeconds=6.4"}

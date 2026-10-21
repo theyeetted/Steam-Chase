@@ -40,7 +40,7 @@ public static class MouseUtil
         hasWarnedMissingCamera = false;
 
         Plane dragPlane = new(cachedCamera.transform.forward, new Vector3(0, 0, zValue));
-        Ray ray = camera.ScreenPointToRay(Input.mousePosition); // Or cachedCamera.ScreenPointToRay
+        Ray ray = cachedCamera.ScreenPointToRay(Input.mousePosition); // Or cachedCamera.ScreenPointToRay
         
         // Using your concise plane raycast logic with fallback
         if (!dragPlane.Raycast(ray, out float distance))

@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public class GameEventRecorder : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class GameEventRecorder : MonoBehaviour
     private float sessionStartTime;
     private float fpsTimer;
     private int sampledFrames;
+    private float worstFrameTime;
+
     private StreamWriter logWriter;
     private int eventIndex;
     private string logFilePath;
@@ -69,22 +72,53 @@ public class GameEventRecorder : MonoBehaviour
 
     private void Update()
     {
-        if (!DeveloperRecordingEnabled)
+        if (!DeveloperRecordingEnabled || logWriter == null)
             return;
 
-        fpsTimer += Time.unscaledDeltaTime;
+        float frameTime = Time.unscaledDeltaTime;
+
+        fpsTimer += frameTime;
         sampledFrames++;
 
+        if (frameTime > worstFrameTime)
+            worstFrameTime = frameTime;
+
+        float sampleInterval = Mathf.Max(fpsSampleInterval, 0.1f);
+
         if (fpsTimer < fpsSampleInterval)
+
             return;
 
         float averageFps = sampledFrames / Mathf.Max(fpsTimer, 0.001f);
+        float averageFrameTimeMs = fpsTimer / Mathf.Max(sampledFrames, 1) * 1000f;
+        float worstFrameTimeMs = worstFrameTime * 1000f;
 
-        Record("Performance", "FPS sample",
-            $"AverageFPS={averageFps:F1}; SampleSeconds={fpsTimer:F1}");
+        // Memory measurements are in bytes, converted to MB.
+        float allocatedMemoryMB =
+            Profiler.GetTotalAllocatedMemoryLong() / (1024f * 1024f);
+
+        float reservedMemoryMB =
+            Profiler.GetTotalReservedMemoryLong() / (1024f * 1024f);
+
+        float managedMemoryMB =
+            Profiler.GetMonoUsedSizeLong() / (1024f * 1024f);
+
+        string details =
+            $"AverageFPS={averageFps:F1}; " +
+            $"AverageFrameTimeMs={averageFrameTimeMs:F2}; " +
+            $"WorstFrameTimeMs={worstFrameTimeMs:F2}; " +
+            $"SampleSeconds={fpsTimer:F1}; " +
+            $"UnityAllocatedMemoryMB={allocatedMemoryMB:F1}; " +
+            $"UnityReservedMemoryMB={reservedMemoryMB:F1}; " +
+            $"ManagedMemoryMB={managedMemoryMB:F1}";
+
+        Record("Performance", "Performance sample", details);
+
+        Debug.Log($"[Recorder] Performance: {details}");
 
         fpsTimer = 0f;
         sampledFrames = 0;
+        worstFrameTime = 0f;
     }
 
     private void OnEnable()
@@ -133,10 +167,7 @@ public class GameEventRecorder : MonoBehaviour
 
     private void Record(string category, string message, string details)
     {
-        if (!DeveloperRecordingEnabled)
-            return;
-
-        if (logWriter == null)
+        if (!DeveloperRecordingEnabled || logWriter == null)
             return;
 
         RecordedEvent entry = new RecordedEvent
@@ -232,9 +263,12 @@ private void HandleUnityLog(
     // Ensure the raw JSONL file is fully written before exporting.
     try
     {
-        logWriter?.Flush();
-        logWriter?.Dispose();
-        logWriter = null;
+        if (logWriter != null)
+        {
+            logWriter.Flush();
+            logWriter.Dispose();
+            logWriter = null;
+        }
 
     #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (!string.IsNullOrEmpty(logFilePath))

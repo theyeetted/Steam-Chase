@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Forter
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Add 7 Blocks.
-  <Image>k__BackingField: {fileID: 8118066430107275596, guid: 0f82bdf52064f5b4fbbea851c6c7b9cb, type: 3}
+  <Image>k__BackingField: {fileID: -7861681740899622216, guid: aa62725af1be26d4c99fcf871aa910d7, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 0
   <Character>k__BackingField: 1

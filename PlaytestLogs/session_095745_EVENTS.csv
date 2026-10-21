@@ -1,0 +1,8 @@
+﻿SessionId,EventIndex,UtcTime,ElapsedSeconds,Category,Message,Details
+"095745","1","2026-10-21T02:57:49.8542502Z","0.001","Session","Session started","Unity=6000.3.24f1; Platform=WindowsEditor"
+"095745","2","2026-10-21T02:57:50.1567856Z","0.303","UnityConsole/Log","[SessionIdDisplay] Displaying session 095745",""
+"095745","3","2026-10-21T02:57:54.8293029Z","4.975","Performance","FPS sample","AverageFPS=222.6; SampleSeconds=5.0"
+"095745","4","2026-10-21T02:57:59.8302527Z","9.976","Performance","FPS sample","AverageFPS=248.4; SampleSeconds=5.0"
+"095745","5","2026-10-21T02:58:04.5777497Z","14.722","UnityConsole/Log","[SessionIdDisplay] Displaying session 095745",""
+"095745","6","2026-10-21T02:58:04.8350779Z","14.979","Performance","FPS sample","AverageFPS=240.0; SampleSeconds=5.0"
+"095745","7","2026-10-21T02:58:06.7118256Z","16.857","Session","Session ended","DurationSeconds=16.9"

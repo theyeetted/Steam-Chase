@@ -1,0 +1,17 @@
+﻿STEAMCHASING PLAYTEST REPORT
+============================
+Session ID: 095717
+Exported UTC: 2026-10-21T02:57:09.3621140Z
+Duration: 00:02
+Total events: 2
+Warnings: 0
+Errors / exceptions / asserts: 0
+Average of FPS samples: No FPS samples recorded
+Unreadable log lines: 0
+
+EVENT TIMELINE
+--------------
+[00:00] #1 [Session] Session started
+    Details: Unity=6000.3.24f1; Platform=WindowsEditor
+[00:02] #2 [Session] Session ended
+    Details: DurationSeconds=2.1

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Block
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Gain 5 Block
-  <Image>k__BackingField: {fileID: 8118066430107275596, guid: 0f82bdf52064f5b4fbbea851c6c7b9cb, type: 3}
+  <Image>k__BackingField: {fileID: -591446080306467075, guid: 883759fe4aeab5443894d6c80ff96559, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 0
   <Character>k__BackingField: 0

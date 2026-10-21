@@ -1,0 +1,4 @@
+﻿SessionId,EventIndex,UtcTime,ElapsedSeconds,Category,Message,Details
+"095536","1","2026-10-21T02:55:31.6168656Z","0.006","Session","Session started","Unity=6000.3.24f1; Platform=WindowsEditor"
+"095536","2","2026-10-21T02:55:36.5831815Z","4.970","Performance","FPS sample","AverageFPS=206.4; SampleSeconds=5.0"
+"095536","3","2026-10-21T02:55:37.9647345Z","6.352","Session","Session ended","DurationSeconds=6.4"

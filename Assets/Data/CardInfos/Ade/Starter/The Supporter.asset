@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: The Supporter
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Deal 4 Damage.
-  <Image>k__BackingField: {fileID: -7008412969330441016, guid: 687f3840229e7424b89395cad9cec6b2, type: 3}
+  <Image>k__BackingField: {fileID: 6457600424845857197, guid: 41c3e0eac6d538541bdfba57d58b8de8, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 0
   <Character>k__BackingField: 1

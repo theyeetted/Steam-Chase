@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Swing
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: Deal 6 Damage
-  <Image>k__BackingField: {fileID: -7008412969330441016, guid: 687f3840229e7424b89395cad9cec6b2, type: 3}
+  <Image>k__BackingField: {fileID: -3809395999728401774, guid: 7106174a1c7de6341969059531358757, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 0
   <Character>k__BackingField: 0
