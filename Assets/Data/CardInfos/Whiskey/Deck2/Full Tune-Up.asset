@@ -15,7 +15,7 @@ MonoBehaviour:
   <description>k__BackingField: Gain 14 Blocks. Apply Aggravated to all enemies for
     1 turn. Whenever Whiskey is attacked this turn, deal 10 damage to the attacker
     and fill their Stun gauge by an additional 15%.
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: 5937791878197993912, guid: 2da29b31808ec4f4299252a9f6b2fa22, type: 3}
   <Cost>k__BackingField: 3
   <Rarity>k__BackingField: 2
   <Character>k__BackingField: 0

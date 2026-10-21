@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: 'Gain 5 Blocks. Apply Aggravated to target enemy
     for 1 turn. '
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: 103696051000404127, guid: 1a3b3039e4be05944abc3edb64091f59, type: 3}
   <Cost>k__BackingField: 0
   <Rarity>k__BackingField: 1
   <Character>k__BackingField: 0

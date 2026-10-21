@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "I\u2019ll get you back!"
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <description>k__BackingField: When attacked gain 1 attack up
-  <Image>k__BackingField: {fileID: 0}
+  <Image>k__BackingField: {fileID: -7579971917159548404, guid: e4fb205fa26287345ac8334b65875e2b, type: 3}
   <Cost>k__BackingField: 1
   <Rarity>k__BackingField: 2
   <Character>k__BackingField: 0
