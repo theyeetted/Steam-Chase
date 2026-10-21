@@ -10,10 +10,9 @@ public class EnemyView : CombatantView
 
     public int AttackPower { get; set; }
     public List<EnemySkill> Skills { get; private set; } = new();
+    public string DisplayName { get; private set; }
 
     private readonly HashSet<EnemySkill> usedBuffSkills = new();
-
-
 
     private void Awake()
     {
@@ -24,6 +23,16 @@ public class EnemyView : CombatantView
 
     public void Setup(EnemyData enemyData)
     {
+        if (enemyData == null)
+        {
+            Debug.LogError("[EnemyView] Setup failed: EnemyData is null.", this);
+            return;
+        }
+
+        DisplayName = string.IsNullOrWhiteSpace(enemyData.DisplayName)
+            ? enemyData.name
+            : enemyData.DisplayName;
+
         AttackPower = enemyData.AttackPower;
         Skills = enemyData.Skills ?? new List<EnemySkill>();
         usedBuffSkills.Clear();

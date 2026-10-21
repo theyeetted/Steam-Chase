@@ -102,16 +102,125 @@ public class CardSystem : SingleTon<CardSystem>
 
     public void Setup(int heroIndex, List<CardData> deckData)
     {
-        if (!IsValidHero(heroIndex)) { return; }
+        if (!IsValidHero(heroIndex) || deckData == null)
+        {
+            Debug.LogWarning("[CardSystem] Invalid hero or missing deck data.");
+            return;
+        }
 
         repeatFirstAttackEachTurn = false;
         ResetAttackCardRecord();
-        ResetCards(heroIndex); // Reset card of that hero
+        ResetCards(heroIndex);
 
-        foreach (CardData cardData in deckData) // Add card of specific hero to draw pile
+        List<CardData> available = new List<CardData>(deckData);
+        List<CardData> selected = new List<CardData>();
+
+        // Always include one Unique card, if the deck has one.
+        CardData uniqueCard = available.Find(c =>
+            c != null && c.Rarity == Rarity.Unique);
+
+        if (uniqueCard != null)
         {
+            selected.Add(uniqueCard);
+            available.Remove(uniqueCard);
+            Debug.Log($"[CardSystem] Guaranteed Unique: {uniqueCard.name}");
+        }
+        else
+        {
+            Debug.LogWarning("[CardSystem] No Unique card found in this deck.");
+        }
+
+        // Select up to 8 more cards. One 1-100 rarity roll per card.
+        while (selected.Count < 9 && available.Count > 0)
+        {
+            int roll = UnityEngine.Random.Range(1, 101);
+            Rarity chosenRarity;
+
+            if (roll <= 2)
+                chosenRarity = Rarity.Legendary;
+            else if (roll <= 32)
+                chosenRarity = Rarity.Rare;
+            else
+                chosenRarity = Rarity.Common;
+
+            List<CardData> candidates = available.FindAll(c =>
+                c != null && c.Rarity == chosenRarity);
+
+            // If that rarity has no cards left, try lower rarities.
+            if (candidates.Count == 0 && chosenRarity == Rarity.Legendary)
+                candidates = available.FindAll(c => c != null && c.Rarity == Rarity.Rare);
+
+            if (candidates.Count == 0 &&
+                chosenRarity != Rarity.Common)
+                candidates = available.FindAll(c => c != null && c.Rarity == Rarity.Common);
+
+            // Base cards are the final fallback if other rarities are exhausted.
+            if (candidates.Count == 0)
+                candidates = available.FindAll(c => c != null && c.Rarity == Rarity.Base);
+
+            if (candidates.Count == 0)
+            {
+                Debug.LogWarning("[CardSystem] No eligible cards remain.");
+                break;
+            }
+
+            // Randomly select a card from the chosen rarity.
+            CardData picked = candidates[
+                UnityEngine.Random.Range(0, candidates.Count)];
+
+            selected.Add(picked);
+            available.Remove(picked);
+
+            Debug.Log(
+                $"[CardSystem] Roll={roll}, rarity={chosenRarity}, " +
+                $"selected={picked.name}"
+            );
+        }
+
+        // Put only the selected battle cards into the draw pile.
+        foreach (CardData cardData in selected)
+            drawPiles[heroIndex].Add(new Card(cardData));
+
+        // Shuffle the selected cards.
+        for (int i = drawPiles[heroIndex].Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (drawPiles[heroIndex][i], drawPiles[heroIndex][j]) =
+                (drawPiles[heroIndex][j], drawPiles[heroIndex][i]);
+        }
+
+        Debug.Log(
+            $"[CardSystem] Hero {heroIndex}: " +
+            $"{drawPiles[heroIndex].Count} battle cards randomly selected."
+        );
+
+/*
+        foreach (CardData cardData in deckData)
+        {
+            if (cardData == null)
+            {
+                Debug.LogWarning("[CardSystem] Skipping a null card.");
+                continue;
+            }
+
             drawPiles[heroIndex].Add(new Card(cardData));
         }
+
+        // Shuffle the draw pile.
+        for (int i = drawPiles[heroIndex].Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+
+            Card temp = drawPiles[heroIndex][i];
+            drawPiles[heroIndex][i] = drawPiles[heroIndex][j];
+            drawPiles[heroIndex][j] = temp;
+        }
+
+        Debug.Log(
+            $"[CardSystem] Hero {heroIndex} draw pile initialized: " +
+            $"{drawPiles[heroIndex].Count} cards."
+        );
+        */ // Old Code
     }
 
 
@@ -309,6 +418,33 @@ public class CardSystem : SingleTon<CardSystem>
             yield break;
         }
 
+        // Record the card the player successfully chose to play ------------
+        Card playedCard = playCardGA.Card;
+        string cardName = playedCard.Title; // See note below if this field differs in your Card class.
+
+        string targetName = playCardGA.MannualTarget != null
+            ? playCardGA.MannualTarget.GetCombatDisplayName()
+            : "None";
+
+        string actionDetails =
+            $"Card={cardName}; " +
+            $"CardType={playedCard.Type}; " +
+            $"HeroIndex={heroIndex}; " +
+            $"EnergyCost={playedCard.Cost}; " +
+            $"Target={targetName}; " +
+            $"PlayType=Manual";
+
+        if (GameEventRecorder.Instance != null)
+        {
+            GameEventRecorder.Instance.RecordPlayerAction(
+                "Card played",
+                actionDetails
+            );
+        }
+
+        Debug.Log($"[CardSystem] Player played card: {actionDetails}");
+        // -------------------------------------------------------------------
+
         yield return MovePlayedCard(heroIndex, playCardGA.Card);
 
         ActionSystem.Instance.AddReaction(
@@ -362,8 +498,34 @@ public class CardSystem : SingleTon<CardSystem>
         Card card = candidates[Random.Range(0, candidates.Count)];
         CombatantView target = enemies[Random.Range(0, enemies.Count)];
         List<List<CombatantView>> otherTargets = ResolveOtherEffectTargets(card, action.Owner, target);
+
         if (!hands[heroIndex].Remove(card))
             yield break;
+
+        // Record cards played automatically by an effect --------------------
+        string cardName = card.Title;
+
+        string targetName = target != null
+            ? target.GetCombatDisplayName()
+            : "None";
+
+        string actionDetails =
+            $"Card={cardName}; " +
+            $"CardType={card.Type}; " +
+            $"HeroIndex={heroIndex}; " +
+            $"Target={targetName}; " +
+            $"PlayType=AutomaticRandom";
+
+        if (GameEventRecorder.Instance != null)
+        {
+            GameEventRecorder.Instance.RecordPlayerAction(
+                "Card played automatically",
+                actionDetails
+            );
+        }
+
+        Debug.Log($"[CardSystem] Automatic card play: {actionDetails}");
+        // ------------------------------------------------------------------
 
         // Use the normal destination rules once, including hidden hands and
         // Disintegrate. This is effect execution, not a paid/manual card play.

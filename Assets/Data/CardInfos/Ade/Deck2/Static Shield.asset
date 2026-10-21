@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
+  m_Name: Static Shield
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <description>k__BackingField: Gain 8 blocks.
+  <Image>k__BackingField: {fileID: 4727408201772238583, guid: 40de8682befa8f24aba31be653d84472, type: 3}
+  <Cost>k__BackingField: 1
+  <Rarity>k__BackingField: 1
+  <Character>k__BackingField: 1
+  <Type>k__BackingField: 1
+  <Disintegrate>k__BackingField: 0
+  <ManualTargetKind>k__BackingField: 1
+  <MannualTargetEffect>k__BackingField:
+    rid: 7746331448223989990
+  <OtherTargetEffects>k__BackingField: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 7746331448223989990
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 2
+        stackCount: 8

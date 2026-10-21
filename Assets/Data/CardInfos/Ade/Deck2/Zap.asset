@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
+  m_Name: Zap
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <description>k__BackingField: Deal 7 damage and apply 1 Shock.
+  <Image>k__BackingField: {fileID: 3397562238068789782, guid: 11560fdc5f37e864eb7aaaa3f123e5e1, type: 3}
+  <Cost>k__BackingField: 1
+  <Rarity>k__BackingField: 1
+  <Character>k__BackingField: 1
+  <Type>k__BackingField: 1
+  <Disintegrate>k__BackingField: 0
+  <ManualTargetKind>k__BackingField: 0
+  <MannualTargetEffect>k__BackingField:
+    rid: 7746331448223989991
+  <OtherTargetEffects>k__BackingField:
+  - rid: 7746331448223989992
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7746331448223989991
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 7
+        damageValue:
+          rid: -2
+    - rid: 7746331448223989992
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 7746331448223989993
+        <Effect>k__BackingField:
+          rid: 7746331448223989994
+        <RepeatMode>k__BackingField: 0
+        <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
+        <ChancePercent>k__BackingField: 100
+    - rid: 7746331448223989993
+      type: {class: ManualTargetTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331448223989994
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 1
+        stackCount: 1

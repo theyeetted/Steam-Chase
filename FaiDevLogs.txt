@@ -1,6 +1,15 @@
 NOTE: These might not have all details down.
 ------------------------------------------------------------------------------------------------------
+Log3 : 20Oct2026 ??:00 PM ; (PlaytestingUpdate)
+- Major changes: 
+	+ Update sprite setting to be more pixelated.
+	+ Add more debug logs.
+	+ Added Ade cards decks.
+	+ Added Game event recorder which will be used for 2 purposes: Feedback to player action during gameplay, and playtest session data collection.
+	+ Added session ID generated display on Main Menu.
+	+ Fixed bug about resume button and camera disappeared (MouseUtil.cs).
 
+------------------------------------------------------------------------------------------------------
 
 Log2 : 15Oct2026 20:00 PM ; (TwoCharactersUpdate)
 - Major changes: 

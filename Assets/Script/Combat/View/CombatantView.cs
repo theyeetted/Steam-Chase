@@ -43,18 +43,18 @@ public class CombatantView : MonoBehaviour
         ResetAttackHistory();
         triggeredEffectRules.Clear();
         if (counterBuffs.Damage > 0)
-            RemoveStatusEffect(StatusEffectType.Counter, counterBuffs.Damage);
+            RemoveStatusEffect(StatusEffectType.Counter, counterBuffs.Damage, false);
         // Reusing a unit for a new battle must also clear permanent damage bonuses.
         foreach (StatusEffectType type in statusDamageBuffs.Clear())
             statusEffectsUI.UpdateStatusEffectUI(type, 0);
         // Stress has no turn decay, but must not carry into a new combat on a reused enemy.
         int stressStacks = GetStatusEffectStacks(StatusEffectType.Stress);
         if (stressStacks > 0)
-            RemoveStatusEffect(StatusEffectType.Stress, stressStacks);
+            RemoveStatusEffect(StatusEffectType.Stress, stressStacks, false);
         // Got 'em lasts for one combat, including when the same hero view is reused.
         int drawOnVulnerableStacks = GetStatusEffectStacks(StatusEffectType.DrawOnVulnerable);
         if (drawOnVulnerableStacks > 0)
-            RemoveStatusEffect(StatusEffectType.DrawOnVulnerable, drawOnVulnerableStacks);
+            RemoveStatusEffect(StatusEffectType.DrawOnVulnerable, drawOnVulnerableStacks, false);
         MaxHealth = health;
         CurrentHealth = health;
         spriteRenderer.sprite = image;
@@ -138,8 +138,8 @@ public class CombatantView : MonoBehaviour
                 CurrentHealth = 0;
             }
         }
-        string casterName = caster != null ? caster.name : "Unknown caster";
-        Debug.Log($"{casterName} deal {healthBeforeDamage - CurrentHealth} Damages to {name}", this);
+        string casterName = caster != null ? caster.GetCombatDisplayName() : "Unknown caster";
+        Debug.Log($"{casterName} deal {healthBeforeDamage - CurrentHealth} Damages to {GetCombatDisplayName()}", this);
         transform.DOShakePosition(0.2f, 0.5f);
         UpdateHealthBar();
 
@@ -323,13 +323,28 @@ public class CombatantView : MonoBehaviour
             : Mathf.Max(0, GetStatusEffectStacks(type) - stacksBeforeApplication);
         RefreshTriggeredStatusAdapter(type);
         statusEffectsUI.UpdateStatusEffectUI(type, GetStatusEffectStacks(type));
+
+        if (appliedStacks > 0)
+        {
+            RecordStatusEvent(
+                "StatusApplied",
+                type,
+                stacksBeforeApplication,
+                GetStatusEffectStacks(type),
+                appliedStacks,
+                applier);
+        }
+
         return appliedStacks > 0;
     }
 
-    public void RemoveStatusEffect(StatusEffectType type, int stackCount)
+    public void RemoveStatusEffect(StatusEffectType type, int stackCount, bool recordEvent = true)
     {
         if (stackCount <= 0)
             return;
+
+        int stacksBefore = GetStatusEffectStacks(type);
+
         if (type == StatusEffectType.Counter)
         {
             counterBuffs.Remove(stackCount);
@@ -352,6 +367,20 @@ public class CombatantView : MonoBehaviour
         }
         RefreshTriggeredStatusAdapter(type);
         statusEffectsUI.UpdateStatusEffectUI(type, GetStatusEffectStacks(type));
+
+        // record stuff
+        int stacksAfter = GetStatusEffectStacks(type);
+        int removedStacks = Mathf.Max(0, stacksBefore - stacksAfter);
+
+        if (recordEvent && removedStacks > 0)
+        {
+            RecordStatusEvent(
+                "StatusRemoved",
+                type,
+                stacksBefore,
+                stacksAfter,
+                removedStacks);
+        }
     }
 
     private void RefreshTriggeredStatusAdapter(StatusEffectType type)
@@ -420,4 +449,72 @@ public class CombatantView : MonoBehaviour
         }
     }
 
+
+    // Record
+    private string GetEventDisplayName(CombatantView unit)
+    {
+        if (unit == null)
+            return "Unknown";
+
+        if (unit is EnemyView enemy &&
+            !string.IsNullOrWhiteSpace(enemy.DisplayName))
+        {
+            return enemy.DisplayName;
+        }
+
+        return unit.name;
+    }
+
+    private void RecordStatusEvent(
+        string eventType,
+        StatusEffectType type,
+        int stacksBefore,
+        int stacksAfter,
+        int changedStacks,
+        CombatantView applier = null)
+    {
+        if (changedStacks <= 0)
+            return;
+
+        string targetName = GetEventDisplayName(this);
+        string applierName = GetEventDisplayName(applier);
+
+        string message = eventType == "StatusApplied"
+            ? $"{targetName} gained {changedStacks} {type} stack(s)."
+            : $"{targetName} lost {changedStacks} {type} stack(s).";
+
+        string details =
+            $"Event={eventType}; " +
+            $"Target={targetName}; " +
+            $"Status={type}; " +
+            $"StacksBefore={stacksBefore}; " +
+            $"StacksAfter={stacksAfter}; " +
+            $"ChangedStacks={changedStacks}; " +
+            $"Applier={applierName}";
+
+        Debug.Log($"[CombatantView] {details}", this);
+
+        if (GameEventRecorder.Instance != null)
+        {
+            GameEventRecorder.Instance.RecordCombat(message, details);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "[CombatantView] GameEventRecorder is missing; " +
+                "status event was not recorded.",
+                this);
+        }
+    }
+
+    public string GetCombatDisplayName()
+    {
+        if (this is EnemyView enemy &&
+            !string.IsNullOrWhiteSpace(enemy.DisplayName))
+        {
+            return enemy.DisplayName;
+        }
+
+        return name;
+    }
 }

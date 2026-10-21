@@ -42,9 +42,24 @@ public class EffectSystem : MonoBehaviour
         if (action.EffectWrapper == null || action.EffectWrapper.Effect == null || action.Context == null)
             yield break;
 
+        int chancePercent = Mathf.Clamp(
+        action.EffectWrapper.ChancePercent, 0, 100);
+
         int repeatCount = action.EffectWrapper.ResolveRepeatCount(action.Context);
         for (int i = 0; i < repeatCount; i++)
         {
+            // Always succeeds at 100%; never succeeds at 0%.
+            bool succeeds = chancePercent >= 100 ||
+                (chancePercent > 0 && Random.Range(0, 100) < chancePercent);
+
+            Debug.Log(
+                $"[Effect Chance] Effect={action.EffectWrapper.Effect.GetType().Name}, " +
+                $"Attempt={i + 1}/{repeatCount}, Chance={chancePercent}%, " +
+                $"Result={(succeeds ? "SUCCESS" : "FAILED")}");
+
+            if (!succeeds)
+                continue;
+
             ActionSystem.Instance.AddReaction(new PerformEffectGA(
                 action.EffectWrapper.Effect,
                 action.Context.ResolveTargets(),

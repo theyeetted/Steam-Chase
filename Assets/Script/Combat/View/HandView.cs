@@ -34,7 +34,7 @@ public class HandView : MonoBehaviour
     {
         if (cards.Count == 0) yield break;
 
-        float cardSpacing = 1f / 10f;
+        float cardSpacing = 1f / 8f;
         float cardFristPosition = 0.5f - (cardSpacing * (cards.Count - 1) / 2);
         Spline spline = splineContainer.Spline;
 

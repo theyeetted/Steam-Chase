@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f3eaa5c1431f743b6bc48670db899a, type: 3}
+  m_Name: Ade Deck 2
+  m_EditorClassIdentifier: Assembly-CSharp::CharData
+  <Image>k__BackingField: {fileID: -6713952168519612241, guid: 000877f4fd4ee9a4db5510a8c2ed14af, type: 3}
+  <Health>k__BackingField: 80
+  <Deck>k__BackingField:
+  - {fileID: 11400000, guid: ea7ed4654fe895a46bbc714b5248df41, type: 2}
+  - {fileID: 11400000, guid: 8dc2c6abe8d1e93458fc0f09b2d39a1e, type: 2}
+  - {fileID: 11400000, guid: 8dc2c6abe8d1e93458fc0f09b2d39a1e, type: 2}
+  - {fileID: 11400000, guid: 8dc2c6abe8d1e93458fc0f09b2d39a1e, type: 2}
+  - {fileID: 11400000, guid: 8dc2c6abe8d1e93458fc0f09b2d39a1e, type: 2}
+  - {fileID: 11400000, guid: 8dc2c6abe8d1e93458fc0f09b2d39a1e, type: 2}
+  - {fileID: 11400000, guid: 12d5cc4d97b47834ea122691b5ab76d8, type: 2}
+  - {fileID: 11400000, guid: 12d5cc4d97b47834ea122691b5ab76d8, type: 2}
+  - {fileID: 11400000, guid: 12d5cc4d97b47834ea122691b5ab76d8, type: 2}
+  - {fileID: 11400000, guid: 12d5cc4d97b47834ea122691b5ab76d8, type: 2}
+  - {fileID: 11400000, guid: 12d5cc4d97b47834ea122691b5ab76d8, type: 2}
+  - {fileID: 11400000, guid: aa9d284c6c7828d46bb9287bfd256cfb, type: 2}
+  - {fileID: 11400000, guid: ed0aa8a893ca18a4ab88188c5ad9aab2, type: 2}
+  - {fileID: 11400000, guid: 777260b0190504a4b86b666a6d686a7b, type: 2}
+  - {fileID: 11400000, guid: d938408f92e1c3a4b8ca37b33576802c, type: 2}
+  - {fileID: 11400000, guid: 635b16d7ee27eb846b2fae05df170ff3, type: 2}
+  - {fileID: 11400000, guid: d7ec4cf14728adb40ab5d45f9468bac9, type: 2}
+  - {fileID: 11400000, guid: 1438a3eb281229e4a99bdc7493d2b84a, type: 2}
+  - {fileID: 11400000, guid: 744a9a4f22ed55d47ba7439316844921, type: 2}
+  - {fileID: 11400000, guid: 775498f1d4a814c4fb7b859a0eb52430, type: 2}
+  - {fileID: 11400000, guid: c4cae269ceed42f4abb7a2552d54ac0e, type: 2}
+  - {fileID: 11400000, guid: 7eb94c5c02debeb478532391028dd58f, type: 2}
+  - {fileID: 11400000, guid: f8d0cdc4fe59bf249b50a55f62325d44, type: 2}
+  - {fileID: 11400000, guid: 83d27841ce15d634fb68218787674bd2, type: 2}
+  - {fileID: 11400000, guid: fb6264ec4b43f87409e30226d2344c0e, type: 2}
+  - {fileID: 11400000, guid: 014cdae5d710cae499f18c4d29bfab83, type: 2}
+  <MaxStun>k__BackingField: 100

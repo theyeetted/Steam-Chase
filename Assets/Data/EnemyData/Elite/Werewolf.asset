@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfc36edc2d5c3d94cb6c5eedd7dafff0, type: 3}
   m_Name: Werewolf
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <DisplayName>k__BackingField: Werewolf
   <Image>k__BackingField: {fileID: -737834021620278050, guid: ab0b9e3942cc7f046a11c81b6699dd43, type: 3}
   <Health>k__BackingField: 120
   <AttackPower>k__BackingField: 12

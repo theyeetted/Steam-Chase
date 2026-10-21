@@ -43,7 +43,12 @@ public class DamageSystem : MonoBehaviour
         // PRE ends the player turn; POST ends the enemy turn, matching the shared turn flow.
         // Both boundaries matter: Last Turn can refer to either side's completed turn.
         if (EnemySystem.Instance == null)
+        {
+            Debug.LogWarning(
+                "[DamageSystem] Cannot advance enemy attack history: " +
+                "EnemySystem.Instance is missing.");
             return;
+        }
 
         foreach (EnemyView enemy in EnemySystem.Instance.Enemies)
         {
@@ -61,6 +66,10 @@ public class DamageSystem : MonoBehaviour
             (source == null || source.CurrentHealth <= 0))
             yield break;
 
+        string casterName = dealDamageGA.Caster != null
+            ? dealDamageGA.Caster.GetCombatDisplayName()
+            : "Unknown caster";
+
         // Resolve once after this action's PRE reactions, but before any of its own hits.
         // Area hits use the same amount, even as they add new history entries.
         if (dealDamageGA.AmountSource != null)
@@ -73,6 +82,12 @@ public class DamageSystem : MonoBehaviour
             yield break;
 
         int outgoingDamage = StatusEffectSystem.ModifyOutgoingDamage(dealDamageGA.Caster, dealDamageGA.Amount);
+
+        Debug.Log(
+            $"[DamageSystem] Outgoing damage calculated. Caster: {casterName}, " +
+            $"Base amount: {dealDamageGA.Amount}, " +
+            $"After outgoing modifiers: {outgoingDamage}.");
+
         CombatantView aggravatedTarget = StatusEffectSystem.GetAggravatedTarget(dealDamageGA.Caster);
         // Replace the target set once, so a multi-target attack hits only the applier once.
         List<CombatantView> targets = aggravatedTarget != null
@@ -87,21 +102,53 @@ public class DamageSystem : MonoBehaviour
                 continue;
 
             int damage = outgoingDamage;
-            if (aggravatedTarget != null && target == aggravatedTarget)
+            if (aggravatedTarget != null && target == aggravatedTarget) {
+                Debug.Log(
+                $"[DamageSystem] Aggravated redirected the attack to " +
+                $"{aggravatedTarget.GetCombatDisplayName()}.");
+
                 damage = Mathf.FloorToInt(damage * 0.85f);
+
+                Debug.Log(
+                $"[DamageSystem] Aggravated damage reduction applied to " +
+                $"{target.GetCombatDisplayName()}. Damage is now {damage}.");
+            }
+        
+            int beforeVulnerable = damage;
             damage = VulnerableSystem.ModifyIncomingDamage(target, damage);
+
+            Debug.Log(
+                $"[DamageSystem] Vulnerable modified damage against " +
+                $"{target.GetCombatDisplayName()}: {beforeVulnerable} -> {damage}.");
+
             // Apply the stunned-target bonus after the ordinary damage modifiers.
-            if (target.IsStunned)
+            if (target.IsStunned) {
+                int beforeStunBonus = damage;
                 damage = Mathf.CeilToInt(damage * 1.2f);
+
+                Debug.Log(
+                $"[DamageSystem] Stunned-target bonus applied to " +
+                $"{target.GetCombatDisplayName()}: {beforeStunBonus} -> {damage}.");
+            }
 
             // Stun buildup uses the original amount, before bonuses or Block.
             int stunAmount = Mathf.FloorToInt(dealDamageGA.Amount * 0.4f);
+
+            Debug.Log(
+            $"[DamageSystem] Applying hit. Caster: {casterName}, " +
+            $"Target: {target.GetCombatDisplayName()}, Final damage before Block: {damage}, " +
+            $"Stun buildup: {stunAmount}, Attack kind: {dealDamageGA.Kind}.");
+
             // Keep the legacy enemy-only predicate. New numeric history is recorded
             // inside ApplyDamage after the hit actually mutates health/Block.
             target.RecordAttack();
             yield return ApplyDamage(target, damage, dealDamageGA.Caster, stunAmount,
                 stunFillPercent: dealDamageGA.AdditionalStunFillPercent,
                 attackKind: dealDamageGA.Kind);
+
+            Debug.Log(
+            $"[DamageSystem] Hit processing finished for {target.GetCombatDisplayName()}. " +
+            $"Remaining HP: {target.CurrentHealth}.");
 
             // A landed ordinary attack triggers Mark even when Block absorbs the hit.
             // Follow-Up damage and direct status ticks never enter this trigger path.
@@ -120,6 +167,15 @@ public class DamageSystem : MonoBehaviour
             caster.GetStatusEffectStacks(StatusEffectType.ExtraAttack) <= 0)
             yield break;
 
+        int stacks = caster.GetStatusEffectStacks(StatusEffectType.ExtraAttack);
+
+        if (stacks <= 0)
+        {
+            Debug.Log(
+                $"[DamageSystem] Extra Attack skipped: {caster.GetCombatDisplayName()} has no charges.");
+            yield break;
+        }
+
         // Check the actual target before spending a charge. Aggravated can replace
         // the requested targets, and releases the caster if its applier has died.
         CombatantView aggravatedTarget = StatusEffectSystem.GetAggravatedTarget(caster);
@@ -129,11 +185,23 @@ public class DamageSystem : MonoBehaviour
 
         caster.RemoveStatusEffect(StatusEffectType.ExtraAttack, 1);
 
+        int damage = StatusEffectSystem.ModifyStatusDamage(
+            caster,
+            StatusEffectType.ExtraAttackDamageUp,
+            ExtraAttackGA.BaseDamage);
+
+        Debug.Log(
+            $"[DamageSystem] Extra Attack accepted. Caster: {caster.GetCombatDisplayName()}, " +
+            $"Base damage: {ExtraAttackGA.BaseDamage}, " +
+            $"Damage after Extra Attack bonus: {damage}, " +
+            $"Charges before consumption: {stacks}.");
+
         // A distinct normal damage action applies all ordinary modifiers and Mark.
         // Keep the original targets so Aggravated can be resolved again at execution.
         ActionSystem.Instance.AddReaction(new DealDamageGA(
             StatusEffectSystem.ModifyStatusDamage(caster, StatusEffectType.ExtraAttackDamageUp, ExtraAttackGA.BaseDamage),
             extraAttackGA.Targets, caster, AttackKind.ExtraAttack));
+            
         yield break;
     }
 
@@ -171,6 +239,13 @@ public class DamageSystem : MonoBehaviour
             ? StatusEffectType.MarkFollowUpDamageUp
             : StatusEffectType.FollowUpAttackDamageUp;
         int damage = StatusEffectSystem.ModifyStatusDamage(caster, damageBuffType, followUpAttackGA.Damage);
+
+        Debug.Log(
+            $"[DamageSystem] Follow-Up Attack accepted. Caster: {caster.GetCombatDisplayName()}, " +
+            $"Triggered by Mark: {followUpAttackGA.IsTriggeredByMark}, " +
+            $"Damage after dedicated bonus: {damage}, " +
+            $"Target count: {targets.Count}.");
+
         foreach (var target in targets)
         {
             if (gameOverTriggered)
@@ -178,6 +253,10 @@ public class DamageSystem : MonoBehaviour
 
             if (target == null || target.CurrentHealth <= 0)
                 continue;
+
+            Debug.Log(
+                $"[DamageSystem] Applying Follow-Up Attack to {target.GetCombatDisplayName()}. " +
+                $"Damage before Block: {damage}.");
 
             // Base four, the dedicated card bonus, and the matching status bonus; Block still applies.
             // Includes Mark-triggered Follow-Up attacks during either side's turn.
@@ -196,16 +275,30 @@ public class DamageSystem : MonoBehaviour
             return;
 
         int damage = hero.GetStatusEffectStacks(StatusEffectType.Counter);
-        if (damage > 0)
+        if (damage > 0) {
+            Debug.Log(
+                $"[DamageSystem] Counter triggered. Hero: {hero.GetCombatDisplayName()}, " +
+                $"Enemy attacker: {enemy.DisplayName}, Counter damage: {damage}.");
+
             ActionSystem.Instance.AddReaction(new CounterAttackGA(hero, enemy, damage, hero.CounterStunFillPercent));
+        }
     }
 
     private IEnumerator CounterAttackPerformer(CounterAttackGA action)
     {
         // Earlier hit reactions may have killed the defender or the original attacker.
         if (gameOverTriggered || action.Caster == null || action.Caster.CurrentHealth <= 0 ||
-            action.Target == null || action.Target.CurrentHealth <= 0 || action.Damage <= 0)
+            action.Target == null || action.Target.CurrentHealth <= 0 || action.Damage <= 0) 
+        {
+            Debug.Log(
+            "[DamageSystem] Counter Attack skipped: game over, invalid " +
+            "caster/target, defeated combatant, or non-positive damage.");
             yield break;
+        }
+
+        Debug.Log(
+        $"[DamageSystem] Counter Attack accepted. Caster: {action.Caster.GetCombatDisplayName()}, " +
+        $"Target: {action.Target.GetCombatDisplayName()}, Damage: {action.Damage}.");
 
         // Normal hero attack: applies damage modifiers, Block, Stun buildup, Mark, and attack history.
         // Counter is hero-only and responds only to enemy casters, so it cannot counter itself.
@@ -239,6 +332,13 @@ public class DamageSystem : MonoBehaviour
             StatusStackConsumption.All => stressStacks,
             _ => 0
         };
+
+        Debug.Log(
+            $"[DamageSystem] Stress detonation accepted. Target: {target.GetCombatDisplayName()}, " +
+            $"Available stacks: {stressStacks}, Triggered stacks: {triggeredStacks}, " +
+            $"Damage: {damage}, Stacks to consume: {consumedStacks}, " +
+            $"Stunned: {target.IsStunned}.");
+
         // Bypass attack/status bonuses, Vulnerable, and Mark triggers. Keep Block, VFX, and death handling.
         yield return ApplyDamage(target, damage, null, results: action.Results);
         if (target != null && consumedStacks > 0)
@@ -251,6 +351,8 @@ public class DamageSystem : MonoBehaviour
             target.GetStatusEffectStacks(StatusEffectType.Mark) <= 0)
             return;
 
+        int markStacks = target.GetStatusEffectStacks(StatusEffectType.Mark);
+
         CombatantView applier = target.MarkApplier;
         if (applier == null || applier.CurrentHealth <= 0)
             return;
@@ -258,7 +360,17 @@ public class DamageSystem : MonoBehaviour
         // Capture ownership before the last-stack removal clears it. Consume now
         // so repeated hits cannot queue more reactions than the available stacks.
         target.RemoveStatusEffect(StatusEffectType.Mark, 1);
+
+        Debug.Log(
+            $"[DamageSystem] Mark triggered on {target.GetCombatDisplayName()}. " +
+            $"Applier: {applier.GetCombatDisplayName()}, Mark stacks before consumption: {markStacks}, " +
+            $"Remaining stacks: {target.GetStatusEffectStacks(StatusEffectType.Mark)}.");
+
         ActionSystem.Instance.AddReaction(FollowUpAttackGA.CreateFromMark(target, applier));
+
+        Debug.Log(
+            $"[DamageSystem] Queued Mark-triggered Follow-Up for {applier.GetCombatDisplayName()} " +
+            $"against {target.GetCombatDisplayName()}.");
     }
 
     private IEnumerator ApplyDamage(CombatantView target, int damage, CombatantView caster, int stunAmount = 0,
@@ -266,18 +378,67 @@ public class DamageSystem : MonoBehaviour
         List<DamageResult> results = null)
     {
         int healthBefore = target.CurrentHealth;
+
         // Start the enemy's hit animation with card damage and its VFX. AttackResolvedGA
         // is queued after the presentation wait below, which made that reaction appear late.
         if (target is EnemyView enemy)
             enemy.TriggerHurtAnimation();
+
+        string casterName = caster != null ? caster.GetCombatDisplayName() : "Unknown caster";
+        Debug.Log(
+            $"[DamageSystem] ApplyDamage started. Caster: {casterName}, " +
+            $"Target: {target.GetCombatDisplayName()}, Damage before Block: {damage}, " +
+            $"HP before: {healthBefore}, Stun amount: {stunAmount}, " +
+            $"Stun fill percent: {stunFillPercent}, Attack kind: {attackKind}.");
+
         target.Damage(damage, caster);
+
+        int healthAfter = target.CurrentHealth;
+        int healthLost = Mathf.Max(0, healthBefore - healthAfter);
+
+        // Record resolved attacks, not every direct status-effect damage tick.
+        if (attackKind != AttackKind.None)
+        {
+            if (GameEventRecorder.Instance != null)
+            {
+                string combatMessage = healthLost > 0
+                    ? $"{casterName} dealt {healthLost} damage to {target.GetCombatDisplayName()}."
+                    : $"{casterName}'s attack dealt no HP damage to {target.GetCombatDisplayName()} (possibly blocked).";
+
+                string details =
+                    $"AttackKind={attackKind}; " +
+                    $"DamageBeforeBlock={damage}; " +
+                    $"HPBefore={healthBefore}; " +
+                    $"HPAfter={healthAfter}; " +
+                    $"HealthLost={healthLost}; " +
+                    $"StunAmount={stunAmount}; " +
+                    $"StunFillPercent={stunFillPercent}";
+
+                GameEventRecorder.Instance.RecordCombat(
+                    combatMessage,
+                    details);
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "[DamageSystem] GameEventRecorder is missing; " +
+                    "this combat event was not recorded.");
+            }
+        }
+
         // Capture immediately: later reactions and death removal cannot overwrite this hit.
-        results?.Add(new DamageResult(target.GetInstanceID(), damage,
-            healthBefore - target.CurrentHealth, false));
-        if (stunAmount > 0)
+        results?.Add(new DamageResult(target.GetInstanceID(), damage, healthLost, false));
+            
+        if (stunAmount > 0) {
             target.AddStun(stunAmount);
-        if (stunFillPercent > 0)
+            Debug.Log(
+            $"[DamageSystem] Added {stunAmount} Stun buildup to {target.GetCombatDisplayName()}.");
+        }
+        if (stunFillPercent > 0) {
             target.AddStunPercent(stunFillPercent);
+            Debug.Log(
+            $"[DamageSystem] Added {stunFillPercent}% Stun fill to {target.GetCombatDisplayName()}.");
+        }
 
         // Record before presentation yields or death removal. Blocked and lethal hits
         // count; direct status damage uses the default None and never publishes this fact.
@@ -289,10 +450,49 @@ public class DamageSystem : MonoBehaviour
         yield return new WaitForSeconds(0.15f);
         if (target != null && target.CurrentHealth <= 0)
         {
-            if (target is EnemyView enemyView)
+            // Record the unit's defeat for playtest data ----------------
+            string defeatedName = target.GetCombatDisplayName();
+            string attackerName = caster != null
+                ? caster.GetCombatDisplayName()
+                : "Unknown attacker";
+
+            string defeatMessage = $"{defeatedName} was defeated.";
+
+            string defeatDetails =
+                $"Event=UnitDefeated; " +
+                $"Unit={defeatedName}; " +
+                $"DefeatedBy={attackerName}; " +
+                $"FinalHP={target.CurrentHealth}";
+
+            Debug.Log($"[DamageSystem] {defeatDetails}", target);
+
+            if (GameEventRecorder.Instance != null)
+            {
+                GameEventRecorder.Instance.RecordCombat(
+                    defeatMessage,
+                    defeatDetails
+                );
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "[DamageSystem] GameEventRecorder is missing; defeat was not recorded.",
+                    target
+                );
+            }
+            // -------------------------------------------------------------
+
+            if (target is EnemyView enemyView) {
                 ActionSystem.Instance.AddReaction(new KillEnemyGA(enemyView));
-            else if (target is PlayerView)
+            }
+            else if (target is PlayerView) {
+                //Debug.Log($"[DamageSystem] A hero has been defeated: {target.GetCombatDisplayName()}. " +"Checking Game Over.");
                 CheckGameOver();
+            }
+        } else {
+            Debug.Log(
+                $"[DamageSystem] ApplyDamage completed for {target.GetCombatDisplayName()}. " +
+                $"HP remaining: {target.CurrentHealth}.");
         }
     }
 
@@ -325,8 +525,10 @@ public class DamageSystem : MonoBehaviour
         {
             gameOverTriggered = true;
 
-            if (gameOverPanel != null)
+            if (gameOverPanel != null) {
                 gameOverPanel.SetActive(true);
+                Debug.Log("[DamageSystem] Game Over panel displayed.");
+            }
 
             Debug.Log("GAME OVER: Both heroes have been defeated.");
         }
@@ -336,7 +538,10 @@ public class DamageSystem : MonoBehaviour
     {
         gameOverTriggered = false;
 
-        if (gameOverPanel != null)
+        if (gameOverPanel != null) {
             gameOverPanel.SetActive(false);
+        }
+
+        Debug.Log("[DamageSystem] Game Over state reset.");
     }
 }

@@ -107,7 +107,7 @@ public class EnemyAI
             return false; 
         }
 
-        Log($"--- Planning {enemy.name}'s next turn | HP: {enemy.CurrentHealth}/{enemy.MaxHealth} ---");
+        Log($"--- Planning {enemy.DisplayName}'s next turn | HP: {enemy.CurrentHealth}/{enemy.MaxHealth} ---");
 
         // 1. 30% chance to use a random skill.
         float randomSkillRoll = Random.value;
@@ -177,7 +177,7 @@ public class EnemyAI
         }
 
 
-        // 4. Attack a stunned hero (placeholder until stun exists).
+        // 4. Attack a stunned hero.
         PlayerView stunned = heroes.FirstOrDefault(IsStunned);
 
         if (stunned != null)
@@ -189,7 +189,7 @@ public class EnemyAI
         }
         else
         {
-            Log("Priority 4: No stunned hero found (stun detection is not implemented yet).  Go next >>>");
+            Log("Priority 4: No stunned hero found.  Go next >>>");
         }
 
 
@@ -236,7 +236,7 @@ public class EnemyAI
             Log("Attack skill roll FAILED.  Go next >>>");
         }
 
-        Log($"{enemy.name} did not use a skill. Normal attack fallback will be used.");
+        Log($"{enemy.DisplayName} did not use a skill. Normal attack fallback will be used.");
         return false;
     }
 
@@ -246,7 +246,7 @@ public class EnemyAI
     private bool TrySkill(EnemyView enemy, List<EnemySkill> skills, PlannedTurn plan, PlayerView forcedTarget = null)
     {
         if (skills == null || skills.Count == 0) { 
-            Log($"{enemy.name}: No skills available for this decision.");
+            Log($"{enemy.DisplayName}: No skills available for this decision.");
             return false; 
         }
 

@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
+  m_Name: Brass Guard
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <description>k__BackingField: Gain 5 blocks. If an Extra Attack was triggered this
+    turn, gain 3 additional blocks.
+  <Image>k__BackingField: {fileID: 7350122105201717674, guid: ec32c34606759b3468f835126fa13482, type: 3}
+  <Cost>k__BackingField: 1
+  <Rarity>k__BackingField: 1
+  <Character>k__BackingField: 1
+  <Type>k__BackingField: 1
+  <Disintegrate>k__BackingField: 0
+  <ManualTargetKind>k__BackingField: 0
+  <MannualTargetEffect>k__BackingField:
+    rid: -2
+  <OtherTargetEffects>k__BackingField:
+  - rid: 7746331448223989864
+  - rid: 7746331448223989855
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7746331448223989855
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 7746331448223989856
+        <Effect>k__BackingField:
+          rid: 7746331448223989858
+        <RepeatMode>k__BackingField: 0
+        <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
+        <ChancePercent>k__BackingField: 100
+    - rid: 7746331448223989856
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331448223989858
+      type: {class: ConditionalEffect, ns: , asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 7746331448223989860
+        effect:
+          rid: 7746331448223989861
+        subjectTargetMode:
+          rid: 7746331448223989862
+        evaluation: 0
+        recipientTargetMode:
+          rid: 7746331448223989863
+    - rid: 7746331448223989860
+      type: {class: AttackCountCondition, ns: , asm: Assembly-CSharp}
+      data:
+        history:
+          actor: 0
+          direction: 1
+          window: 0
+          kinds: 2
+        minimumCount: 1
+        invert: 0
+    - rid: 7746331448223989861
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 2
+        stackCount: 3
+    - rid: 7746331448223989862
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331448223989863
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331448223989864
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 7746331448223989865
+        <Effect>k__BackingField:
+          rid: 7746331448223989866
+        <RepeatMode>k__BackingField: 0
+        <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
+        <ChancePercent>k__BackingField: 100
+    - rid: 7746331448223989865
+      type: {class: SelfTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331448223989866
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 2
+        stackCount: 5

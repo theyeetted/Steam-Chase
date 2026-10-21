@@ -77,6 +77,8 @@ public class CardView : MonoBehaviour
                 return rareRaritySprite;
             case Rarity.Legendary:
                 return legendaryRaritySprite;
+            case Rarity.Unique:
+                return legendaryRaritySprite;
             default:
                 return null;
         }

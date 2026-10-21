@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
+  m_Name: Broad Beacon
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <description>k__BackingField: Apply 1 Mark to all enemies. Deal 5 damage to all
+    enemies.
+  <Image>k__BackingField: {fileID: -2973479180967320524, guid: b40afb80f4af1ee478f10c1c2eb260c9, type: 3}
+  <Cost>k__BackingField: 1
+  <Rarity>k__BackingField: 2
+  <Character>k__BackingField: 1
+  <Type>k__BackingField: 1
+  <Disintegrate>k__BackingField: 0
+  <ManualTargetKind>k__BackingField: 0
+  <MannualTargetEffect>k__BackingField:
+    rid: -2
+  <OtherTargetEffects>k__BackingField:
+  - rid: 7746331448223990127
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7746331448223990127
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 7746331448223990128
+        <Effect>k__BackingField:
+          rid: 7746331448223990129
+        <RepeatMode>k__BackingField: 0
+        <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
+        <ChancePercent>k__BackingField: 100
+    - rid: 7746331448223990128
+      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331448223990129
+      type: {class: SequenceEffect, ns: , asm: Assembly-CSharp}
+      data:
+        effects:
+        - rid: 7746331448223990130
+        - rid: 7746331448223990131
+    - rid: 7746331448223990130
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 5
+        stackCount: 1
+    - rid: 7746331448223990131
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 5
+        damageValue:
+          rid: -2

@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1096c7327cc5d45b5f4fc97c7d2817, type: 3}
+  m_Name: Chain Discharge
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <description>k__BackingField: Deal 7 damage to all enemies. 1 Shock to all enemies
+    hit.
+  <Image>k__BackingField: {fileID: 9047242249322448030, guid: bf354b4a3c9d2f9409407d85067da86a, type: 3}
+  <Cost>k__BackingField: 2
+  <Rarity>k__BackingField: 1
+  <Character>k__BackingField: 1
+  <Type>k__BackingField: 0
+  <Disintegrate>k__BackingField: 0
+  <ManualTargetKind>k__BackingField: 0
+  <MannualTargetEffect>k__BackingField:
+    rid: -2
+  <OtherTargetEffects>k__BackingField:
+  - rid: 7746331448223989996
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7746331448223989996
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 7746331448223989997
+        <Effect>k__BackingField:
+          rid: 7746331448223990003
+        <RepeatMode>k__BackingField: 0
+        <RepeatCount>k__BackingField: 1
+        attackCountQuery:
+          actor: 0
+          direction: 0
+          window: 0
+          kinds: 15
+        <ChancePercent>k__BackingField: 100
+    - rid: 7746331448223989997
+      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7746331448223990003
+      type: {class: SequenceEffect, ns: , asm: Assembly-CSharp}
+      data:
+        effects:
+        - rid: 7746331448223990004
+        - rid: 7746331448223990005
+    - rid: 7746331448223990004
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 7
+        damageValue:
+          rid: -2
+    - rid: 7746331448223990005
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 1
+        stackCount: 0

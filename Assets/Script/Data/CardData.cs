@@ -29,7 +29,7 @@ public class CardData : ScriptableObject
     [field: SerializeReference, SR] public List<AutoTargetEffect> OtherTargetEffects { get; private set; }
 }
 
-public enum Rarity { Base, Common, Rare, Legendary }
+public enum Rarity { Base, Common, Rare, Legendary, Unique }
 
 public enum Character { Whiskey, Ade }
 
