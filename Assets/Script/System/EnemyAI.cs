@@ -368,8 +368,7 @@ public class EnemyAI
 
     private bool IsStunned(PlayerView hero)
     {
-        // TODO: Connect to the actual stun gauge/stunned state.
-        return false;
+        return hero != null && hero.CurrentHealth > 0 && hero.IsStunned;
     }
 
     public List<PlayerView> GetLivingHeroes()
