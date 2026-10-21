@@ -4929,7 +4929,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &701074640
 Transform:
   m_ObjectHideFlags: 0
@@ -7430,6 +7430,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameEventRecorder
   logPlayerActions: 1
   fpsSampleInterval: 5
+  frameSpikeThresholdMs: 33.3
+  printPerformanceToConsole: 0
 --- !u!1 &1169054926
 GameObject:
   m_ObjectHideFlags: 0
