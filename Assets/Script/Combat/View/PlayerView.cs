@@ -11,6 +11,12 @@ public class PlayerView : CombatantView
 
     private void OnMouseDown()
     {
-        CardSystem.Instance.SetActiveHero(heroIndex);
+        Debug.Log($"[PlayerView] Clicked player: {name}, heroIndex: {heroIndex}");
+        if (CardSystem.Instance != null) {
+            CardSystem.Instance.SetActiveHero(heroIndex);
+        }
+        else {
+            Debug.LogWarning("[PlayerView] CardSystem.Instance is null.");
+        }
     }
 }

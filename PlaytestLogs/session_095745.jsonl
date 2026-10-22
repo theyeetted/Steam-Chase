@@ -1,7 +1,0 @@
-{"sessionId":"095745","eventIndex":1,"utcTime":"2026-10-21T02:57:49.8542502Z","elapsedSeconds":0.0007425006479024887,"category":"Session","message":"Session started","details":"Unity=6000.3.24f1; Platform=WindowsEditor"}
-{"sessionId":"095745","eventIndex":2,"utcTime":"2026-10-21T02:57:50.1567856Z","elapsedSeconds":0.30341947078704836,"category":"UnityConsole/Log","message":"[SessionIdDisplay] Displaying session 095745","details":""}
-{"sessionId":"095745","eventIndex":3,"utcTime":"2026-10-21T02:57:54.8293029Z","elapsedSeconds":4.975492477416992,"category":"Performance","message":"FPS sample","details":"AverageFPS=222.6; SampleSeconds=5.0"}
-{"sessionId":"095745","eventIndex":4,"utcTime":"2026-10-21T02:57:59.8302527Z","elapsedSeconds":9.975653648376465,"category":"Performance","message":"FPS sample","details":"AverageFPS=248.4; SampleSeconds=5.0"}
-{"sessionId":"095745","eventIndex":5,"utcTime":"2026-10-21T02:58:04.5777497Z","elapsedSeconds":14.722222328186036,"category":"UnityConsole/Log","message":"[SessionIdDisplay] Displaying session 095745","details":""}
-{"sessionId":"095745","eventIndex":6,"utcTime":"2026-10-21T02:58:04.8350779Z","elapsedSeconds":14.979475975036621,"category":"Performance","message":"FPS sample","details":"AverageFPS=240.0; SampleSeconds=5.0"}
-{"sessionId":"095745","eventIndex":7,"utcTime":"2026-10-21T02:58:06.7118256Z","elapsedSeconds":16.85677719116211,"category":"Session","message":"Session ended","details":"DurationSeconds=16.9"}

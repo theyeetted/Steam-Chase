@@ -1,2 +1,0 @@
-{"sessionId":"095717","eventIndex":1,"utcTime":"2026-10-21T02:57:07.2728815Z","elapsedSeconds":0.0007493998855352402,"category":"Session","message":"Session started","details":"Unity=6000.3.24f1; Platform=WindowsEditor"}
-{"sessionId":"095717","eventIndex":2,"utcTime":"2026-10-21T02:57:09.3555118Z","elapsedSeconds":2.084115982055664,"category":"Session","message":"Session ended","details":"DurationSeconds=2.1"}

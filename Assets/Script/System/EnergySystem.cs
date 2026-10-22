@@ -83,11 +83,6 @@ public class EnergySystem : SingleTon<EnergySystem>
     {
         ActionSystem.Instance.AddReaction(new RefillEnergyGA(0));
         ActionSystem.Instance.AddReaction(new RefillEnergyGA(1));
-
-        /*
-        RefillEnergyGA refillEnergyGA = new();
-        ActionSystem.Instance.AddReaction(refillEnergyGA);
-        */
     }
 
     // Way to reset energy

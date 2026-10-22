@@ -1,4 +1,0 @@
-﻿SessionId,EventIndex,UtcTime,ElapsedSeconds,Category,Message,Details
-"095984","1","2026-10-21T02:59:03.5105758Z","0.001","Session","Session started","Unity=6000.3.24f1; Platform=WindowsEditor"
-"095984","2","2026-10-21T02:59:04.3269131Z","0.818","UnityConsole/Log","[SessionIdDisplay] Displaying session 095984",""
-"095984","3","2026-10-21T02:59:07.7037412Z","4.194","Session","Session ended","DurationSeconds=4.2"

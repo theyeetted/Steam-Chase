@@ -193,34 +193,6 @@ public class CardSystem : SingleTon<CardSystem>
             $"[CardSystem] Hero {heroIndex}: " +
             $"{drawPiles[heroIndex].Count} battle cards randomly selected."
         );
-
-/*
-        foreach (CardData cardData in deckData)
-        {
-            if (cardData == null)
-            {
-                Debug.LogWarning("[CardSystem] Skipping a null card.");
-                continue;
-            }
-
-            drawPiles[heroIndex].Add(new Card(cardData));
-        }
-
-        // Shuffle the draw pile.
-        for (int i = drawPiles[heroIndex].Count - 1; i > 0; i--)
-        {
-            int j = UnityEngine.Random.Range(0, i + 1);
-
-            Card temp = drawPiles[heroIndex][i];
-            drawPiles[heroIndex][i] = drawPiles[heroIndex][j];
-            drawPiles[heroIndex][j] = temp;
-        }
-
-        Debug.Log(
-            $"[CardSystem] Hero {heroIndex} draw pile initialized: " +
-            $"{drawPiles[heroIndex].Count} cards."
-        );
-        */ // Old Code
     }
 
 

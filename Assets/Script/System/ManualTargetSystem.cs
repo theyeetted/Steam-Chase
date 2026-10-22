@@ -27,11 +27,27 @@ public class ManualTargetSystem : SingleTon<ManualTargetSystem>
     public CombatantView EndTargeting(Vector3 endPosition, ManualTargetKind targetKind)
     {
         CancelTargeting();
-        if (Physics.Raycast(endPosition, Vector3.forward, out RaycastHit hit, 10f, targetLayerMask)
-            && hit.collider != null)
+
+        Camera cam = Camera.main;
+        if (cam == null)
+        {
+            Debug.LogWarning("[ManualTarget] Camera.main is missing.");
+            return null;
+        }
+
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(
+            ray,
+            out RaycastHit hit,
+            1000f,
+            Physics.AllLayers,
+            QueryTriggerInteraction.Collide))
         {
             // Support colliders on the combatant itself or a child, using the same arrow path.
-            CombatantView target = hit.collider.GetComponentInParent<CombatantView>();
+            CombatantView target =
+                hit.collider.GetComponentInParent<CombatantView>();
+
             if (ManualTargetRules.IsValid(target, targetKind))
                 return target;
         }

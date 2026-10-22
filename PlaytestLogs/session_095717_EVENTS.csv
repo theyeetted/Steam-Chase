@@ -1,3 +1,0 @@
-﻿SessionId,EventIndex,UtcTime,ElapsedSeconds,Category,Message,Details
-"095717","1","2026-10-21T02:57:07.2728815Z","0.001","Session","Session started","Unity=6000.3.24f1; Platform=WindowsEditor"
-"095717","2","2026-10-21T02:57:09.3555118Z","2.084","Session","Session ended","DurationSeconds=2.1"

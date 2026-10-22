@@ -15,7 +15,7 @@ MonoBehaviour:
   <description>k__BackingField: 'Deal 12 damage and apply 2 Vulnerable. '
   <Image>k__BackingField: {fileID: -7385644879074639389, guid: 7c5dfe1eec9f2a34bba7af0d05617670, type: 3}
   <Cost>k__BackingField: 2
-  <Rarity>k__BackingField: 0
+  <Rarity>k__BackingField: 4
   <Character>k__BackingField: 0
   <Type>k__BackingField: 0
   <Disintegrate>k__BackingField: 0

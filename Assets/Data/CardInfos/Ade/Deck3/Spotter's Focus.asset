@@ -22,38 +22,12 @@ MonoBehaviour:
   <Disintegrate>k__BackingField: 0
   <ManualTargetKind>k__BackingField: 1
   <MannualTargetEffect>k__BackingField:
-    rid: -2
+    rid: 7746331475137790026
   <OtherTargetEffects>k__BackingField:
-  - rid: 7746331448223990105
   - rid: 7746331448223990109
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 7746331448223990105
-      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
-      data:
-        <TargetMode>k__BackingField:
-          rid: 7746331448223990107
-        <Effect>k__BackingField:
-          rid: 7746331448223990108
-        <RepeatMode>k__BackingField: 0
-        <RepeatCount>k__BackingField: 1
-        attackCountQuery:
-          actor: 0
-          direction: 0
-          window: 0
-          kinds: 15
-        <ChancePercent>k__BackingField: 100
-    - rid: 7746331448223990107
-      type: {class: ManualTargetTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 7746331448223990108
-      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
-      data:
-        statusEffectType: 3
-        stackCount: 1
     - rid: 7746331448223990109
       type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -79,3 +53,8 @@ MonoBehaviour:
         bonusDamage: 3
         permanent: 0
         durationTurns: 2
+    - rid: 7746331475137790026
+      type: {class: AddStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 3
+        stackCount: 1

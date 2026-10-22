@@ -1,3 +1,0 @@
-{"sessionId":"095984","eventIndex":1,"utcTime":"2026-10-21T02:59:03.5105758Z","elapsedSeconds":0.0009019002318382263,"category":"Session","message":"Session started","details":"Unity=6000.3.24f1; Platform=WindowsEditor"}
-{"sessionId":"095984","eventIndex":2,"utcTime":"2026-10-21T02:59:04.3269131Z","elapsedSeconds":0.8178638219833374,"category":"UnityConsole/Log","message":"[SessionIdDisplay] Displaying session 095984","details":""}
-{"sessionId":"095984","eventIndex":3,"utcTime":"2026-10-21T02:59:07.7037412Z","elapsedSeconds":4.194016933441162,"category":"Session","message":"Session ended","details":"DurationSeconds=4.2"}
