@@ -16,7 +16,6 @@ public class MatchSetupSystem : MonoBehaviour
     [SerializeField] private CharData[] adeDecks = new CharData[3];
 
     [Header("Match")]
-    [SerializeField] private PerkData PerkData;
     [SerializeField] private List<EnemyData> enemyDatas;
 
     [Header("Difficulty encounters")]
@@ -88,10 +87,9 @@ public class MatchSetupSystem : MonoBehaviour
         if (!CanConfigureMatch(difficulty, whiskeyData, adeData, out error)) return false;
         if (HeroSystem.Instance == null || HeroSystem.Instance.playerView == null ||
             HeroSystem.Instance.secondPlayerView == null || EnemySystem.Instance == null ||
-            CardSystem.Instance == null || ActionSystem.Instance == null || EnergySystem.Instance == null ||
-            (PerkData != null && PerkSystem.Instance == null))
+            CardSystem.Instance == null || ActionSystem.Instance == null || EnergySystem.Instance == null)
         {
-            error = "Keep both hero views and the hero, enemy, card, action, energy and perk systems active and configured.";
+            error = "Keep both hero views and the hero, enemy, card, action, energy active and configured.";
             return false;
         }
         firstCharData = whiskeyData;
@@ -116,8 +114,6 @@ public class MatchSetupSystem : MonoBehaviour
         CardSystem.Instance.Setup(0, firstCharData.Deck);
         CardSystem.Instance.Setup(1, secondCharData.Deck);
 
-        // Do we need seperated perk for each char?
-        if (PerkData != null) PerkSystem.Instance.AddPerk(new Perk(PerkData));
         IsSetupComplete = true;
         // Use one sequence so the busy action system does not reject the second hero's draw.
         DrawOpeningHands();

@@ -1069,82 +1069,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!1 &161654593
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 161654594}
-  - component: {fileID: 161654595}
-  - component: {fileID: 161654596}
-  m_Layer: 5
-  m_Name: PerksUI
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &161654594
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 161654593}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1140826397}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 60, y: -60}
-  m_SizeDelta: {x: 120, y: 120}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &161654595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 161654593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 12
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
---- !u!114 &161654596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 161654593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 164e4d6947c75864eaa6abcb6535cda5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PerksUI
-  perkUIPrefab: {fileID: 1989226129013608190, guid: dbafc3639bb2c6542a964e65e47f0fd5, type: 3}
 --- !u!114 &191163173 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7837288273610152512, guid: 924e91e667fddc34ab40ce8bc1c14327, type: 3}
@@ -5297,7 +5221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c7f386c2b1879b4590a77fe9f518418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PerkSystem
-  perksUI: {fileID: 161654596}
+  perksUI: {fileID: 0}
 --- !u!1 &793113985
 GameObject:
   m_ObjectHideFlags: 0
@@ -7398,7 +7322,6 @@ RectTransform:
   - {fileID: 503804469}
   - {fileID: 455528900}
   - {fileID: 799611160}
-  - {fileID: 161654594}
   - {fileID: 1920072818}
   m_Father: {fileID: 514062279}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
